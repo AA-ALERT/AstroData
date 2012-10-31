@@ -48,7 +48,7 @@ int main(int argc, char *argv[]) {
 	string rawFilename;
 	unsigned int nrSeconds = 0;
 	unsigned int nrSamplesPerSecond = 0;
-	unsigned int samplesInMem = 0;
+	unsigned int paddedSecond = 0;
 	unsigned int nrChannels = 0;
 	unsigned int nrOutputSamples = 0;
 
@@ -71,8 +71,7 @@ int main(int argc, char *argv[]) {
 
 	// Load input
 	vector< GPUData< float > * > *input = new vector< GPUData< float > * >(nrSeconds);
-	readLOFAR(headerFilename, rawFilename, nrSeconds, nrSamplesPerSecond, nrChannels, *input);
-	samplesInMem = nrSamplesPerSecond + (nrSamplesPerSecond % 4);
+	readLOFAR(headerFilename, rawFilename, nrSeconds, nrSamplesPerSecond, paddedSecond, nrChannels, *input);
 
 	// Plot the output
 	ofstream oFile;
@@ -83,7 +82,7 @@ int main(int argc, char *argv[]) {
 		float oSample = 0.0f;
 
 		for ( unsigned int channel = 0; channel < nrChannels; channel++ ) {
-			oSample += ((input->at(sample / nrSamplesPerSecond))->getHostData())[(channel * samplesInMem) + (sample % nrSamplesPerSecond)];
+			oSample += ((input->at(sample / nrSamplesPerSecond))->getHostData())[(channel * paddedSecond) + (sample % nrSamplesPerSecond)];
 		}
 
 		oFile << sample << " " << oSample << endl;
