@@ -44,27 +44,28 @@ using AstroData::readSIGPROC;
 
 
 int main(int argc, char *argv[]) {
-	string iFileName;
+	string iFilename;
 	unsigned int headerBytes = 0;
 	unsigned int nrSeconds = 0;
 	unsigned int nrSamplesPerSecond = 0;
+	unsigned int paddedSecond = 0;
 	unsigned int nrChannels = 0;
-	unsigned int nrOutputSamples = 0;
+	unsigned int nrOutputSeconds = 0;
 
 	// Parse command line
 	if ( argc != 13 ) {
-		cerr << "Usage: " << argv[0] << " -if <input_file> -h <header_bytes> -is <#seconds> -ss <#samples_per_second> -c <#channels> -os <#output_samples>" << endl;
+		cerr << "Usage: " << argv[0] << " -if <input_file> -h <header_bytes> -is <#seconds> -ss <#samples_per_second> -c <#channels> -os <output_seconds>" << endl;
 		return 1;
 	}
 	try {
 		ArgumentList args(argc, argv);
 
-		iFileName = args.getSwitchArgument< string >("-if");
+		iFilename = args.getSwitchArgument< string >("-if");
 		headerBytes = args.getSwitchArgument< unsigned int >("-h");
 		nrSeconds = args.getSwitchArgument< unsigned int >("-is");
 		nrSamplesPerSecond = args.getSwitchArgument< unsigned int >("-ss");
 		nrChannels = args.getSwitchArgument< unsigned int >("-c");
-		nrOutputSamples = args.getSwitchArgument< unsigned int >("-os");
+		nrOutputSeconds = args.getSwitchArgument< unsigned int >("-os");
 	}
 	catch ( exception &err ) {
 		cerr << err.what() << endl;
@@ -73,25 +74,26 @@ int main(int argc, char *argv[]) {
 
 	// Load input
 	vector< GPUData< float > * > *input = new vector< GPUData< float > * >(nrSeconds);
-	ifstream iFile;
 	
-	iFile.open(iFileName.c_str(), ios::binary);
-	readSIGPROC(nrSeconds, nrSamplesPerSecond, nrChannels, headerBytes, &iFile, *input);
-	iFile.close();
+	readSIGPROC(nrSeconds, nrSamplesPerSecond, nrChannels, headerBytes, &paddedSecond, iFilename, *input);
 
 	// Plot the output
+	long long unsigned int counter = 0;
 	ofstream oFile;
 	
 	oFile.open("./rawInput.dat");
 	oFile << fixed << setprecision(3);
-	for ( unsigned int sample = 0; sample < nrOutputSamples; sample++ ) {
-		float oSample = 0.0f;
+	for ( unsigned int second = 0; second < nrOutputSeconds; second++ ) {
+		for ( unsigned int sample = 0; sample < nrSamplesPerSecond; sample++ ) {
+			float oSample = 0.0f;
 
-		for ( unsigned int channel = 0; channel < nrChannels; channel++ ) {
-			oSample += ((input->at(sample / nrSamplesPerSecond))->getHostData())[(channel * nrSamplesPerSecond) + (sample % nrSamplesPerSecond)];
+			for ( unsigned int channel = 0; channel < nrChannels; channel++ ) {
+				oSample += ((input->at(second)->getHostData())[(channel * paddedSecond) + sample];
+			}
+
+			oFile << counter << " " << oSample << endl;
+			counter++;
 		}
-
-		oFile << sample << " " << oSample << endl;
 	}
 	oFile.close();
 
