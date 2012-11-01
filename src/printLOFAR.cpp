@@ -84,7 +84,7 @@ int main(int argc, char *argv[]) {
 			float oSample = 0.0f;
 
 			for ( unsigned int channel = 0; channel < nrChannels; channel++ ) {
-				oSample += ((input->at(second)->getHostData())[(channel * paddedSecond) + sample];
+				oSample += (input->at(second)->getHostData())[(channel * paddedSecond) + sample];
 			}
 
 			oFile << counter << " " << oSample << endl;
