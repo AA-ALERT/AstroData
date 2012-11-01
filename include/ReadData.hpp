@@ -50,18 +50,19 @@ template< typename T > void readLOFAR(string headerFilename, string rawFilename,
 
 template< typename T > void readSIGPROC(unsigned int nrSeconds, unsigned int nrSamplesPerSecond, unsigned int nrChannels, unsigned int bytesToSkip, ifstream *inputFile, vector< GPUData< T > * > &data) {
 	const unsigned int BUFFER_DIM = 4;
+	unsigned int paddedSecond = nrSamplesPerSecond + (nrSamplesPerSecond % 4);
 	char *buffer = new char [BUFFER_DIM];
 
 	inputFile->sync_with_stdio(false);
 	inputFile->ignore(bytesToSkip);
 	for ( unsigned int second = 0; second < nrSeconds; second++ ) {
 		data.at(second) = new GPUData< T >("second" + toStringValue< unsigned int >(second), true, true);
-		(data.at(second))->allocateHostData(nrSamplesPerSecond * nrChannels);
+		(data.at(second))->allocateHostData(paddedSecond * nrChannels);
 		
 		for ( unsigned int sample = 0; sample < nrSamplesPerSecond; sample++ ) {
 			for ( unsigned int channel = nrChannels; channel > 0; channel-- ) {
 				inputFile->read(buffer, BUFFER_DIM);
-				((data.at(second))->getHostData())[((channel - 1) * nrSamplesPerSecond) + sample] = *(reinterpret_cast< T * >(buffer));
+				((data.at(second))->getHostData())[((channel - 1) * paddedSecond) + sample] = *(reinterpret_cast< T * >(buffer));
 			}
 		}
 	}

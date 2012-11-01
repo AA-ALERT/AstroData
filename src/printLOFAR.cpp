@@ -50,11 +50,11 @@ int main(int argc, char *argv[]) {
 	unsigned int nrSamplesPerSecond = 0;
 	unsigned int paddedSecond = 0;
 	unsigned int nrChannels = 0;
-	unsigned int nrOutputSamples = 0;
+	unsigned int nrOutputSeconds = 0;
 
 	// Parse command line
 	if ( argc != 7 ) {
-		cerr << "Usage: " << argv[0] << " -hf <header_file> -rf <raw_file> -os <#output_samples>" << endl;
+		cerr << "Usage: " << argv[0] << " -hf <header_file> -rf <raw_file> -os <output_seconds>" << endl;
 		return 1;
 	}
 	try {
@@ -62,7 +62,7 @@ int main(int argc, char *argv[]) {
 
 		headerFilename = args.getSwitchArgument< string >("-hf");
 		rawFilename = args.getSwitchArgument< string >("-rf");
-		nrOutputSamples = args.getSwitchArgument< unsigned int >("-os");
+		nrOutputSeconds = args.getSwitchArgument< unsigned int >("-os");
 	}
 	catch ( exception &err ) {
 		cerr << err.what() << endl;
@@ -76,16 +76,20 @@ int main(int argc, char *argv[]) {
 	// Plot the output
 	ofstream oFile;
 	
+	long long unsigned int counter = 0;
 	oFile.open("./rawInput.dat");
 	oFile << fixed << setprecision(3);
-	for ( unsigned int sample = 0; sample < nrOutputSamples; sample++ ) {
-		float oSample = 0.0f;
+	for ( unsigned int second = 0; second < nrOutputSeconds; second++ ) {
+		for ( unsigned int sample = 0; sample < nrSamplesPerSecond; sample++ ) {
+			float oSample = 0.0f;
 
-		for ( unsigned int channel = 0; channel < nrChannels; channel++ ) {
-			oSample += ((input->at(sample / nrSamplesPerSecond))->getHostData())[(channel * paddedSecond) + (sample % nrSamplesPerSecond)];
+			for ( unsigned int channel = 0; channel < nrChannels; channel++ ) {
+				oSample += ((input->at(second)->getHostData())[(channel * paddedSecond) + sample];
+			}
+
+			oFile << counter << " " << oSample << endl;
+			counter++;
 		}
-
-		oFile << sample << " " << oSample << endl;
 	}
 	oFile.close();
 
