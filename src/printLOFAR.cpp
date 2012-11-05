@@ -77,7 +77,7 @@ int main(int argc, char *argv[]) {
 	ofstream oFile;
 	
 	long long unsigned int counter = 0;
-	oFile.open("./rawInput.dat");
+	oFile.open("./rawLOFAR.dat");
 	oFile << fixed << setprecision(3);
 	for ( unsigned int second = 0; second < nrOutputSeconds; second++ ) {
 		for ( unsigned int sample = 0; sample < nrSamplesPerSecond; sample++ ) {

@@ -81,7 +81,7 @@ int main(int argc, char *argv[]) {
 	long long unsigned int counter = 0;
 	ofstream oFile;
 	
-	oFile.open("./rawInput.dat");
+	oFile.open("./rawSIGPROC.dat");
 	oFile << fixed << setprecision(3);
 	for ( unsigned int second = 0; second < nrOutputSeconds; second++ ) {
 		for ( unsigned int sample = 0; sample < nrSamplesPerSecond; sample++ ) {

@@ -49,23 +49,26 @@ template< typename T > void readLOFAR(string headerFilename, string rawFilename,
 // Implementation
 
 template< typename T > void readSIGPROC(unsigned int nrSeconds, unsigned int nrSamplesPerSecond, unsigned int nrChannels, unsigned int bytesToSkip, unsigned int *paddedSecond, string inputFilename, vector< GPUData< T > * > &data) {
+	ifstream inputFile;
 	const unsigned int BUFFER_DIM = 4;
 	*paddedSecond = nrSamplesPerSecond + (nrSamplesPerSecond % 4);
 	char *buffer = new char [BUFFER_DIM];
 
-	inputFile->sync_with_stdio(false);
-	inputFile->ignore(bytesToSkip);
+	inputFile.open(inputFilename.c_str());
+	inputFile.sync_with_stdio(false);
+	inputFile.ignore(bytesToSkip);
 	for ( unsigned int second = 0; second < nrSeconds; second++ ) {
 		data.at(second) = new GPUData< T >("second" + toStringValue< unsigned int >(second), true, true);
 		(data.at(second))->allocateHostData(*paddedSecond * nrChannels);
 		
 		for ( unsigned int sample = 0; sample < nrSamplesPerSecond; sample++ ) {
 			for ( unsigned int channel = nrChannels; channel > 0; channel-- ) {
-				inputFile->read(buffer, BUFFER_DIM);
+				inputFile.read(buffer, BUFFER_DIM);
 				((data.at(second))->getHostData())[((channel - 1) * (*paddedSecond)) + sample] = *(reinterpret_cast< T * >(buffer));
 			}
 		}
 	}
+	inputFile.close();
 
 	delete [] buffer;
 }
@@ -97,21 +100,23 @@ template< typename T > void readLOFAR(string headerFilename, string rawFilename,
 	paddedSecond = nrSamplesPerSecond + (nrSamplesPerSecond % 4);
 		
 	// Read the raw file with the actual data
-	data.resize(nrSeconds);
-	for ( unsigned int second = 0; second < nrSeconds; second++ ) {
-		data.at(second) = new GPUData< T >("second" + toStringValue< unsigned int >(second), true, true);
-		(data.at(second))->allocateHostData(nrSubbands * nrChannels * paddedSecond);
-	}
-	
 	ifstream rawFile;
 	rawFile.open(rawFilename.c_str(), ios::binary);
 	rawFile.sync_with_stdio(false);
 		
-	for ( unsigned int subband = 0; subband < nrSubbands; subband++ ) {
-		for ( unsigned int channel = 0; channel < nrChannels; channel++ ) {
-			for ( unsigned int sample = 0; sample < totalSamples; sample++ ) {
-				rawFile.read(word, 4);
-				((data.at(sample / nrSamplesPerSecond))->getHostData())[(((subband * nrChannels) + channel) * paddedSecond) + (sample % nrSamplesPerSecond)] = *(reinterpret_cast< T * >(word));
+	data.resize(nrSeconds);
+	
+	for ( unsigned int second = 0; second < nrSeconds; second++ ) {
+		data.at(second) = new GPUData< T >("second" + toStringValue< unsigned int >(second), true, true);
+		(data.at(second))->allocateHostData(nrSubbands * nrChannels * paddedSecond);
+		for ( unsigned int sample = 0; sample < nrSamplesPerSecond; sample++ ) {
+			for ( unsigned int subband = 0; subband < nrSubbands; subband++ ) {
+				for ( unsigned int channel = 0; channel < nrChannels; channel++ ) {
+					unsigned int bitMap = 0;
+					rawFile.read(word, 4);
+					bitMap = (word[3] << 24) + (word[2] << 16) + (word[1] << 8) + word[0];
+					((data.at(second))->getHostData())[(((subband * nrChannels) + channel) * paddedSecond) + sample] = *(reinterpret_cast< T * >(&bitMap));
+				}
 			}
 		}
 	}
