@@ -35,6 +35,7 @@ using H5::IntType;
 #include <utils.hpp>
 using isa::OpenCL::GPUData;
 using isa::utils::toStringValue;
+using isa::utils::changeEndianness;
 
 
 #ifndef READ_DATA_HPP
@@ -96,7 +97,7 @@ template< typename T > void readLOFAR(string headerFilename, string rawFilename,
 	headerFile.close();
 	
 	nrSamplesPerSecond = static_cast< unsigned int >(totalSamples / totalIntegrationTime);
-	nrSeconds = static_cast< unsigned int >(totalIntegrationTime + 1);
+	nrSeconds = static_cast< unsigned int >(totalIntegrationTime);
 	paddedSecond = nrSamplesPerSecond + (nrSamplesPerSecond % 4);
 		
 	// Read the raw file with the actual data
@@ -112,10 +113,9 @@ template< typename T > void readLOFAR(string headerFilename, string rawFilename,
 		for ( unsigned int sample = 0; sample < nrSamplesPerSecond; sample++ ) {
 			for ( unsigned int subband = 0; subband < nrSubbands; subband++ ) {
 				for ( unsigned int channel = 0; channel < nrChannels; channel++ ) {
-					unsigned int bitMap = 0;
 					rawFile.read(word, 4);
-					bitMap = (word[3] << 24) + (word[2] << 16) + (word[1] << 8) + word[0];
-					((data.at(second))->getHostData())[(((subband * nrChannels) + channel) * paddedSecond) + sample] = *(reinterpret_cast< T * >(&bitMap));
+					changeEndianness(word);
+					((data.at(second))->getHostData())[(((subband * nrChannels) + channel) * paddedSecond) + sample] = *(reinterpret_cast< T * >(word));
 				}
 			}
 		}
