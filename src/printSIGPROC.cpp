@@ -87,7 +87,7 @@ int main(int argc, char *argv[]) {
 			float oSample = 0.0f;
 
 			for ( unsigned int channel = 0; channel < observation.getNrChannels(); channel++ ) {
-				oSample += ((input->at(second)->getHostData())[(channel * paddedSecond) + sample];
+				oSample += (input->at(second)->getHostData())[(channel * paddedSecond) + sample];
 			}
 
 			oFile << setprecision(6) << ((second * observation.getNrSamplesPerSecond()) + sample) * observation.getSamplingRate() << " " << setprecision(3) << oSample << endl;
