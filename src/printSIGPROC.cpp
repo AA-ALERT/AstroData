@@ -38,18 +38,17 @@ using std::string;
 #include <GPUData.hpp>
 #include <Exceptions.hpp>
 #include <ReadData.hpp>
+#include <Observation.hpp>
 using isa::utils::ArgumentList;
 using isa::OpenCL::GPUData;
 using AstroData::readSIGPROC;
+using AstroData::Observation;
 
 
 int main(int argc, char *argv[]) {
 	string iFilename;
 	unsigned int headerBytes = 0;
-	unsigned int nrSeconds = 0;
-	unsigned int nrSamplesPerSecond = 0;
 	unsigned int paddedSecond = 0;
-	unsigned int nrChannels = 0;
 	unsigned int nrOutputSeconds = 0;
 
 	// Parse command line
@@ -62,9 +61,9 @@ int main(int argc, char *argv[]) {
 
 		iFilename = args.getSwitchArgument< string >("-if");
 		headerBytes = args.getSwitchArgument< unsigned int >("-h");
-		nrSeconds = args.getSwitchArgument< unsigned int >("-is");
-		nrSamplesPerSecond = args.getSwitchArgument< unsigned int >("-ss");
-		nrChannels = args.getSwitchArgument< unsigned int >("-c");
+		observation.setNrSeconds(args.getSwitchArgument< unsigned int >("-is"));
+		observation.setNrSamplesPerSecond(args.getSwitchArgument< unsigned int >("-ss"));
+		observation.setNrChannels(args.getSwitchArgument< unsigned int >("-c"));
 		nrOutputSeconds = args.getSwitchArgument< unsigned int >("-os");
 	}
 	catch ( exception &err ) {
@@ -73,26 +72,25 @@ int main(int argc, char *argv[]) {
 	}
 
 	// Load input
+	Observation observation("SIGPROC", "float");
 	vector< GPUData< float > * > *input = new vector< GPUData< float > * >(nrSeconds);
 	
-	readSIGPROC(nrSeconds, nrSamplesPerSecond, nrChannels, headerBytes, &paddedSecond, iFilename, *input);
+	readSIGPROC(observation, headerBytes, &paddedSecond, iFilename, *input);
 
 	// Plot the output
-	long long unsigned int counter = 0;
 	ofstream oFile;
 	
 	oFile.open("./rawSIGPROC.dat");
-	oFile << fixed << setprecision(3);
+	oFile << fixed;
 	for ( unsigned int second = 0; second < nrOutputSeconds; second++ ) {
-		for ( unsigned int sample = 0; sample < nrSamplesPerSecond; sample++ ) {
+		for ( unsigned int sample = 0; sample < observation.getNrSamplesPerSecond(); sample++ ) {
 			float oSample = 0.0f;
 
-			for ( unsigned int channel = 0; channel < nrChannels; channel++ ) {
+			for ( unsigned int channel = 0; channel < observation.getNrChannels(); channel++ ) {
 				oSample += ((input->at(second)->getHostData())[(channel * paddedSecond) + sample];
 			}
 
-			oFile << counter << " " << oSample << endl;
-			counter++;
+			oFile << setprecision(6) << ((second * observation.getNrSamplesPerSecond()) + sample) * observation.getSamplingRate() << " " << setprecision(3) << oSample << endl;
 		}
 	}
 	oFile.close();

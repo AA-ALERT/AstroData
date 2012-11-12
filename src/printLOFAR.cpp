@@ -38,18 +38,17 @@ using std::string;
 #include <GPUData.hpp>
 #include <Exceptions.hpp>
 #include <ReadData.hpp>
+#include <Observation.hpp>
 using isa::utils::ArgumentList;
 using isa::OpenCL::GPUData;
 using AstroData::readLOFAR;
+using AstroData::Observation;
 
 
 int main(int argc, char *argv[]) {
 	string headerFilename;
 	string rawFilename;
-	unsigned int nrSeconds = 0;
-	unsigned int nrSamplesPerSecond = 0;
 	unsigned int paddedSecond = 0;
-	unsigned int nrChannels = 0;
 	unsigned int nrOutputSeconds = 0;
 
 	// Parse command line
@@ -70,25 +69,24 @@ int main(int argc, char *argv[]) {
 	}
 
 	// Load input
-	vector< GPUData< float > * > *input = new vector< GPUData< float > * >(nrSeconds);
-	readLOFAR(headerFilename, rawFilename, nrSeconds, nrSamplesPerSecond, paddedSecond, nrChannels, *input);
+	Observation observation("LOFAR", "float");
+	vector< GPUData< float > * > *input = new vector< GPUData< float > * >(1);
+	readLOFAR(headerFilename, rawFilename, observation, paddedSecond, *input);
 
 	// Plot the output
 	ofstream oFile;
 	
-	long long unsigned int counter = 0;
 	oFile.open("./rawLOFAR.dat");
-	oFile << fixed << setprecision(3);
+	oFile << fixed;
 	for ( unsigned int second = 0; second < nrOutputSeconds; second++ ) {
-		for ( unsigned int sample = 0; sample < nrSamplesPerSecond; sample++ ) {
+		for ( unsigned int sample = 0; sample < observation.getNrSamplesPerSecond(); sample++ ) {
 			float oSample = 0.0f;
 
-			for ( unsigned int channel = 0; channel < nrChannels; channel++ ) {
+			for ( unsigned int channel = 0; channel < observation.getNrChannels(); channel++ ) {
 				oSample += (input->at(second)->getHostData())[(channel * paddedSecond) + sample];
 			}
 
-			oFile << counter << " " << oSample << endl;
-			counter++;
+			oFile << setprecision(6) << ((second * observation.getNrSamplesPerSecond()) + sample) * observation.getSamplingRate() << " " << setprecision(3) << oSample << endl;
 		}
 	}
 	oFile.close();
