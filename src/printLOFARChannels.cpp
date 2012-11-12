@@ -104,7 +104,7 @@ int main(int argc, char *argv[]) {
 			for ( unsigned int channel = 0; channel < observation.getNrChannels(); channel++ ) {
 				float value = (input->at(second)->getHostData())[(channel * paddedSecond) + sample] - minSample;
 				
-				oImage.at((second * observation.getNrSamplesPerSecond()) + sample, channel, 0, 0) = (value * 256) / diffMinMax;
+				oImage((second * observation.getNrSamplesPerSecond()) + sample, channel, 0, 0) = (value * 256) / diffMinMax;
 			}
 		}
 	}
