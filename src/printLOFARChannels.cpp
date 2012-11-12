@@ -108,7 +108,6 @@ int main(int argc, char *argv[]) {
 			}
 		}
 	}
-	oImage.display();
 	oImage.save("./rawLOFARChannels.bmp");
 
 	return 0;
