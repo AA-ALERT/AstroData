@@ -55,7 +55,7 @@ template< typename T > void readLOFAR(string headerFilename, string rawFilename,
 template< typename T > void readSIGPROC(Observation &observation, unsigned int bytesToSkip, unsigned int *paddedSecond, string inputFilename, vector< GPUData< T > * > &data) {
 	ifstream inputFile;
 	const unsigned int BUFFER_DIM = 4;
-	*paddedSecond = nrSamplesPerSecond + (nrSamplesPerSecond % 4);
+	*paddedSecond = observation.getNrSamplesPerSecond() + (observation.getNrSamplesPerSecond() % 4);
 	char *buffer = new char [BUFFER_DIM];
 
 	inputFile.open(inputFilename.c_str());
@@ -63,7 +63,7 @@ template< typename T > void readSIGPROC(Observation &observation, unsigned int b
 	inputFile.ignore(bytesToSkip);
 	for ( unsigned int second = 0; second < observation.getNrSeconds(); second++ ) {
 		data.at(second) = new GPUData< T >("second" + toStringValue< unsigned int >(second), true, true);
-		(data.at(second))->allocateHostData((*paddedSecond) * nrChannels);
+		(data.at(second))->allocateHostData((*paddedSecond) * observation.getNrChannels());
 		
 		for ( unsigned int sample = 0; sample < observation.getNrSamplesPerSecond(); sample++ ) {
 			for ( unsigned int channel = observation.getNrChannels(); channel > 0; channel-- ) {
@@ -118,7 +118,7 @@ template< typename T > void readLOFAR(string headerFilename, string rawFilename,
 	observation.setNrSamplesPerSecond(static_cast< unsigned int >(totalSamples / totalIntegrationTime));
 	observation.setSamplingRate(1.0f / observation.getNrSamplesPerSecond());
 	observation.setNrSeconds(static_cast< unsigned int >(totalIntegrationTime));
-	*paddedSecond = nrSamplesPerSecond + (nrSamplesPerSecond % 4);
+	*paddedSecond = observation.getNrSamplesPerSecond() + (observation.getNrSamplesPerSecond() % 4);
 		
 	// Read the raw file with the actual data
 	ifstream rawFile;
@@ -129,13 +129,13 @@ template< typename T > void readLOFAR(string headerFilename, string rawFilename,
 	
 	for ( unsigned int second = 0; second < observation.getNrSeconds(); second++ ) {
 		data.at(second) = new GPUData< T >("second" + toStringValue< unsigned int >(second), true, true);
-		(data.at(second))->allocateHostData(nrSubbands * observation.getNrChannels() * paddedSecond);
+		(data.at(second))->allocateHostData(nrSubbands * observation.getNrChannels() * (*paddedSecond));
 		for ( unsigned int sample = 0; sample < observation.getNrSamplesPerSecond(); sample++ ) {
 			for ( unsigned int subband = 0; subband < nrSubbands; subband++ ) {
 				for ( unsigned int channel = 0; channel < observation.getNrChannels(); channel++ ) {
 					rawFile.read(word, 4);
 					changeEndianness(word);
-					((data.at(second))->getHostData())[(((subband * nrChannels) + channel) * paddedSecond) + sample] = *(reinterpret_cast< T * >(word));
+					((data.at(second))->getHostData())[(((subband * observation.getNrChannels()) + channel) * (*paddedSecond)) + sample] = *(reinterpret_cast< T * >(word));
 				}
 			}
 		}
