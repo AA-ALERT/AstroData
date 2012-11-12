@@ -71,6 +71,7 @@ int main(int argc, char *argv[]) {
 		cerr << err.what() << endl;
 		return 1;
 	}
+	observation.setSamplingRate(1.0f / observation.getNrSamplesPerSecond());
 
 	// Load input
 	vector< GPUData< float > * > *input = new vector< GPUData< float > * >(observation.getNrSeconds());
