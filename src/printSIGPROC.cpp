@@ -46,6 +46,7 @@ using AstroData::Observation;
 
 
 int main(int argc, char *argv[]) {
+	Observation observation("SIGPROC", "float");
 	string iFilename;
 	unsigned int headerBytes = 0;
 	unsigned int paddedSecond = 0;
@@ -72,8 +73,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	// Load input
-	Observation observation("SIGPROC", "float");
-	vector< GPUData< float > * > *input = new vector< GPUData< float > * >(nrSeconds);
+	vector< GPUData< float > * > *input = new vector< GPUData< float > * >(observation.getNrSeconds());
 	
 	readSIGPROC(observation, headerBytes, &paddedSecond, iFilename, *input);
 
