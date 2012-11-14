@@ -54,10 +54,12 @@ int main(int argc, char *argv[]) {
 	string rawFilename;
 	unsigned int paddedSecond = 0;
 	unsigned int nrOutputSeconds = 0;
+	unsigned int channelMagnifyingFactor = 0;
+	unsigned int timeIntegrationFactor = 0;
 
 	// Parse command line
-	if ( argc != 7 ) {
-		cerr << "Usage: " << argv[0] << " -hf <header_file> -rf <raw_file> -os <output_seconds>" << endl;
+	if ( argc != 11 ) {
+		cerr << "Usage: " << argv[0] << " -hf <header_file> -rf <raw_file> -os <output_seconds> -cm <channel_magnifying_factor> -if <time_integration_factor>" << endl;
 		return 1;
 	}
 	try {
@@ -66,6 +68,8 @@ int main(int argc, char *argv[]) {
 		headerFilename = args.getSwitchArgument< string >("-hf");
 		rawFilename = args.getSwitchArgument< string >("-rf");
 		nrOutputSeconds = args.getSwitchArgument< unsigned int >("-os");
+		channelMagnifyingFactor = args.getSwitchArgument< unsigned int >("-cm");
+		timeIntegrationFactor = args.getSwitchArgument< unsigned int >("-if");
 	}
 	catch ( exception &err ) {
 		cerr << err.what() << endl;
@@ -81,7 +85,7 @@ int main(int argc, char *argv[]) {
 	float maxSample = numeric_limits< float >::min();
 	float minSample = numeric_limits< float >::max();
 	float diffMinMax = 0.0f;
-	CImg< unsigned char > oImage(nrOutputSeconds * observation.getNrSamplesPerSecond(), observation.getNrChannels(), 1, 1);
+	CImg< unsigned char > oImage(nrOutputSeconds * (observation.getNrSamplesPerSecond() / timeIntegrationFactor), observation.getNrChannels() * channelMagnifyingFactor, 1, 1);
 	
 	for ( unsigned int second = 0; second < nrOutputSeconds; second++ ) {
 		for ( unsigned int sample = 0; sample < observation.getNrSamplesPerSecond(); sample++ ) {
@@ -100,15 +104,29 @@ int main(int argc, char *argv[]) {
 	diffMinMax = maxSample - minSample;
 
 	for ( unsigned int second = 0; second < nrOutputSeconds; second++ ) {
-		for ( unsigned int sample = 0; sample < observation.getNrSamplesPerSecond(); sample++ ) {
+		for ( unsigned int sample = 0; sample < observation.getNrSamplesPerSecond(); sample += timeIntegrationFactor ) {
 			for ( unsigned int channel = 0; channel < observation.getNrChannels(); channel++ ) {
-				float value = (input->at(second)->getHostData())[(channel * paddedSecond) + sample] - minSample;
+				unsigned int counter = 0;
+				float value = 0.0f;
 				
-				oImage((second * observation.getNrSamplesPerSecond()) + sample, channel, 0, 0) = (value * 256) / diffMinMax;
+				for ( unsigned int time = 0; time < timeIntegrationFactor; time++ ) {
+					if ( (sample + time) < observation.getNrSamplesPerSecond() ) {
+						value += (input->at(second)->getHostData())[(channel * paddedSecond) + (sample + time)] - minSample;
+						counter++;
+					}
+					else {
+						break;
+					}
+				}
+				value /= couter;
+				
+				for ( unsigned int magnifier = 0; magnifier < channelMagnifyingFactor; magnifier++ ) {
+					oImage(((second * observation.getNrSamplesPerSecond()) + sample) / timeIntegrationFactor, (channel * channelMagnifyingFactor) + magnifier, 0, 0) = (value * 256) / diffMinMax;
+				}
 			}
 		}
 	}
-	oImage.save("./rawLOFARChannels.bmp");
+	oImage.save("./rawLOFARChannels.jpg");
 
 	return 0;
 }
