@@ -77,8 +77,8 @@ int main(int argc, char *argv[]) {
 	}
 
 	// Load input
-	float maxSample = numeric_limits< float >::min();
 	float minSample = numeric_limits< float >::max();
+	float maxSample = numeric_limits< float >::min();
 	Observation observation("LOFAR", "float");
 	vector< GPUData< float > * > *input = new vector< GPUData< float > * >(1);
 	
@@ -106,7 +106,7 @@ int main(int argc, char *argv[]) {
 				value /= counter;
 				
 				for ( unsigned int magnifier = 0; magnifier < channelMagnifyingFactor; magnifier++ ) {
-					oImage(((second * observation.getNrSamplesPerSecond()) + sample) / timeIntegrationFactor, (channel * channelMagnifyingFactor) + magnifier, 0, 0) = (value * 256) / diffMinMax;
+					oImage(((second * observation.getNrSamplesPerSecond()) + sample) / timeIntegrationFactor, (channel * channelMagnifyingFactor) + magnifier, 0, 0) = 256 - static_cast< unsigned int >((value * 256) / diffMinMax);
 				}
 			}
 		}

@@ -50,6 +50,8 @@ int main(int argc, char *argv[]) {
 	string rawFilename;
 	unsigned int paddedSecond = 0;
 	unsigned int nrOutputSeconds = 0;
+	unsigned int minValue = 0;
+	unsigned int maxValue = 0;
 
 	// Parse command line
 	if ( argc != 7 ) {
@@ -71,7 +73,7 @@ int main(int argc, char *argv[]) {
 	// Load input
 	Observation observation("LOFAR", "float");
 	vector< GPUData< float > * > *input = new vector< GPUData< float > * >(1);
-	readLOFAR(headerFilename, rawFilename, observation, &paddedSecond, *input);
+	readLOFAR(headerFilename, rawFilename, observation, &paddedSecond, &minValue, &maxValue, *input);
 
 	// Plot the output
 	ofstream oFile;
