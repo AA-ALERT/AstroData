@@ -118,7 +118,7 @@ int main(int argc, char *argv[]) {
 						break;
 					}
 				}
-				value /= couter;
+				value /= counter;
 				
 				for ( unsigned int magnifier = 0; magnifier < channelMagnifyingFactor; magnifier++ ) {
 					oImage(((second * observation.getNrSamplesPerSecond()) + sample) / timeIntegrationFactor, (channel * channelMagnifyingFactor) + magnifier, 0, 0) = (value * 256) / diffMinMax;
