@@ -77,31 +77,16 @@ int main(int argc, char *argv[]) {
 	}
 
 	// Load input
-	Observation observation("LOFAR", "float");
-	vector< GPUData< float > * > *input = new vector< GPUData< float > * >(1);
-	readLOFAR(headerFilename, rawFilename, observation, &paddedSecond, *input);
-
-	// Plot the output
 	float maxSample = numeric_limits< float >::min();
 	float minSample = numeric_limits< float >::max();
-	float diffMinMax = 0.0f;
-	CImg< unsigned char > oImage(nrOutputSeconds * (observation.getNrSamplesPerSecond() / timeIntegrationFactor), observation.getNrChannels() * channelMagnifyingFactor, 1, 1);
+	Observation observation("LOFAR", "float");
+	vector< GPUData< float > * > *input = new vector< GPUData< float > * >(1);
 	
-	for ( unsigned int second = 0; second < nrOutputSeconds; second++ ) {
-		for ( unsigned int sample = 0; sample < observation.getNrSamplesPerSecond(); sample++ ) {
-			for ( unsigned int channel = 0; channel < observation.getNrChannels(); channel++ ) {
-				float value = (input->at(second)->getHostData())[(channel * paddedSecond) + sample];
+	readLOFAR(headerFilename, rawFilename, observation, &paddedSecond, &minSample, &maxSample, *input);
 
-				if ( value < minSample ) {
-					minSample = value;
-				}
-				if ( value > maxSample ) {
-					maxSample = value;
-				}
-			}
-		}
-	}
-	diffMinMax = maxSample - minSample;
+	// Plot the output
+	float diffMinMax = maxSample - minSample;
+	CImg< unsigned char > oImage(nrOutputSeconds * (observation.getNrSamplesPerSecond() / timeIntegrationFactor), observation.getNrChannels() * channelMagnifyingFactor, 1, 1);
 
 	for ( unsigned int second = 0; second < nrOutputSeconds; second++ ) {
 		for ( unsigned int sample = 0; sample < observation.getNrSamplesPerSecond(); sample += timeIntegrationFactor ) {

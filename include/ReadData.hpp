@@ -47,7 +47,7 @@ using isa::utils::changeEndianness;
 namespace AstroData {
 
 template< typename T > void readSIGPROC(Observation &observation, unsigned int bytestoSkip, unsigned int *paddedSecond, ifstream *inputFile, vector< GPUData< T > * > &data);
-template< typename T > void readLOFAR(string headerFilename, string rawFilename, Observation &observation, unsigned int *paddedSecond, vector< GPUData< T > * > &data);
+template< typename T > void readLOFAR(string headerFilename, string rawFilename, Observation &observation, unsigned int *paddedSecond, T *minValue, T *maxValue, vector< GPUData< T > * > &data);
 
 
 // Implementation
@@ -78,7 +78,7 @@ template< typename T > void readSIGPROC(Observation &observation, unsigned int b
 }
 
 
-template< typename T > void readLOFAR(string headerFilename, string rawFilename, Observation &observation, unsigned int *paddedSecond, vector< GPUData< T > * > &data) {
+template< typename T > void readLOFAR(string headerFilename, string rawFilename, Observation &observation, unsigned int *paddedSecond, T *minValue, T *maxValue, vector< GPUData< T > * > &data) {
 	unsigned int totalSamples = 0;
 	unsigned int nrSubbands = 0;
 	char *word = new char[4];
@@ -133,9 +133,19 @@ template< typename T > void readLOFAR(string headerFilename, string rawFilename,
 		for ( unsigned int sample = 0; sample < observation.getNrSamplesPerSecond(); sample++ ) {
 			for ( unsigned int subband = 0; subband < nrSubbands; subband++ ) {
 				for ( unsigned int channel = 0; channel < observation.getNrChannels(); channel++ ) {
+					T value = 0;
+
 					rawFile.read(word, 4);
 					changeEndianness(word);
-					((data.at(second))->getHostData())[(((subband * observation.getNrChannels()) + channel) * (*paddedSecond)) + sample] = *(reinterpret_cast< T * >(word));
+					value = *(reinterpret_cast< T * >(word));
+
+					((data.at(second))->getHostData())[(((subband * observation.getNrChannels()) + channel) * (*paddedSecond)) + sample] = value;
+					if ( value <  *minValue ) {
+						*minValue = value;
+					}
+					if ( value > *maxValue ) {
+						*maxValue = value;
+					}
 				}
 			}
 		}
