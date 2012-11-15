@@ -48,13 +48,13 @@ using isa::utils::changeEndianness;
 
 namespace AstroData {
 
-template< typename T > void readSIGPROC(Observation &observation, unsigned int bytestoSkip, unsigned int *paddedSecond, ifstream *inputFile, vector< GPUData< T > * > &data);
-template< typename T > void readLOFAR(string headerFilename, string rawFilename, Observation &observation, unsigned int *paddedSecond, vector< GPUData< T > * > &data);
+template< typename T > void readSIGPROC(Observation< T > &observation, unsigned int bytestoSkip, unsigned int *paddedSecond, ifstream *inputFile, vector< GPUData< T > * > &data);
+template< typename T > void readLOFAR(string headerFilename, string rawFilename, Observation< T > &observation, unsigned int *paddedSecond, vector< GPUData< T > * > &data);
 
 
 // Implementation
 
-template< typename T > void readSIGPROC(Observation &observation, unsigned int bytesToSkip, unsigned int *paddedSecond, string inputFilename, vector< GPUData< T > * > &data) {
+template< typename T > void readSIGPROC(Observation< T > &observation, unsigned int bytesToSkip, unsigned int *paddedSecond, string inputFilename, vector< GPUData< T > * > &data) {
 	ifstream inputFile;
 	const unsigned int BUFFER_DIM = 4;
 	*paddedSecond = observation.getNrSamplesPerSecond() + (observation.getNrSamplesPerSecond() % 4);
@@ -80,7 +80,7 @@ template< typename T > void readSIGPROC(Observation &observation, unsigned int b
 }
 
 
-template< typename T > void readLOFAR(string headerFilename, string rawFilename, Observation &observation, unsigned int *paddedSecond, vector< GPUData< T > * > &data) {
+template< typename T > void readLOFAR(string headerFilename, string rawFilename, Observation< T > &observation, unsigned int *paddedSecond, vector< GPUData< T > * > &data) {
 	unsigned int totalSamples = 0;
 	unsigned int nrSubbands = 0;
 	char *word = new char[4];

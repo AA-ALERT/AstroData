@@ -95,125 +95,125 @@ private:
 
 // Implementation
 
-Observation< T >::Observation(string name, string dataType) : name(name), dataType(dataType), nrSeconds(0), nrStations(0), nrBeams(0), nrSamplesPerSecond(0), nrChannels(0), samplingRate(0.0f), minFreq(0.0f), maxFreq(0.0f), channelBandwidth(0.0f), minValue(0), maxValue(0), average(0.0f), variance(0.0f), stdDev(0.0f) {}
+template< typename T > Observation< T >::Observation(string name, string dataType) : name(name), dataType(dataType), nrSeconds(0), nrStations(0), nrBeams(0), nrSamplesPerSecond(0), nrChannels(0), samplingRate(0.0f), minFreq(0.0f), maxFreq(0.0f), channelBandwidth(0.0f), minValue(0), maxValue(0), average(0.0f), variance(0.0f), stdDev(0.0f) {}
 
-inline void Observation< T >::setNrSeconds(unsigned int seconds) {
+template< typename T > inline void Observation< T >::setNrSeconds(unsigned int seconds) {
 	nrSeconds = seconds;
 }
 
-inline void Observation< T >::setNrStations(unsigned int stations) {
+template< typename T > inline void Observation< T >::setNrStations(unsigned int stations) {
 	nrStations = stations;
 }
 
-inline void Observation< T >::setNrBeams(unsigned int beams) {
+template< typename T > inline void Observation< T >::setNrBeams(unsigned int beams) {
 	nrBeams = beams;
 }
 
-inline void Observation< T >::setNrSamplesPerSecond(unsigned int samples) {
+template< typename T > inline void Observation< T >::setNrSamplesPerSecond(unsigned int samples) {
 	nrSamplesPerSecond = samples;
 }
 
-inline void Observation< T >::setNrChannels(unsigned int channels) {
+template< typename T > inline void Observation< T >::setNrChannels(unsigned int channels) {
 	nrChannels = channels;
 }
 
-inline void Observation< T >::setSamplingRate(float rate) {
+template< typename T > inline void Observation< T >::setSamplingRate(float rate) {
 	samplingRate = rate;
 }
 
-inline void Observation< T >::setMinFreq(float freq) {
+template< typename T > inline void Observation< T >::setMinFreq(float freq) {
 	minFreq = freq;
 }
 
-inline void Observation< T >::setMaxFreq(float freq) {
+template< typename T > inline void Observation< T >::setMaxFreq(float freq) {
 	maxFreq = freq;
 }
 
-inline void Observation< T >::setChannelBandwidth(float bandwidth) {
+template< typename T > inline void Observation< T >::setChannelBandwidth(float bandwidth) {
 	channelBandwidth = bandwidth;
 }
 
-inline void Observation< T >::setMinValue(T value) {
+template< typename T > inline void Observation< T >::setMinValue(T value) {
 	minValue = value;
 }
 
-inline void Observation< T >::setMaxValue(T value) {
+template< typename T > inline void Observation< T >::setMaxValue(T value) {
 	maxValue = value;
 }
 
-inline void Observation< T >::setAverage(float avg) {
+template< typename T > inline void Observation< T >::setAverage(float avg) {
 	average = avg;
 }
 
-inline void Observation< T >::setVariance(float var) {
+template< typename T > inline void Observation< T >::setVariance(float var) {
 	variance = var;
 }
 
-inline void Observation< T >::setStdDev(float dev) {
+template< typename T > inline void Observation< T >::setStdDev(float dev) {
 	stdDev = dev;
 }
 
-inline string Observation< T >::getName() {
+template< typename T > inline string Observation< T >::getName() {
 	return name;
 }
 
-inline string Observation< T >::getDataType() {
+template< typename T > inline string Observation< T >::getDataType() {
 	return dataType;
 }
 
-inline unsigned int Observation< T >::getNrSeconds() {
+template< typename T > inline unsigned int Observation< T >::getNrSeconds() {
 	return nrSeconds;
 }
 
-inline unsigned int Observation< T >::getNrStations() {
+template< typename T > inline unsigned int Observation< T >::getNrStations() {
 	return nrStations;
 }
 
-inline unsigned int Observation< T >::getNrBeams() {
+template< typename T > inline unsigned int Observation< T >::getNrBeams() {
 	return nrBeams;
 }
 
-inline unsigned int Observation< T >::getNrSamplesPerSecond() {
+template< typename T > inline unsigned int Observation< T >::getNrSamplesPerSecond() {
 	return nrSamplesPerSecond;
 }
 
-inline unsigned int Observation< T >::getNrChannels() {
+template< typename T > inline unsigned int Observation< T >::getNrChannels() {
 	return nrChannels;
 }
 
-inline float Observation< T >::getSamplingRate() {
+template< typename T > inline float Observation< T >::getSamplingRate() {
 	return samplingRate;
 }
 
-inline float Observation< T >::getMinFreq() {
+template< typename T > inline float Observation< T >::getMinFreq() {
 	return minFreq;
 }
 
-inline float Observation< T >::getMaxFreq() {
+template< typename T > inline float Observation< T >::getMaxFreq() {
 	return maxFreq;
 }
 
-inline float Observation< T >::getChannelBandwidth() {
+template< typename T > inline float Observation< T >::getChannelBandwidth() {
 	return channelBandwidth;
 }
 
-inline T Observation< T >::getMinValue() {
+template< typename T > inline T Observation< T >::getMinValue() {
 	return minValue;
 }
 
-inline T Observation< T >::getMaxValue() {
+template< typename T > inline T Observation< T >::getMaxValue() {
 	return maxValue;
 }
 
-inline float Observation< T >::getAverage() {
+template< typename T > inline float Observation< T >::getAverage() {
 	return average;
 }
 
-inline float Observation< T >::getVariance() {
+template< typename T > inline float Observation< T >::getVariance() {
 	return variance;
 }
 
-inline float Observation< T >::getStdDev() {
+template< typename T > inline float Observation< T >::getStdDev() {
 	return stdDev;
 }
 

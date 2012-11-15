@@ -71,7 +71,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	// Load input
-	Observation observation("LOFAR", "float");
+	Observation< float > observation("LOFAR", "float");
 	vector< GPUData< float > * > *input = new vector< GPUData< float > * >(1);
 	readLOFAR(headerFilename, rawFilename, observation, &paddedSecond, *input);
 
