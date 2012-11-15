@@ -50,11 +50,12 @@ int main(int argc, char *argv[]) {
 	string rawFilename;
 	string outFilename;
 	unsigned int paddedSecond = 0;
+	unsigned int firstSecond = 0;
 	unsigned int nrOutputSeconds = 0;
 
 	// Parse command line
-	if ( argc != 9 ) {
-		cerr << "Usage: " << argv[0] << " -hf <header_file> -rf <raw_file> -of <output_file> -os <output_seconds>" << endl;
+	if ( argc != 11 ) {
+		cerr << "Usage: " << argv[0] << " -hf <header_file> -rf <raw_file> -of <output_file> -fs <first_second> -os <output_seconds>" << endl;
 		return 1;
 	}
 	try {
@@ -63,6 +64,7 @@ int main(int argc, char *argv[]) {
 		headerFilename = args.getSwitchArgument< string >("-hf");
 		rawFilename = args.getSwitchArgument< string >("-rf");
 		outFilename = args.getSwitchArgument< string >("-of");
+		firstSecond = args.getSwitchArgument< unsigned int >("-fs");
 		nrOutputSeconds = args.getSwitchArgument< unsigned int >("-os");
 	}
 	catch ( exception &err ) {
@@ -79,7 +81,8 @@ int main(int argc, char *argv[]) {
 	// Print some statistics
 	cout << fixed << setprecision(3) << endl;
 	cout << "Total seconds: \t\t" << observation.getNrSeconds() << endl;
-	cout << "Output seconds: \t" << nrOutputSeconds << endl;
+	cout << "First output second: \t" << firstSecond << endl;
+	cout << "Last output second: \t" << firstSecond + nrOutputSeconds << endl;
 	cout << "Min frequency: \t\t" << observation.getMinFreq() << " MHz" << endl;
 	cout << "Max frequency: \t\t" << observation.getMaxFreq() << " MHz" << endl;
 	cout << "Nr. channels: \t\t" << observation.getNrChannels() << endl;
@@ -90,26 +93,49 @@ int main(int argc, char *argv[]) {
 	cout << "Max sample: \t\t" << observation.getMaxValue() << endl;
 	cout << "Average sample: \t" << observation.getAverage() << endl;
 	cout << "Variance: \t\t" << observation.getVariance() << endl;
-	cout << "Standard deviation:  \t" << observation.getStdDev() << endl;
+	cout << "Standard deviation: \t" << observation.getStdDev() << endl;
 	cout << endl;	
 
 	// Plot the output
+	float aCur = 0.0f;
+	float aOld = 0.0f;
+	float vCur = 0.0f;
+	float aOld = 0.0f;
 	ofstream oFile;
 	
 	oFile.open(outFilename.c_str());
 	oFile << fixed;
-	for ( unsigned int second = 0; second < nrOutputSeconds; second++ ) {
+	for ( unsigned int second = firstSecond; second < firstSecond + nrOutputSeconds; second++ ) {
 		for ( unsigned int sample = 0; sample < observation.getNrSamplesPerSecond(); sample++ ) {
+			long long unsigned int element = ((second - firstSecond) * observation.getNrSamplesPerSecond()) + sample;
 			float oSample = 0.0f;
 
 			for ( unsigned int channel = 0; channel < observation.getNrChannels(); channel++ ) {
 				oSample += (input->at(second)->getHostData())[(channel * paddedSecond) + sample];
 			}
 
+			if ( element == 0 ) {
+				aCur = oSample;
+				vCur = 0.0f;
+			}
+			else {
+				aOld = aCur;
+				vOld = vCur;
+
+				aCur = aOld + ((oSample - aOld) / (element + 1));
+				vCur = vOld + ((oSample - aOld) * (oSample - aCur));
+			}
+
 			oFile << setprecision(6) << ((second * observation.getNrSamplesPerSecond()) + sample) * observation.getSamplingRate() << " " << setprecision(3) << oSample << endl;
 		}
 	}
 	oFile.close();
+
+	cout << "Interval statistics" << endl;
+	cout << "Average: \t\t" << aCur << endl;
+	cout << "Variance: \t\t " << vCur / (nrOutputSeconds * observation.getNrSamplesPerSecond()) << endl;
+	cout << "Standard deviation: \t" << sqrt(vCur / (nrOutputSeconds * observation.getNrSamplesPerSecond())) << endl;
+	cout << endl;
 
 	return 0;
 }
