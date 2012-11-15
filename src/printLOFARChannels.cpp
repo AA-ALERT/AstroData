@@ -111,7 +111,7 @@ int main(int argc, char *argv[]) {
 			}
 		}
 	}
-	oImage.save("./rawLOFARChannels.jpg");
+	oImage.save("./rawLOFARChannels.bmp");
 
 	return 0;
 }

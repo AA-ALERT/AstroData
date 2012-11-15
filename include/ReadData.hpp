@@ -20,12 +20,14 @@
 #include <fstream>
 #include <vector>
 #include <string>
+#include <cmath>
 #include <H5Cpp.h>
 
 using std::ios;
 using std::string;
 using std::ifstream;
 using std::vector;
+using std::sqrt;
 using H5::H5File;
 using H5::Group;
 using H5::DataSet;
@@ -47,7 +49,7 @@ using isa::utils::changeEndianness;
 namespace AstroData {
 
 template< typename T > void readSIGPROC(Observation &observation, unsigned int bytestoSkip, unsigned int *paddedSecond, ifstream *inputFile, vector< GPUData< T > * > &data);
-template< typename T > void readLOFAR(string headerFilename, string rawFilename, Observation &observation, unsigned int *paddedSecond, T *minValue, T *maxValue, vector< GPUData< T > * > &data);
+template< typename T > void readLOFAR(string headerFilename, string rawFilename, Observation &observation, unsigned int *paddedSecond, vector< GPUData< T > * > &data);
 
 
 // Implementation
@@ -78,7 +80,7 @@ template< typename T > void readSIGPROC(Observation &observation, unsigned int b
 }
 
 
-template< typename T > void readLOFAR(string headerFilename, string rawFilename, Observation &observation, unsigned int *paddedSecond, T *minValue, T *maxValue, vector< GPUData< T > * > &data) {
+template< typename T > void readLOFAR(string headerFilename, string rawFilename, Observation &observation, unsigned int *paddedSecond, vector< GPUData< T > * > &data) {
 	unsigned int totalSamples = 0;
 	unsigned int nrSubbands = 0;
 	char *word = new char[4];
@@ -127,12 +129,16 @@ template< typename T > void readLOFAR(string headerFilename, string rawFilename,
 		
 	data.resize(observation.getNrSeconds());
 	
+	unsigned int aOld = 0;
+	unsigned int vOld = 0;
+
 	for ( unsigned int second = 0; second < observation.getNrSeconds(); second++ ) {
 		data.at(second) = new GPUData< T >("second" + toStringValue< unsigned int >(second), true, true);
 		(data.at(second))->allocateHostData(nrSubbands * observation.getNrChannels() * (*paddedSecond));
 		for ( unsigned int sample = 0; sample < observation.getNrSamplesPerSecond(); sample++ ) {
 			for ( unsigned int subband = 0; subband < nrSubbands; subband++ ) {
 				for ( unsigned int channel = 0; channel < observation.getNrChannels(); channel++ ) {
+					long long unsigned int element = (((subband * observation.getNrChannels()) + channel) * observation.getNrSamplesPerSecond()) + sample;
 					T value = 0;
 
 					rawFile.read(word, 4);
@@ -140,11 +146,24 @@ template< typename T > void readLOFAR(string headerFilename, string rawFilename,
 					value = *(reinterpret_cast< T * >(word));
 
 					((data.at(second))->getHostData())[(((subband * observation.getNrChannels()) + channel) * (*paddedSecond)) + sample] = value;
-					if ( value <  *minValue ) {
-						*minValue = value;
+					if ( value <  observation.getMinValue() ) {
+						observation.setMinValue(value);
 					}
-					if ( value > *maxValue ) {
-						*maxValue = value;
+					if ( value > observation.getMaxValue() ) {
+						observation.setMaxValue(value);
+					}
+
+					if ( element == 0 ) {
+						firstSample = false;
+						observation.setAverage(value);
+						observation.setVariance(0.0f);
+					}
+					else {
+						aOld = observation.getAverage();
+						vOld = observation.getVariance();
+
+						observation.setAverage(aOld + ((value - aOld) / (element + 1)));
+						observation.setVariance(vOld + ((value - aOld) * (value - observation.getAverage())));
 					}
 				}
 			}
@@ -153,6 +172,8 @@ template< typename T > void readLOFAR(string headerFilename, string rawFilename,
 	rawFile.close();
 
 	observation.setNrChannels(observation.getNrChannels() * nrSubbands);
+	observation.setVariance(observation.getVariance() / (observation.getNrChannels() * observation.getNrSamplesPerSecond()));
+	observation.setStdDev(sqrt(observation.getVariance()));
 
 	delete [] word;
 }

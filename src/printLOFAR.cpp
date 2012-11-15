@@ -48,14 +48,13 @@ using AstroData::Observation;
 int main(int argc, char *argv[]) {
 	string headerFilename;
 	string rawFilename;
+	string outFilename;
 	unsigned int paddedSecond = 0;
 	unsigned int nrOutputSeconds = 0;
-	unsigned int minValue = 0;
-	unsigned int maxValue = 0;
 
 	// Parse command line
-	if ( argc != 7 ) {
-		cerr << "Usage: " << argv[0] << " -hf <header_file> -rf <raw_file> -os <output_seconds>" << endl;
+	if ( argc != 9 ) {
+		cerr << "Usage: " << argv[0] << " -hf <header_file> -rf <raw_file> -of <output_file> -os <output_seconds>" << endl;
 		return 1;
 	}
 	try {
@@ -63,6 +62,7 @@ int main(int argc, char *argv[]) {
 
 		headerFilename = args.getSwitchArgument< string >("-hf");
 		rawFilename = args.getSwitchArgument< string >("-rf");
+		outFilename = args.getSwitchArgument< string >("-of");
 		nrOutputSeconds = args.getSwitchArgument< unsigned int >("-os");
 	}
 	catch ( exception &err ) {
@@ -73,12 +73,29 @@ int main(int argc, char *argv[]) {
 	// Load input
 	Observation observation("LOFAR", "float");
 	vector< GPUData< float > * > *input = new vector< GPUData< float > * >(1);
-	readLOFAR(headerFilename, rawFilename, observation, &paddedSecond, &minValue, &maxValue, *input);
+	readLOFAR(headerFilename, rawFilename, observation, &paddedSecond, *input);
+
+	// Print some statistics
+	cout << fixed << setprecision(3) << endl;
+	cout << "Total seconds: \t\t" << observation.getNrSeconds() << endl;
+	cout << "Output seconds: \t\t" << nrOutputSeconds << endl;
+	cout << "Min frequency: \t\t" << observation.getMinFreq() << " MHz" << endl;
+	cout << "Max frequency: \t\t" << observation.getMaxFreq() << " MHz" << endl;
+	cout << "Nr. channels: \t\t" << observation.getNrChannels() << endl;
+	cout << "Channel bandwidth: \t" << observation.getChannelBandwidth() << " MHz" << endl;
+	cout << "Samples/second: \t" << observation.getNrSamplesPerSecond() << endl;
+	cout << "Samples/second (pad): \t" << paddedSecond << endl;
+	cout << "Min sample: \t\t" << observation.getMinValue() << endl;
+	cout << "Max sample: \t\t" << observation.getMaxValue() << endl;
+	cout << "Average sample: \t\t" << observation.getAverage() << endl;
+	cout << "Variance: \t\t" << observation.getVariance() << endl;
+	cout << "Standard deviation:  \t" << observation.getStdDev() << endl;
+	cout << endl;	
 
 	// Plot the output
 	ofstream oFile;
 	
-	oFile.open("./rawLOFAR.dat");
+	oFile.open(outFilename.c_str());
 	oFile << fixed;
 	for ( unsigned int second = 0; second < nrOutputSeconds; second++ ) {
 		for ( unsigned int sample = 0; sample < observation.getNrSamplesPerSecond(); sample++ ) {

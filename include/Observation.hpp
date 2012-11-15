@@ -27,7 +27,7 @@ using std::string;
 
 namespace AstroData {
 
-class Observation {
+template< typename T > class Observation {
 public:
 	Observation(string name, string dataType);
 
@@ -42,6 +42,12 @@ public:
 	inline void setMinFreq(float freq);
 	inline void setMaxFreq(float freq);
 	inline void setChannelBandwidth(float bandwidth);
+
+	inline void setMinValue(T value);
+	inline void setMaxValue(T value);
+	inline void setAverage(float avg);
+	inline void setVariance(float var);
+	inline void setStdDev(float dev);
 
 	// Get values
 	inline string getName();
@@ -58,6 +64,11 @@ public:
 	inline float getMaxFreq();
 	inline float getChannelBandwidth();
 
+	inline T getMinValue();
+	inline T getMaxValue();
+	inline float getAverage();
+	inline float getVariance();
+	inline float getStdDev();
 
 private:
 	string name;
@@ -73,91 +84,137 @@ private:
 	float minFreq;
 	float maxFreq;
 	float channelBandwidth;
+
+	T minValue;
+	T maxValue;
+	float average;
+	float variance;
+	float stdDev;
 };
 
 
 // Implementation
 
-Observation::Observation(string name, string dataType) : name(name), dataType(dataType), nrSeconds(0), nrStations(0), nrBeams(0), nrSamplesPerSecond(0), nrChannels(0), samplingRate(0.0f), minFreq(0.0f), maxFreq(0.0f), channelBandwidth(0.0f) {}
+Observation< T >::Observation(string name, string dataType) : name(name), dataType(dataType), nrSeconds(0), nrStations(0), nrBeams(0), nrSamplesPerSecond(0), nrChannels(0), samplingRate(0.0f), minFreq(0.0f), maxFreq(0.0f), channelBandwidth(0.0f), minValue(0), maxValue(0), average(0.0f), variance(0.0f), stdDev(0.0f) {}
 
-inline void Observation::setNrSeconds(unsigned int seconds) {
+inline void Observation< T >::setNrSeconds(unsigned int seconds) {
 	nrSeconds = seconds;
 }
 
-inline void Observation::setNrStations(unsigned int stations) {
+inline void Observation< T >::setNrStations(unsigned int stations) {
 	nrStations = stations;
 }
 
-inline void Observation::setNrBeams(unsigned int beams) {
+inline void Observation< T >::setNrBeams(unsigned int beams) {
 	nrBeams = beams;
 }
 
-inline void Observation::setNrSamplesPerSecond(unsigned int samples) {
+inline void Observation< T >::setNrSamplesPerSecond(unsigned int samples) {
 	nrSamplesPerSecond = samples;
 }
 
-inline void Observation::setNrChannels(unsigned int channels) {
+inline void Observation< T >::setNrChannels(unsigned int channels) {
 	nrChannels = channels;
 }
 
-inline void Observation::setSamplingRate(float rate) {
+inline void Observation< T >::setSamplingRate(float rate) {
 	samplingRate = rate;
 }
 
-inline void Observation::setMinFreq(float freq) {
+inline void Observation< T >::setMinFreq(float freq) {
 	minFreq = freq;
 }
 
-inline void Observation::setMaxFreq(float freq) {
+inline void Observation< T >::setMaxFreq(float freq) {
 	maxFreq = freq;
 }
 
-inline void Observation::setChannelBandwidth(float bandwidth) {
+inline void Observation< T >::setChannelBandwidth(float bandwidth) {
 	channelBandwidth = bandwidth;
 }
 
-inline string Observation::getName() {
+inline void Observation< T >::setMinValue(T value) {
+	minValue = value;
+}
+
+inline void Observation< T >::setMaxValue(T value) {
+	maxValue = value;
+}
+
+inline void Observation< T >::setAverage(float avg) {
+	average = avg;
+}
+
+inline void Observation< T >::setVariance(float var) {
+	variance = var;
+}
+
+inline void Observation< T >::setStdDev(float dev) {
+	stdDev = dev;
+}
+
+inline string Observation< T >::getName() {
 	return name;
 }
 
-inline string Observation::getDataType() {
+inline string Observation< T >::getDataType() {
 	return dataType;
 }
 
-inline unsigned int Observation::getNrSeconds() {
+inline unsigned int Observation< T >::getNrSeconds() {
 	return nrSeconds;
 }
 
-inline unsigned int Observation::getNrStations() {
+inline unsigned int Observation< T >::getNrStations() {
 	return nrStations;
 }
 
-inline unsigned int Observation::getNrBeams() {
+inline unsigned int Observation< T >::getNrBeams() {
 	return nrBeams;
 }
 
-inline unsigned int Observation::getNrSamplesPerSecond() {
+inline unsigned int Observation< T >::getNrSamplesPerSecond() {
 	return nrSamplesPerSecond;
 }
 
-inline unsigned int Observation::getNrChannels() {
+inline unsigned int Observation< T >::getNrChannels() {
 	return nrChannels;
 }
 
-inline float Observation::getSamplingRate() {
+inline float Observation< T >::getSamplingRate() {
 	return samplingRate;
 }
 
-inline float Observation::getMinFreq() {
+inline float Observation< T >::getMinFreq() {
 	return minFreq;
 }
 
-inline float Observation::getMaxFreq() {
+inline float Observation< T >::getMaxFreq() {
 	return maxFreq;
 }
 
-inline float Observation::getChannelBandwidth() {
+inline float Observation< T >::getChannelBandwidth() {
 	return channelBandwidth;
+}
+
+inline T Observation< T >::getMinValue() {
+	return minValue;
+}
+
+inline T Observation< T >::getMaxValue() {
+	return maxValue;
+}
+
+inline float Observation< T >::getAverage() {
+	return average;
+}
+
+inline float Observation< T >::getVariance() {
+	return variance;
+}
+
+inline float Observation< T >::getStdDev() {
+	return stdDev;
 }
 
 } // AstroData
