@@ -154,7 +154,6 @@ template< typename T > void readLOFAR(string headerFilename, string rawFilename,
 					}
 
 					if ( element == 0 ) {
-						firstSample = false;
 						observation.setAverage(value);
 						observation.setVariance(0.0f);
 					}
