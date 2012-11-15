@@ -100,7 +100,7 @@ int main(int argc, char *argv[]) {
 	float aCur = 0.0f;
 	float aOld = 0.0f;
 	float vCur = 0.0f;
-	float aOld = 0.0f;
+	float vOld = 0.0f;
 	ofstream oFile;
 	
 	oFile.open(outFilename.c_str());
