@@ -18,8 +18,9 @@
  */
 
 #include <string>
-
+#include <limits>
 using std::string;
+using std::numeric_limits;
 
 
 #ifndef OBSERVATION_HPP
@@ -95,7 +96,7 @@ private:
 
 // Implementation
 
-template< typename T > Observation< T >::Observation(string name, string dataType) : name(name), dataType(dataType), nrSeconds(0), nrStations(0), nrBeams(0), nrSamplesPerSecond(0), nrChannels(0), samplingRate(0.0f), minFreq(0.0f), maxFreq(0.0f), channelBandwidth(0.0f), minValue(0), maxValue(0), average(0.0f), variance(0.0f), stdDev(0.0f) {}
+template< typename T > Observation< T >::Observation(string name, string dataType) : name(name), dataType(dataType), nrSeconds(0), nrStations(0), nrBeams(0), nrSamplesPerSecond(0), nrChannels(0), samplingRate(0.0f), minFreq(0.0f), maxFreq(0.0f), channelBandwidth(0.0f), minValue(numeric_limits< T >::max()), maxValue(numeric_limits< T >::min()), average(0.0f), variance(0.0f), stdDev(0.0f) {}
 
 template< typename T > inline void Observation< T >::setNrSeconds(unsigned int seconds) {
 	nrSeconds = seconds;

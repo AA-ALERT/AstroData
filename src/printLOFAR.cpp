@@ -73,12 +73,13 @@ int main(int argc, char *argv[]) {
 	// Load input
 	Observation< float > observation("LOFAR", "float");
 	vector< GPUData< float > * > *input = new vector< GPUData< float > * >(1);
+
 	readLOFAR(headerFilename, rawFilename, observation, &paddedSecond, *input);
 
 	// Print some statistics
 	cout << fixed << setprecision(3) << endl;
 	cout << "Total seconds: \t\t" << observation.getNrSeconds() << endl;
-	cout << "Output seconds: \t\t" << nrOutputSeconds << endl;
+	cout << "Output seconds: \t" << nrOutputSeconds << endl;
 	cout << "Min frequency: \t\t" << observation.getMinFreq() << " MHz" << endl;
 	cout << "Max frequency: \t\t" << observation.getMaxFreq() << " MHz" << endl;
 	cout << "Nr. channels: \t\t" << observation.getNrChannels() << endl;
@@ -87,7 +88,7 @@ int main(int argc, char *argv[]) {
 	cout << "Samples/second (pad): \t" << paddedSecond << endl;
 	cout << "Min sample: \t\t" << observation.getMinValue() << endl;
 	cout << "Max sample: \t\t" << observation.getMaxValue() << endl;
-	cout << "Average sample: \t\t" << observation.getAverage() << endl;
+	cout << "Average sample: \t" << observation.getAverage() << endl;
 	cout << "Variance: \t\t" << observation.getVariance() << endl;
 	cout << "Standard deviation:  \t" << observation.getStdDev() << endl;
 	cout << endl;	
