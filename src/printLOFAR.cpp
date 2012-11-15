@@ -132,7 +132,7 @@ int main(int argc, char *argv[]) {
 	oFile.close();
 
 	cout << "Average: \t\t" << aCur << endl;
-	cout << "Variance: \t\t " << vCur / (nrOutputSeconds * observation.getNrSamplesPerSecond()) << endl;
+	cout << "Variance: \t\t" << vCur / (nrOutputSeconds * observation.getNrSamplesPerSecond()) << endl;
 	cout << "Standard deviation: \t" << sqrt(vCur / (nrOutputSeconds * observation.getNrSamplesPerSecond())) << endl;
 	cout << endl;
 

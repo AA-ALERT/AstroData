@@ -148,7 +148,7 @@ int main(int argc, char *argv[]) {
 				value /= counter;
 				
 				for ( unsigned int magnifier = 0; magnifier < channelMagnifyingFactor; magnifier++ ) {
-					oImage(((second * observation.getNrSamplesPerSecond()) + sample) / timeIntegrationFactor, (channel * channelMagnifyingFactor) + magnifier, 0, 0) = 256 - static_cast< unsigned int >((value * 256) / diffMinMax);
+					oImage((((second - firstSecond) * observation.getNrSamplesPerSecond()) + sample) / timeIntegrationFactor, (channel * channelMagnifyingFactor) + magnifier, 0, 0) = 256 - static_cast< unsigned int >((value * 256) / diffMinMax);
 				}
 			}
 		}
@@ -161,6 +161,11 @@ int main(int argc, char *argv[]) {
 		cout << "Std. dev. channel " << channel << ": \t" << sqrt(vCur[channel] / (nrOutputSeconds * observation.getNrChannels() * observation.getNrSamplesPerSecond())) << endl;
 	}
 	cout << endl;
+
+	delete [] aCur;
+	delete [] aOld;
+	delete [] vCur;
+	delete [] vOld;
 
 	return 0;
 }
