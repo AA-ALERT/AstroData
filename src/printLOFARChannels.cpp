@@ -121,7 +121,7 @@ int main(int argc, char *argv[]) {
 				float value = 0.0f;
 				
 				for ( unsigned int time = 0; time < timeIntegrationFactor; time++ ) {
-					long long unsigned int element = (channel * observation.getNrSamplesPerSecond()) + (sample + time);
+					long long unsigned int element = ((second - firstSecond) * observation.getNrSamplesPerSecond()) + (sample + time);
 
 					if ( (sample + time) < observation.getNrSamplesPerSecond() ) {
 						float temp = (input->at(second)->getHostData())[(channel * paddedSecond) + (sample + time)] - observation.getMinValue();
@@ -155,7 +155,6 @@ int main(int argc, char *argv[]) {
 	}
 	oImage.save(outFilename.c_str());
 
-	cout << "Interval statistics" << endl;
 	for ( unsigned int channel = 0; channel < observation.getNrChannels(); channel++ ) {
 		cout << "Average channel " << channel << ": \t" << aCur[channel] << endl;
 		cout << "Variance channel " << channel << ": \t" << vCur[channel] / (nrOutputSeconds * observation.getNrChannels() * observation.getNrSamplesPerSecond()) << endl;
