@@ -138,7 +138,7 @@ template< typename T > void readLOFAR(string headerFilename, string rawFilename,
 		for ( unsigned int sample = 0; sample < observation.getNrSamplesPerSecond(); sample++ ) {
 			for ( unsigned int subband = 0; subband < nrSubbands; subband++ ) {
 				for ( unsigned int channel = 0; channel < observation.getNrChannels(); channel++ ) {
-					long long unsigned int element = (((subband * observation.getNrChannels()) + channel) * observation.getNrSamplesPerSecond()) + sample;
+					long long unsigned int element = (second * (subband * observation.getNrChannels()) * observation.getNrSamplesPerSecond()) + (((subband * observation.getNrChannels()) + channel) * observation.getNrSamplesPerSecond()) + sample;
 					T value = 0;
 
 					rawFile.read(word, 4);
