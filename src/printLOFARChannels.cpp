@@ -157,8 +157,8 @@ int main(int argc, char *argv[]) {
 
 	for ( unsigned int channel = 0; channel < observation.getNrChannels(); channel++ ) {
 		cout << "Average channel " << channel << ": \t" << aCur[channel] << endl;
-		cout << "Variance channel " << channel << ": \t" << vCur[channel] / (nrOutputSeconds * observation.getNrChannels() * observation.getNrSamplesPerSecond()) << endl;
-		cout << "Std. dev. channel " << channel << ": \t" << sqrt(vCur[channel] / (nrOutputSeconds * observation.getNrChannels() * observation.getNrSamplesPerSecond())) << endl;
+		cout << "Variance channel " << channel << ": \t" << vCur[channel] / (nrOutputSeconds * observation.getNrSamplesPerSecond()) << endl;
+		cout << "Std. dev. channel " << channel << ": \t" << sqrt(vCur[channel] / (nrOutputSeconds * observation.getNrSamplesPerSecond())) << endl;
 	}
 	cout << endl;
 

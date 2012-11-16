@@ -171,7 +171,7 @@ template< typename T > void readLOFAR(string headerFilename, string rawFilename,
 	rawFile.close();
 
 	observation.setNrChannels(observation.getNrChannels() * nrSubbands);
-	observation.setVariance(observation.getVariance() / (observation.getNrChannels() * observation.getNrSamplesPerSecond()));
+	observation.setVariance(observation.getVariance() / (observation.getNrSeconds() * observation.getNrChannels() * observation.getNrSamplesPerSecond()));
 	observation.setStdDev(sqrt(observation.getVariance()));
 
 	delete [] word;
