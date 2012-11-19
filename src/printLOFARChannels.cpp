@@ -45,10 +45,13 @@ using cimg_library::CImg;
 #include <Exceptions.hpp>
 #include <ReadData.hpp>
 #include <Observation.hpp>
+#include <ColorMap.hpp>
 using isa::utils::ArgumentList;
 using isa::OpenCL::GPUData;
 using AstroData::readLOFAR;
 using AstroData::Observation;
+using AstroData::Color;
+using AstroData::getColorMap;
 
 
 int main(int argc, char *argv[]) {
@@ -105,7 +108,8 @@ int main(int argc, char *argv[]) {
 
 	// Plot the output
 	float diffMinMax = observation.getMaxValue() - observation.getMinValue();
-	CImg< unsigned char > oImage(nrOutputSeconds * (observation.getNrSamplesPerSecond() / timeIntegrationFactor), observation.getNrChannels() * channelMagnifyingFactor, 1, 1);
+	CImg< unsigned char > oImage(nrOutputSeconds * (observation.getNrSamplesPerSecond() / timeIntegrationFactor), observation.getNrChannels() * channelMagnifyingFactor, 1, 3);
+	Color *colorMap = getColorMap();
 
 	for ( unsigned int second = firstSecond; second < firstSecond + nrOutputSeconds; second++ ) {
 		for ( unsigned int channel = 0; channel < observation.getNrChannels(); channel++ ) {
@@ -129,7 +133,9 @@ int main(int argc, char *argv[]) {
 				value /= counter;
 				
 				for ( unsigned int magnifier = 0; magnifier < channelMagnifyingFactor; magnifier++ ) {
-					oImage((((second - firstSecond) * observation.getNrSamplesPerSecond()) + sample) / timeIntegrationFactor, (channel * channelMagnifyingFactor) + magnifier, 0, 0) = 256 - static_cast< unsigned int >((value * 256) / diffMinMax);
+					oImage((((second - firstSecond) * observation.getNrSamplesPerSecond()) + sample) / timeIntegrationFactor, (channel * channelMagnifyingFactor) + magnifier, 0, 0) = (colorMap[(value * 257) / diffMinMax]).getR();
+					oImage((((second - firstSecond) * observation.getNrSamplesPerSecond()) + sample) / timeIntegrationFactor, (channel * channelMagnifyingFactor) + magnifier, 0, 1) = (colorMap[(value * 257) / diffMinMax]).getG();
+					oImage((((second - firstSecond) * observation.getNrSamplesPerSecond()) + sample) / timeIntegrationFactor, (channel * channelMagnifyingFactor) + magnifier, 0, 2) = (colorMap[(value * 257) / diffMinMax]).getB();
 				}
 			}
 		}
