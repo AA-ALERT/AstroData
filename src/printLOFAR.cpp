@@ -93,9 +93,6 @@ int main(int argc, char *argv[]) {
 	cout << "Samples/second (pad): \t" << paddedSecond << endl;
 	cout << "Min sample: \t\t" << observation.getMinValue() << endl;
 	cout << "Max sample: \t\t" << observation.getMaxValue() << endl;
-	cout << "Average sample: \t" << observation.getAverage() << endl;
-	cout << "Variance: \t\t" << observation.getVariance() << endl;
-	cout << "Standard deviation: \t" << observation.getStdDev() << endl;
 	cout << endl;	
 
 	// Plot the output

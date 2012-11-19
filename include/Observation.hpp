@@ -47,7 +47,7 @@ public:
 
 	inline void setMinValue(T value);
 	inline void setMaxValue(T value);
-	inline void setAverage(unsigne int channel, double avg);
+	inline void setAverage(unsigned int channel, double avg);
 	inline void setVariance(unsigned int channel, double var);
 	inline void setStdDev(unsigned int channel, double dev);
 
