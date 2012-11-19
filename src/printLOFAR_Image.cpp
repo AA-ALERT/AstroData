@@ -24,7 +24,6 @@
 #include <vector>
 #include <string>
 #include <limits>
-#include <cmath>
 #include <CImg.h>
 using std::cout;
 using std::cerr;
@@ -37,7 +36,6 @@ using std::fixed;
 using std::setprecision;
 using std::string;
 using std::numeric_limits;
-using std::sqrt;
 using cimg_library::CImg;
 
 #include <ArgumentList.hpp>
@@ -61,12 +59,11 @@ int main(int argc, char *argv[]) {
 	unsigned int paddedSecond = 0;
 	unsigned int firstSecond = 0;
 	unsigned int nrOutputSeconds = 0;
-	unsigned int channelMagnifyingFactor = 0;
-	unsigned int timeIntegrationFactor = 0;
+	unsigned int magnifyingFactor = 0;
 
 	// Parse command line
-	if ( argc != 15 ) {
-		cerr << "Usage: " << argv[0] << " -hf <header_file> -rf <raw_file> -of <output_file > -fs <first_second> -os <output_seconds> -cm <channel_magnifying_factor> -if <time_integration_factor>" << endl;
+	if ( argc != 13 ) {
+		cerr << "Usage: " << argv[0] << " -hf <header_file> -rf <raw_file> -of <output_file> -fs <first_second> -os <output_seconds> -mf <magnifying_factor>" << endl;
 		return 1;
 	}
 	try {
@@ -77,8 +74,7 @@ int main(int argc, char *argv[]) {
 		outFilename = args.getSwitchArgument< string >("-of");
 		firstSecond = args.getSwitchArgument< unsigned int >("-fs");
 		nrOutputSeconds = args.getSwitchArgument< unsigned int >("-os");
-		channelMagnifyingFactor = args.getSwitchArgument< unsigned int >("-cm");
-		timeIntegrationFactor = args.getSwitchArgument< unsigned int >("-if");
+		magnifyingFactor = args.getSwitchArgument< unsigned int >("-mf");
 	}
 	catch ( exception &err ) {
 		cerr << err.what() << endl;
@@ -88,7 +84,7 @@ int main(int argc, char *argv[]) {
 	// Load input
 	Observation< float > observation("LOFAR", "float");
 	vector< GPUData< float > * > *input = new vector< GPUData< float > * >(1);
-	
+
 	readLOFAR(headerFilename, rawFilename, observation, &paddedSecond, *input);
 
 	// Print some statistics
@@ -107,47 +103,70 @@ int main(int argc, char *argv[]) {
 	cout << endl;	
 
 	// Plot the output
-	float diffMinMax = observation.getMaxValue() - observation.getMinValue();
-	CImg< unsigned char > oImage(nrOutputSeconds * (observation.getNrSamplesPerSecond() / timeIntegrationFactor), observation.getNrChannels() * channelMagnifyingFactor, 1, 3);
-	Color *colorMap = getColorMap();
-
+	float minSample = numeric_limits< float >::max();
+	float maxSample = numeric_limits< float >::min();
+	double aCur = 0.0f;
+	double aOld = 0.0f;
+	double vCur = 0.0f;
+	double vOld = 0.0f;
+	
 	for ( unsigned int second = firstSecond; second < firstSecond + nrOutputSeconds; second++ ) {
-		for ( unsigned int channel = 0; channel < observation.getNrChannels(); channel++ ) {
-			for ( unsigned int sample = 0; sample < observation.getNrSamplesPerSecond(); sample += timeIntegrationFactor ) {
-				unsigned int counter = 0;
-				float value = 0.0f;
-				
-				for ( unsigned int time = 0; time < timeIntegrationFactor; time++ ) {
-					long long unsigned int element = ((second - firstSecond) * observation.getNrSamplesPerSecond()) + (sample + time);
+		for ( unsigned int sample = 0; sample < observation.getNrSamplesPerSecond(); sample++ ) {
+			long long unsigned int element = ((second - firstSecond) * observation.getNrSamplesPerSecond()) + sample;
+			float oSample = 0.0f;
 
-					if ( (sample + time) < observation.getNrSamplesPerSecond() ) {
-						float temp = (input->at(second)->getHostData())[(channel * paddedSecond) + (sample + time)] - observation.getMinValue();
+			for ( unsigned int channel = 0; channel < observation.getNrChannels(); channel++ ) {
+				oSample += (input->at(second)->getHostData())[(channel * paddedSecond) + sample];
+			}
 
-						value += temp;
-						counter++;
-					}
-					else {
-						break;
-					}
-				}
-				value /= counter;
-				
-				for ( unsigned int magnifier = 0; magnifier < channelMagnifyingFactor; magnifier++ ) {
-					oImage((((second - firstSecond) * observation.getNrSamplesPerSecond()) + sample) / timeIntegrationFactor, (channel * channelMagnifyingFactor) + magnifier, 0, 0) = (colorMap[static_cast< unsigned int >((value * 257) / diffMinMax)]).getR();
-					oImage((((second - firstSecond) * observation.getNrSamplesPerSecond()) + sample) / timeIntegrationFactor, (channel * channelMagnifyingFactor) + magnifier, 0, 1) = (colorMap[static_cast< unsigned int >((value * 257) / diffMinMax)]).getG();
-					oImage((((second - firstSecond) * observation.getNrSamplesPerSecond()) + sample) / timeIntegrationFactor, (channel * channelMagnifyingFactor) + magnifier, 0, 2) = (colorMap[static_cast< unsigned int >((value * 257) / diffMinMax)]).getB();
-				}
+			if ( oSample < minSample ) {
+				minSample = oSample;
+			}
+			if ( oSample > maxSample ) {
+				maxSample = oSample;
+			}
+
+			if ( element == 0 ) {
+				aCur = oSample;
+				vCur = 0.0;
+			}
+			else {
+				aOld = aCur;
+				vOld = vCur;
+
+				aCur = aOld + ((oSample - aOld) / (element + 1));
+				vCur = vOld + ((oSample - aOld) * (oSample - aCur));
 			}
 		}
 	}
-	oImage.save(outFilename.c_str());
-
-	for ( unsigned int channel = 0; channel < observation.getNrChannels(); channel++ ) {
-		cout << "Average channel " << channel << ": \t" << observation.getAverage(channel) << endl;
-		cout << "Variance channel " << channel << ": \t" << observation.getVariance(channel) << endl;
-		cout << "Std. dev. channel " << channel << ": \t" << observation.getStdDev(channel) << endl;
-	}
+	
+	cout << "Min: \t\t\t" << minSample << endl;
+	cout << "Max: \t\t\t" << maxSample << endl;
+	cout << "Average: \t\t" << aCur << endl;
+	cout << "Variance: \t\t" << vCur / (nrOutputSeconds * observation.getNrSamplesPerSecond()) << endl;
+	cout << "Standard deviation: \t" << sqrt(vCur / (nrOutputSeconds * observation.getNrSamplesPerSecond())) << endl;
 	cout << endl;
+	
+	float diffMinMax = maxSample - minSample;
+	CImg< unsigned char > oImage(nrOutputSeconds * observation.getNrSamplesPerSecond(), magnifyingFactor, 1, 3);
+	Color *colorMap = getColorMap();
+	
+	for ( unsigned int second = firstSecond; second < firstSecond + nrOutputSeconds; second++ ) {
+		for ( unsigned int sample = 0; sample < observation.getNrSamplesPerSecond(); sample++ ) {
+			float oSample = 0.0f;
+			
+			for ( unsigned int channel = 0; channel < observation.getNrChannels(); channel++ ) {
+				oSample += (input->at(second)->getHostData())[(channel * paddedSecond) + sample];
+			}
+			oSample -= minSample;
+
+			for ( unsigned int magnifier = 0; magnifier < magnifyingFactor; magnifier++ ) {
+				oImage(((second - firstSecond) * observation.getNrSamplesPerSecond()) + sample, magnifier, 0, 0) = (colorMap[static_cast< unsigned int >((oSample * 257) / diffMinMax)]).getR();
+				oImage(((second - firstSecond) * observation.getNrSamplesPerSecond()) + sample, magnifier, 0, 1) = (colorMap[static_cast< unsigned int >((oSample * 257) / diffMinMax)]).getG();
+				oImage(((second - firstSecond) * observation.getNrSamplesPerSecond()) + sample, magnifier, 0, 2) = (colorMap[static_cast< unsigned int >((oSample * 257) / diffMinMax)]).getB();
+			}
+		}
+	}
 
 	delete [] colorMap;
 
