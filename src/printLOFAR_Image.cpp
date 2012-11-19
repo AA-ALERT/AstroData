@@ -167,6 +167,7 @@ int main(int argc, char *argv[]) {
 			}
 		}
 	}
+	oImage.save(outFilename.c_str());
 
 	delete [] colorMap;
 
