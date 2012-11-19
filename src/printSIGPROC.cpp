@@ -46,7 +46,7 @@ using AstroData::Observation;
 
 
 int main(int argc, char *argv[]) {
-	Observation observation("SIGPROC", "float");
+	Observation< float > observation("SIGPROC", "float");
 	string iFilename;
 	unsigned int headerBytes = 0;
 	unsigned int paddedSecond = 0;
