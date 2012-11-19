@@ -145,11 +145,11 @@ template< typename T > inline void Observation< T >::setChannelBandwidth(float b
 	channelBandwidth = bandwidth;
 }
 
-template< typename T > inline void Observation< T >::setMinValue(unsigned int channel, T value) {
+template< typename T > inline void Observation< T >::setMinValue(T value) {
 	minValue = value;
 }
 
-template< typename T > inline void Observation< T >::setMaxValue(unsigned int channel, T value) {
+template< typename T > inline void Observation< T >::setMaxValue(T value) {
 	maxValue = value;
 }
 
