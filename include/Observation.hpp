@@ -38,6 +38,7 @@ public:
 	inline void setNrStations(unsigned int nrStations);
 	inline void setNrBeams(unsigned int beams);
 	inline void setNrSamplesPerSecond(unsigned int samples);
+	inline void setNrSamplesPerPaddedSecond(unsigned int samples);
 	void setNrChannels(unsigned int channels);
 
 	inline void setSamplingRate(float rate);
@@ -59,6 +60,7 @@ public:
 	inline unsigned int getNrStations();
 	inline unsigned int getNrBeams();
 	inline unsigned int getNrSamplesPerSecond();
+	inline unsigned int getNrSamplesPerPaddedSecond();
 	inline unsigned int getNrChannels();
 
 	inline float getSamplingRate();
@@ -80,6 +82,7 @@ private:
 	unsigned int nrStations;
 	unsigned int nrBeams;
 	unsigned int nrSamplesPerSecond;
+	unsigned int nrSamplesPerPaddedSecond;
 	unsigned int nrChannels;
 
 	float samplingRate;
@@ -97,7 +100,7 @@ private:
 
 // Implementation
 
-template< typename T > Observation< T >::Observation(string name, string dataType) : name(name), dataType(dataType), nrSeconds(0), nrStations(0), nrBeams(0), nrSamplesPerSecond(0), nrChannels(0), samplingRate(0.0f), minFreq(0.0f), maxFreq(0.0f), channelBandwidth(0.0f), minValue(numeric_limits< T >::max()), maxValue(numeric_limits< T >::min()), average(0), variance(0), stdDev(0) {}
+template< typename T > Observation< T >::Observation(string name, string dataType) : name(name), dataType(dataType), nrSeconds(0), nrStations(0), nrBeams(0), nrSamplesPerSecond(0), nrSamplesPerPaddedSecond(0), nrChannels(0), samplingRate(0.0f), minFreq(0.0f), maxFreq(0.0f), channelBandwidth(0.0f), minValue(numeric_limits< T >::max()), maxValue(numeric_limits< T >::min()), average(0), variance(0), stdDev(0) {}
 
 template< typename T > Observation< T >::~Observation() {
 	delete [] average;
@@ -119,6 +122,10 @@ template< typename T > inline void Observation< T >::setNrBeams(unsigned int bea
 
 template< typename T > inline void Observation< T >::setNrSamplesPerSecond(unsigned int samples) {
 	nrSamplesPerSecond = samples;
+}
+
+template< typename T > inline void Observation< T >::setNrSamplesPerPaddedSecond(unsigned int samples) {
+	nrSamplesPerPaddedSecond = samples;
 }
 
 template< typename T > void Observation< T >::setNrChannels(unsigned int channels) {
@@ -187,6 +194,10 @@ template< typename T > inline unsigned int Observation< T >::getNrBeams() {
 
 template< typename T > inline unsigned int Observation< T >::getNrSamplesPerSecond() {
 	return nrSamplesPerSecond;
+}
+
+template< typename T > inline unsigned int Observation< T >::getNrSamplesPerPaddedSecond() {
+	return nrSamplesPerPaddedSecond;
 }
 
 template< typename T > inline unsigned int Observation< T >::getNrChannels() {

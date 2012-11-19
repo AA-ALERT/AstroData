@@ -58,7 +58,6 @@ int main(int argc, char *argv[]) {
 	string headerFilename;
 	string rawFilename;
 	string outFilename;
-	unsigned int paddedSecond = 0;
 	unsigned int firstSecond = 0;
 	unsigned int nrOutputSeconds = 0;
 	unsigned int channelMagnifyingFactor = 0;
@@ -89,7 +88,7 @@ int main(int argc, char *argv[]) {
 	Observation< float > observation("LOFAR", "float");
 	vector< GPUData< float > * > *input = new vector< GPUData< float > * >(1);
 	
-	readLOFAR(headerFilename, rawFilename, observation, &paddedSecond, *input);
+	readLOFAR(headerFilename, rawFilename, observation, *input);
 
 	// Print some statistics
 	cout << fixed << setprecision(3) << endl;
@@ -101,7 +100,7 @@ int main(int argc, char *argv[]) {
 	cout << "Nr. channels: \t\t" << observation.getNrChannels() << endl;
 	cout << "Channel bandwidth: \t" << observation.getChannelBandwidth() << " MHz" << endl;
 	cout << "Samples/second: \t" << observation.getNrSamplesPerSecond() << endl;
-	cout << "Samples/second (pad): \t" << paddedSecond << endl;
+	cout << "Samples/second (pad): \t" << observation.getNrSamplesPerPaddedSecond() << endl;
 	cout << "Min sample: \t\t" << observation.getMinValue() << endl;
 	cout << "Max sample: \t\t" << observation.getMaxValue() << endl;
 	cout << endl;	
@@ -121,7 +120,7 @@ int main(int argc, char *argv[]) {
 					long long unsigned int element = ((second - firstSecond) * observation.getNrSamplesPerSecond()) + (sample + time);
 
 					if ( (sample + time) < observation.getNrSamplesPerSecond() ) {
-						float temp = (input->at(second)->getHostData())[(channel * paddedSecond) + (sample + time)] - observation.getMinValue();
+						float temp = (input->at(second)->getHostData())[(channel * observation.getNrSamplesPerPaddedSecond()) + (sample + time)] - observation.getMinValue();
 
 						value += temp;
 						counter++;

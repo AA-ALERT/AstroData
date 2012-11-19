@@ -49,7 +49,6 @@ int main(int argc, char *argv[]) {
 	Observation< float > observation("SIGPROC", "float");
 	string iFilename;
 	unsigned int headerBytes = 0;
-	unsigned int paddedSecond = 0;
 	unsigned int nrOutputSeconds = 0;
 
 	// Parse command line
@@ -72,11 +71,12 @@ int main(int argc, char *argv[]) {
 		return 1;
 	}
 	observation.setSamplingRate(1.0f / observation.getNrSamplesPerSecond());
+	observation.setNrSamplesPerPaddedSecond(observation.getNrSamplesPerSecond() + (observation.getNrSamplesPerSecond() % 4));
 
 	// Load input
 	vector< GPUData< float > * > *input = new vector< GPUData< float > * >(observation.getNrSeconds());
 	
-	readSIGPROC(observation, headerBytes, &paddedSecond, iFilename, *input);
+	readSIGPROC(observation, headerBytes, iFilename, *input);
 
 	// Plot the output
 	ofstream oFile;
@@ -88,7 +88,7 @@ int main(int argc, char *argv[]) {
 			float oSample = 0.0f;
 
 			for ( unsigned int channel = 0; channel < observation.getNrChannels(); channel++ ) {
-				oSample += (input->at(second)->getHostData())[(channel * paddedSecond) + sample];
+				oSample += (input->at(second)->getHostData())[(channel * observation.getNrSamplesPerPaddedSecond()) + sample];
 			}
 
 			oFile << setprecision(6) << ((second * observation.getNrSamplesPerSecond()) + sample) * observation.getSamplingRate() << " " << setprecision(3) << oSample << endl;
