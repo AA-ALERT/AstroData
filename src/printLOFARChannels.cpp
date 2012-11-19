@@ -133,9 +133,9 @@ int main(int argc, char *argv[]) {
 				value /= counter;
 				
 				for ( unsigned int magnifier = 0; magnifier < channelMagnifyingFactor; magnifier++ ) {
-					oImage((((second - firstSecond) * observation.getNrSamplesPerSecond()) + sample) / timeIntegrationFactor, (channel * channelMagnifyingFactor) + magnifier, 0, 0) = (colorMap[(value * 257) / diffMinMax]).getR();
-					oImage((((second - firstSecond) * observation.getNrSamplesPerSecond()) + sample) / timeIntegrationFactor, (channel * channelMagnifyingFactor) + magnifier, 0, 1) = (colorMap[(value * 257) / diffMinMax]).getG();
-					oImage((((second - firstSecond) * observation.getNrSamplesPerSecond()) + sample) / timeIntegrationFactor, (channel * channelMagnifyingFactor) + magnifier, 0, 2) = (colorMap[(value * 257) / diffMinMax]).getB();
+					oImage((((second - firstSecond) * observation.getNrSamplesPerSecond()) + sample) / timeIntegrationFactor, (channel * channelMagnifyingFactor) + magnifier, 0, 0) = (colorMap[static_cast< unsigned int >((value * 257) / diffMinMax)]).getR();
+					oImage((((second - firstSecond) * observation.getNrSamplesPerSecond()) + sample) / timeIntegrationFactor, (channel * channelMagnifyingFactor) + magnifier, 0, 1) = (colorMap[static_cast< unsigned int >((value * 257) / diffMinMax)]).getG();
+					oImage((((second - firstSecond) * observation.getNrSamplesPerSecond()) + sample) / timeIntegrationFactor, (channel * channelMagnifyingFactor) + magnifier, 0, 2) = (colorMap[static_cast< unsigned int >((value * 257) / diffMinMax)]).getB();
 				}
 			}
 		}
