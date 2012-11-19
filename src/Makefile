@@ -8,10 +8,10 @@ all: clean printSIGPROC printLOFAR_GNUplot printLOFAR_Image printLOFARChannels
 printSIGPROC: printSIGPROC.cpp
 	$(LINKER) -o $(PROJ_BASE)/bin/printSIGPROC printSIGPROC.cpp $(UTILS_SRC) $(INCLUDES) $(LIBS) $(CFLAGS) $(LDFLAGS) 
 
-printLOFAR: printLOFAR_GNUplot.cpp
+printLOFAR_GNUplot: printLOFAR_GNUplot.cpp
 	$(LINKER) -o $(PROJ_BASE)/bin/printLOFAR_GNUplot printLOFAR_GNUplot.cpp $(UTILS_SRC) $(INCLUDES) $(LIBS) $(CFLAGS) $(LDFLAGS) 
 
-printLOFAR: printLOFAR_Image.cpp
+printLOFAR_Image: printLOFAR_Image.cpp
 	$(LINKER) -o $(PROJ_BASE)/bin/printLOFAR_Image printLOFAR_Image.cpp $(UTILS_SRC) $(INCLUDES) $(LIBS) $(CFLAGS) $(LDFLAGS) -lX11
 
 printLOFARChannels: printLOFARChannels.cpp
