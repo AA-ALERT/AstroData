@@ -5,7 +5,6 @@
 
 namespace AstroData {
 
-Color *getColorMap();
 
 class Color {
 public:
@@ -23,6 +22,9 @@ private:
 	unsigned char G;
 	unsigned char B;
 };
+
+// Returns an array of colors
+Color *getColorMap();
 
 
 // Implementation
