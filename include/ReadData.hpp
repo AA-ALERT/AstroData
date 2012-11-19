@@ -83,6 +83,7 @@ template< typename T > void readSIGPROC(Observation< T > &observation, unsigned 
 template< typename T > void readLOFAR(string headerFilename, string rawFilename, Observation< T > &observation, unsigned int *paddedSecond, vector< GPUData< T > * > &data) {
 	unsigned int totalSamples = 0;
 	unsigned int nrSubbands = 0;
+	unsigned int nrChannels = 0;
 	char *word = new char[4];
 	double totalIntegrationTime = 0.0;
 
@@ -109,7 +110,7 @@ template< typename T > void readLOFAR(string headerFilename, string rawFilename,
 	currentNode.openAttribute("NOF_STATIONS").read(typeUInt, reinterpret_cast< void * >(&valueUInt));
 	observation.setNrStations(valueUInt);
 	currentNode.openAttribute("CHANNELS_PER_SUBBAND").read(typeUInt, reinterpret_cast< void * >(&valueUInt));
-	observation.setNrChannels(valueUInt);
+	nrChannels = valueUInt;
 	currentNode.openAttribute("CHANNEL_WIDTH").read(typeDouble, reinterpret_cast< void * >(&valueDouble));
 	observation.setChannelBandwidth(valueDouble / 1000000);
 	DataSet currentData = currentNode.openDataSet("STOKES_0");
@@ -121,6 +122,7 @@ template< typename T > void readLOFAR(string headerFilename, string rawFilename,
 	observation.setSamplingRate(1.0f / observation.getNrSamplesPerSecond());
 	observation.setNrSeconds(static_cast< unsigned int >(totalIntegrationTime));
 	*paddedSecond = observation.getNrSamplesPerSecond() + (observation.getNrSamplesPerSecond() % 4);
+	observation.setNrChannels(nrChannels * nrSubbands);
 		
 	// Read the raw file with the actual data
 	ifstream rawFile;
@@ -129,23 +131,23 @@ template< typename T > void readLOFAR(string headerFilename, string rawFilename,
 		
 	data.resize(observation.getNrSeconds());
 	
-	unsigned int aOld = 0;
-	unsigned int vOld = 0;
+	double *aOld = new double [nrSubbands * nrChannels];
+	double *vOld = new double [nrSubbands * nrChannels];
 
 	for ( unsigned int second = 0; second < observation.getNrSeconds(); second++ ) {
 		data.at(second) = new GPUData< T >("second" + toStringValue< unsigned int >(second), true, true);
-		(data.at(second))->allocateHostData(nrSubbands * observation.getNrChannels() * (*paddedSecond));
+		(data.at(second))->allocateHostData(nrSubbands * nrChannels * (*paddedSecond));
 		for ( unsigned int sample = 0; sample < observation.getNrSamplesPerSecond(); sample++ ) {
 			for ( unsigned int subband = 0; subband < nrSubbands; subband++ ) {
-				for ( unsigned int channel = 0; channel < observation.getNrChannels(); channel++ ) {
-					long long unsigned int element = (second * (subband * observation.getNrChannels()) * observation.getNrSamplesPerSecond()) + (((subband * observation.getNrChannels()) + channel) * observation.getNrSamplesPerSecond()) + sample;
+				for ( unsigned int channel = 0; channel < nrChannels; channel++ ) {
+					long long unsigned int element = (second * observation.getNrSamplesPerSecond()) + sample;
 					T value = 0;
 
 					rawFile.read(word, 4);
 					changeEndianness(word);
 					value = *(reinterpret_cast< T * >(word));
 
-					((data.at(second))->getHostData())[(((subband * observation.getNrChannels()) + channel) * (*paddedSecond)) + sample] = value;
+					((data.at(second))->getHostData())[(((subband * nrChannels) + channel) * (*paddedSecond)) + sample] = value;
 					if ( value <  observation.getMinValue() ) {
 						observation.setMinValue(value);
 					}
@@ -154,15 +156,15 @@ template< typename T > void readLOFAR(string headerFilename, string rawFilename,
 					}
 
 					if ( element == 0 ) {
-						observation.setAverage(value);
-						observation.setVariance(0.0f);
+						observation.setAverage((subband * nrChannels) + channel, value);
+						observation.setVariance((subband * nrChannels) + channel, 0.0);
 					}
 					else {
-						aOld = observation.getAverage();
-						vOld = observation.getVariance();
+						aOld[(subband * nrChannels) + channel] = observation.getAverage((subband * nrChannels) + channel);
+						vOld[(subband * nrChannels) + channel] = observation.getVariance((subband * nrChannels) + channel);
 
-						observation.setAverage(aOld + ((value - aOld) / (element + 1)));
-						observation.setVariance(vOld + ((value - aOld) * (value - observation.getAverage())));
+						observation.setAverage((subband * nrChannels) + channel, aOld[(subband * nrChannels) + channel] + ((value - aOld[(subband * nrChannels) + channel]) / (element + 1)));
+						observation.setVariance((subband * nrChannels) + channel, vOld[(subband * nrChannels) + channel] + ((value - aOld[(subband * nrChannels) + channel]) * (value - observation.getAverage((subband * nrChannels) + channel))));
 					}
 				}
 			}
@@ -170,11 +172,14 @@ template< typename T > void readLOFAR(string headerFilename, string rawFilename,
 	}
 	rawFile.close();
 
-	observation.setNrChannels(observation.getNrChannels() * nrSubbands);
-	observation.setVariance(observation.getVariance() / (observation.getNrSeconds() * observation.getNrChannels() * observation.getNrSamplesPerSecond()));
-	observation.setStdDev(sqrt(observation.getVariance()));
+	for ( unsigned int channel = 0; channel < observation.getNrChannels(); channel++ ) {
+		observation.setVariance(channel, observation.getVariance(channel) / (observation.getNrSeconds() * observation.getNrSamplesPerSecond()));
+		observation.setStdDev(channel, sqrt(observation.getVariance(channel)));
+	}
 
 	delete [] word;
+	delete [] aOld;
+	delete [] vOld;
 }
 
 } // AstroData

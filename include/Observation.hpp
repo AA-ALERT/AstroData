@@ -31,13 +31,14 @@ namespace AstroData {
 template< typename T > class Observation {
 public:
 	Observation(string name, string dataType);
+	~Observation();
 
 	// Set values
 	inline void setNrSeconds(unsigned int seconds);
 	inline void setNrStations(unsigned int nrStations);
 	inline void setNrBeams(unsigned int beams);
 	inline void setNrSamplesPerSecond(unsigned int samples);
-	inline void setNrChannels(unsigned int channels);
+	void setNrChannels(unsigned int channels);
 
 	inline void setSamplingRate(float rate);
 	inline void setMinFreq(float freq);
@@ -46,9 +47,9 @@ public:
 
 	inline void setMinValue(T value);
 	inline void setMaxValue(T value);
-	inline void setAverage(float avg);
-	inline void setVariance(float var);
-	inline void setStdDev(float dev);
+	inline void setAverage(unsigne int channel, double avg);
+	inline void setVariance(unsigned int channel, double var);
+	inline void setStdDev(unsigned int channel, double dev);
 
 	// Get values
 	inline string getName();
@@ -67,9 +68,9 @@ public:
 
 	inline T getMinValue();
 	inline T getMaxValue();
-	inline float getAverage();
-	inline float getVariance();
-	inline float getStdDev();
+	inline double getAverage(unsigned int channel);
+	inline double getVariance(unsigned int channel);
+	inline double getStdDev(unsigned int channel);
 
 private:
 	string name;
@@ -88,15 +89,21 @@ private:
 
 	T minValue;
 	T maxValue;
-	float average;
-	float variance;
-	float stdDev;
+	double *average;
+	double *variance;
+	double *stdDev;
 };
 
 
 // Implementation
 
-template< typename T > Observation< T >::Observation(string name, string dataType) : name(name), dataType(dataType), nrSeconds(0), nrStations(0), nrBeams(0), nrSamplesPerSecond(0), nrChannels(0), samplingRate(0.0f), minFreq(0.0f), maxFreq(0.0f), channelBandwidth(0.0f), minValue(numeric_limits< T >::max()), maxValue(numeric_limits< T >::min()), average(0.0f), variance(0.0f), stdDev(0.0f) {}
+template< typename T > Observation< T >::Observation(string name, string dataType) : name(name), dataType(dataType), nrSeconds(0), nrStations(0), nrBeams(0), nrSamplesPerSecond(0), nrChannels(0), samplingRate(0.0f), minFreq(0.0f), maxFreq(0.0f), channelBandwidth(0.0f), minValue(numeric_limits< T >::max()), maxValue(numeric_limits< T >::min()), average(0), variance(0), stdDev(0) {}
+
+template< typename T > Observation< T >::~Observation() {
+	delete [] average;
+	delete [] variance;
+	delete [] stdDev;
+}
 
 template< typename T > inline void Observation< T >::setNrSeconds(unsigned int seconds) {
 	nrSeconds = seconds;
@@ -114,8 +121,12 @@ template< typename T > inline void Observation< T >::setNrSamplesPerSecond(unsig
 	nrSamplesPerSecond = samples;
 }
 
-template< typename T > inline void Observation< T >::setNrChannels(unsigned int channels) {
+template< typename T > void Observation< T >::setNrChannels(unsigned int channels) {
 	nrChannels = channels;
+
+	average = new double [channels];
+	variance = new double [channels];
+	stdDev = new double [channels];
 }
 
 template< typename T > inline void Observation< T >::setSamplingRate(float rate) {
@@ -134,24 +145,24 @@ template< typename T > inline void Observation< T >::setChannelBandwidth(float b
 	channelBandwidth = bandwidth;
 }
 
-template< typename T > inline void Observation< T >::setMinValue(T value) {
+template< typename T > inline void Observation< T >::setMinValue(unsigned int channel, T value) {
 	minValue = value;
 }
 
-template< typename T > inline void Observation< T >::setMaxValue(T value) {
+template< typename T > inline void Observation< T >::setMaxValue(unsigned int channel, T value) {
 	maxValue = value;
 }
 
-template< typename T > inline void Observation< T >::setAverage(float avg) {
-	average = avg;
+template< typename T > inline void Observation< T >::setAverage(unsigned int channel, double avg) {
+	average[channel] = avg;
 }
 
-template< typename T > inline void Observation< T >::setVariance(float var) {
-	variance = var;
+template< typename T > inline void Observation< T >::setVariance(unsigned int channel, double var) {
+	variance[channel] = var;
 }
 
-template< typename T > inline void Observation< T >::setStdDev(float dev) {
-	stdDev = dev;
+template< typename T > inline void Observation< T >::setStdDev(unsigned int channel, double dev) {
+	stdDev[channel] = dev;
 }
 
 template< typename T > inline string Observation< T >::getName() {
@@ -206,16 +217,16 @@ template< typename T > inline T Observation< T >::getMaxValue() {
 	return maxValue;
 }
 
-template< typename T > inline float Observation< T >::getAverage() {
-	return average;
+template< typename T > inline double Observation< T >::getAverage(unsigned int channel) {
+	return average[channel];
 }
 
-template< typename T > inline float Observation< T >::getVariance() {
-	return variance;
+template< typename T > inline double Observation< T >::getVariance(unsigned int channel) {
+	return variance[channel];
 }
 
-template< typename T > inline float Observation< T >::getStdDev() {
-	return stdDev;
+template< typename T > inline double Observation< T >::getStdDev(unsigned int channel) {
+	return stdDev[channel];
 }
 
 } // AstroData

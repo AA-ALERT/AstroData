@@ -23,6 +23,7 @@
 #include <fstream>
 #include <vector>
 #include <string>
+#include <limits>
 using std::cout;
 using std::cerr;
 using std::endl;
@@ -33,6 +34,7 @@ using std::vector;
 using std::fixed;
 using std::setprecision;
 using std::string;
+using std::numeric_limits;
 
 #include <ArgumentList.hpp>
 #include <GPUData.hpp>
@@ -97,10 +99,12 @@ int main(int argc, char *argv[]) {
 	cout << endl;	
 
 	// Plot the output
-	float aCur = 0.0f;
-	float aOld = 0.0f;
-	float vCur = 0.0f;
-	float vOld = 0.0f;
+	float minSample = numeric_limits< float >::max();
+	float maxSample = numeric_limits< float >::min();
+	double aCur = 0.0f;
+	double aOld = 0.0f;
+	double vCur = 0.0f;
+	double vOld = 0.0f;
 	ofstream oFile;
 	
 	oFile.open(outFilename.c_str());
@@ -114,9 +118,16 @@ int main(int argc, char *argv[]) {
 				oSample += (input->at(second)->getHostData())[(channel * paddedSecond) + sample];
 			}
 
+			if ( oSample < minSample ) {
+				minSample = oSample;
+			}
+			if ( oSample > maxSample ) {
+				maxSample = oSample;
+			}
+
 			if ( element == 0 ) {
 				aCur = oSample;
-				vCur = 0.0f;
+				vCur = 0.0;
 			}
 			else {
 				aOld = aCur;
@@ -131,6 +142,8 @@ int main(int argc, char *argv[]) {
 	}
 	oFile.close();
 
+	cout << "Min: \t\t\t" << minSample << endl;
+	cout << "Max: \t\t\t" << maxSample << endl;
 	cout << "Average: \t\t" << aCur << endl;
 	cout << "Variance: \t\t" << vCur / (nrOutputSeconds * observation.getNrSamplesPerSecond()) << endl;
 	cout << "Standard deviation: \t" << sqrt(vCur / (nrOutputSeconds * observation.getNrSamplesPerSecond())) << endl;

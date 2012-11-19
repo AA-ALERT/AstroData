@@ -108,10 +108,6 @@ int main(int argc, char *argv[]) {
 
 	// Plot the output
 	float diffMinMax = observation.getMaxValue() - observation.getMinValue();
-	float *aCur = new float [observation.getNrChannels()];
-	float *aOld = new float [observation.getNrChannels()];
-	float *vCur = new float [observation.getNrChannels()];
-	float *vOld = new float [observation.getNrChannels()];
 	CImg< unsigned char > oImage(nrOutputSeconds * (observation.getNrSamplesPerSecond() / timeIntegrationFactor), observation.getNrChannels() * channelMagnifyingFactor, 1, 1);
 
 	for ( unsigned int second = firstSecond; second < firstSecond + nrOutputSeconds; second++ ) {
@@ -128,18 +124,6 @@ int main(int argc, char *argv[]) {
 
 						value += temp;
 						counter++;
-
-						if ( element == 0 ) {
-							aCur[channel] = temp;
-							vCur[channel] = 0.0f;
-						}
-						else {
-							aOld[channel] = aCur[channel];
-							vOld[channel] = vCur[channel];
-
-							aCur[channel] = aOld[channel] + ((temp - aOld[channel]) / (element + 1));
-							vCur[channel] = vOld[channel] + ((temp - aOld[channel]) * (temp - aCur[channel]));
-						}
 					}
 					else {
 						break;
@@ -156,16 +140,11 @@ int main(int argc, char *argv[]) {
 	oImage.save(outFilename.c_str());
 
 	for ( unsigned int channel = 0; channel < observation.getNrChannels(); channel++ ) {
-		cout << "Average channel " << channel << ": \t" << aCur[channel] << endl;
-		cout << "Variance channel " << channel << ": \t" << vCur[channel] / (nrOutputSeconds * observation.getNrSamplesPerSecond()) << endl;
-		cout << "Std. dev. channel " << channel << ": \t" << sqrt(vCur[channel] / (nrOutputSeconds * observation.getNrSamplesPerSecond())) << endl;
+		cout << "Average channel " << channel << ": \t" << observation.getAverage(channel) << endl;
+		cout << "Variance channel " << channel << ": \t" << observation.getVariance(channel) << endl;
+		cout << "Std. dev. channel " << channel << ": \t" << observation.getStdDev(channel) << endl;
 	}
 	cout << endl;
-
-	delete [] aCur;
-	delete [] aOld;
-	delete [] vCur;
-	delete [] vOld;
 
 	return 0;
 }
