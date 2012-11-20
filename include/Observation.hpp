@@ -40,8 +40,8 @@ public:
 	inline void setNrSamplesPerSecond(unsigned int samples);
 	inline void setNrSamplesPerPaddedSecond(unsigned int samples);
 	void setNrChannels(unsigned int channels);
+	inline void setNrPaddedChannels(unsigned int channels);
 
-	inline void setSamplingRate(float rate);
 	inline void setMinFreq(float freq);
 	inline void setMaxFreq(float freq);
 	inline void setChannelBandwidth(float bandwidth);
@@ -53,8 +53,12 @@ public:
 	inline void setStdDev(unsigned int channel, double dev);
 
 	inline void setNrDMs(unsigned int dms);
+	inline void setNrPaddedDMs(unsigned int dms);
 	inline void setFirstDM(float dm);
 	inline void setDMStep(float step);
+
+	inline void setNrPeriods(unsigned int periods);
+	inline void setNrPaddedPeriods(unsigned int periods);
 
 	// Get values
 	inline string getName();
@@ -64,10 +68,11 @@ public:
 	inline unsigned int getNrStations();
 	inline unsigned int getNrBeams();
 	inline unsigned int getNrSamplesPerSecond();
+	inline float getSamplingRate();
 	inline unsigned int getNrSamplesPerPaddedSecond();
 	inline unsigned int getNrChannels();
+	inline unsigned int getNrPaddedChannels();
 
-	inline float getSamplingRate();
 	inline float getMinFreq();
 	inline float getMaxFreq();
 	inline float getChannelBandwidth();
@@ -79,8 +84,12 @@ public:
 	inline double getStdDev(unsigned int channel);
 
 	inline unsigned int getNrDMs();
+	inline unsigned int getNrPaddedDMs();
 	inline float getFirstDM();
 	inline float getDMStep();
+
+	inline unsigned int getNrPeriods();
+	inline unsigned int getNrPaddedPeriods();
 
 private:
 	string name;
@@ -90,10 +99,11 @@ private:
 	unsigned int nrStations;
 	unsigned int nrBeams;
 	unsigned int nrSamplesPerSecond;
+	float samplingRate;
 	unsigned int nrSamplesPerPaddedSecond;
 	unsigned int nrChannels;
+	unsigned int nrPaddedChannels;
 
-	float samplingRate;
 	float minFreq;
 	float maxFreq;
 	float channelBandwidth;
@@ -105,14 +115,18 @@ private:
 	double *stdDev;
 
 	unsigned int nrDMs;
+	unsigned int nrPaddedDMs;
 	float firstDM;
 	float DMStep;
+
+	unsigned int nrPeriods;
+	unsigned int nrPaddedPeriods;
 };
 
 
 // Implementation
 
-template< typename T > Observation< T >::Observation(string name, string dataType) : name(name), dataType(dataType), nrSeconds(0), nrStations(0), nrBeams(0), nrSamplesPerSecond(0), nrSamplesPerPaddedSecond(0), nrChannels(0), samplingRate(0.0f), minFreq(0.0f), maxFreq(0.0f), channelBandwidth(0.0f), minValue(numeric_limits< T >::max()), maxValue(numeric_limits< T >::min()), average(0.0), variance(0.0), stdDev(0.0), nrDMs(0), firstDM(0.0f), DMStep(0.0f) {}
+template< typename T > Observation< T >::Observation(string name, string dataType) : name(name), dataType(dataType), nrSeconds(0), nrStations(0), nrBeams(0), nrSamplesPerSecond(0), samplingRate(0.0f), nrSamplesPerPaddedSecond(0), nrChannels(0), nrPaddedChannels(0), minFreq(0.0f), maxFreq(0.0f), channelBandwidth(0.0f), minValue(numeric_limits< T >::max()), maxValue(numeric_limits< T >::min()), average(0.0), variance(0.0), stdDev(0.0), nrDMs(0), nrPaddedDMs(0), firstDM(0.0f), DMStep(0.0f), nrPeriods(0), nrPaddedPeriods(0) {}
 
 template< typename T > Observation< T >::~Observation() {
 	delete [] average;
@@ -134,6 +148,7 @@ template< typename T > inline void Observation< T >::setNrBeams(unsigned int bea
 
 template< typename T > inline void Observation< T >::setNrSamplesPerSecond(unsigned int samples) {
 	nrSamplesPerSecond = samples;
+	samplingRate = 1.0f / samples;
 }
 
 template< typename T > inline void Observation< T >::setNrSamplesPerPaddedSecond(unsigned int samples) {
@@ -148,8 +163,8 @@ template< typename T > void Observation< T >::setNrChannels(unsigned int channel
 	stdDev = new double [channels];
 }
 
-template< typename T > inline void Observation< T >::setSamplingRate(float rate) {
-	samplingRate = rate;
+template< typename T > void Observation< T >::setNrPaddedChannels(unsigned int channels) {
+	nrPaddedChannels = channels;
 }
 
 template< typename T > inline void Observation< T >::setMinFreq(float freq) {
@@ -188,11 +203,24 @@ template< typename T > inline void Observation< T >::setNrDMs(unsigned int dms) 
 	nrDMs = dms;
 }
 
+template< typename T > inline void Observation< T >::setNrPaddedDMs(unsigned int dms) {
+	nrPaddedDMs = dms;
+}
+
 template< typename T > inline void Observation< T >::setFirstDM(float dm) {
 	firstDM = dm;
 }
 
 template< typename T > inline void Observation< T >::setDMStep(float step) {
+	DMStep = step;
+}
+
+template< typename T > inline void Observation< T >::setNrPeriods(unsigned int periods) {
+	nrPeriods = periods;
+}
+
+template< typename T > inline void Observation< T >::setNrPaddedPeriods(unsigned int periods) {
+	nrPaddedPeriods = periods;
 }
 
 template< typename T > inline string Observation< T >::getName() {
@@ -219,6 +247,10 @@ template< typename T > inline unsigned int Observation< T >::getNrSamplesPerSeco
 	return nrSamplesPerSecond;
 }
 
+template< typename T > inline float Observation< T >::getSamplingRate() {
+	return samplingRate;
+}
+
 template< typename T > inline unsigned int Observation< T >::getNrSamplesPerPaddedSecond() {
 	return nrSamplesPerPaddedSecond;
 }
@@ -227,8 +259,8 @@ template< typename T > inline unsigned int Observation< T >::getNrChannels() {
 	return nrChannels;
 }
 
-template< typename T > inline float Observation< T >::getSamplingRate() {
-	return samplingRate;
+template< typename T > inline unsigned int Observation< T >::getNrPaddedChannels() {
+	return nrPaddedChannels;
 }
 
 template< typename T > inline float Observation< T >::getMinFreq() {
@@ -267,12 +299,24 @@ template< typename T > inline unsigned int Observation< T >::getNrDMs() {
 	return nrDMs;
 }
 
+template< typename T > inline unsigned int Observation< T >::getNrPaddedDMs() {
+	return nrPaddedDMs;
+}
+
 template< typename T > inline float Observation< T >::getFirstDM() {
 	return firstDM;
 }
 
 template< typename T > inline float Observation< T >::getDMStep() {
 	return DMStep;
+}
+
+template< typename T > inline unsigned int Observation< T >::getNrPeriods() {
+	return nrPeriods;
+}
+
+template< typename T > inline unsigned int Observation< T >::getNrPaddedPeriods() {
+	return nrPaddedPeriods;
 }
 
 } // AstroData

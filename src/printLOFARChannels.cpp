@@ -98,6 +98,7 @@ int main(int argc, char *argv[]) {
 	cout << "Min frequency: \t\t" << observation.getMinFreq() << " MHz" << endl;
 	cout << "Max frequency: \t\t" << observation.getMaxFreq() << " MHz" << endl;
 	cout << "Nr. channels: \t\t" << observation.getNrChannels() << endl;
+	cout << "Nr. channels (pad): \t" << observation.getNrPaddedChannels() << endl;
 	cout << "Channel bandwidth: \t" << observation.getChannelBandwidth() << " MHz" << endl;
 	cout << "Samples/second: \t" << observation.getNrSamplesPerSecond() << endl;
 	cout << "Samples/second (pad): \t" << observation.getNrSamplesPerPaddedSecond() << endl;
@@ -148,7 +149,7 @@ int main(int argc, char *argv[]) {
 
 	for ( unsigned int channel = 0; channel < observation.getNrChannels(); channel++ ) {
 		cout << "Average channel " << channel << ": \t" << observation.getAverage(channel) << endl;
-		cout << "Variance channel " << channel << ": \t" << observation.getVariance(channel) << endl;
+		//cout << "Variance channel " << channel << ": \t" << observation.getVariance(channel) << endl;
 		cout << "Std. dev. channel " << channel << ": \t" << observation.getStdDev(channel) << endl;
 	}
 	cout << endl;

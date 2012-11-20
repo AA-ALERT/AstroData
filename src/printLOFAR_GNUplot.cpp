@@ -87,6 +87,7 @@ int main(int argc, char *argv[]) {
 	cout << "Min frequency: \t\t" << observation.getMinFreq() << " MHz" << endl;
 	cout << "Max frequency: \t\t" << observation.getMaxFreq() << " MHz" << endl;
 	cout << "Nr. channels: \t\t" << observation.getNrChannels() << endl;
+	cout << "Nr. channels (pad): \t" << observation.getNrPaddedChannels() << endl;
 	cout << "Channel bandwidth: \t" << observation.getChannelBandwidth() << " MHz" << endl;
 	cout << "Samples/second: \t" << observation.getNrSamplesPerSecond() << endl;
 	cout << "Samples/second (pad): \t" << observation.getNrSamplesPerPaddedSecond() << endl;
@@ -146,7 +147,7 @@ int main(int argc, char *argv[]) {
 	cout << "Min: \t\t\t" << minSample << endl;
 	cout << "Max: \t\t\t" << maxSample << endl;
 	cout << "Average: \t\t" << aCur << endl;
-	cout << "Variance: \t\t" << vCur / (nrOutputSeconds * observation.getNrSamplesPerSecond()) << endl;
+	//cout << "Variance: \t\t" << vCur / (nrOutputSeconds * observation.getNrSamplesPerSecond()) << endl;
 	cout << "Standard deviation: \t" << sqrt(vCur / (nrOutputSeconds * observation.getNrSamplesPerSecond())) << endl;
 	cout << endl;
 

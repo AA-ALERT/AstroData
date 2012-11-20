@@ -118,10 +118,10 @@ template< typename T > void readLOFAR(string headerFilename, string rawFilename,
 	headerFile.close();
 	
 	observation.setNrSamplesPerSecond(static_cast< unsigned int >(totalSamples / totalIntegrationTime));
-	observation.setSamplingRate(1.0f / observation.getNrSamplesPerSecond());
 	observation.setNrSeconds(static_cast< unsigned int >(totalIntegrationTime));
 	observation.setNrSamplesPerPaddedSecond(observation.getNrSamplesPerSecond() + (observation.getNrSamplesPerSecond() % 4));
 	observation.setNrChannels(nrChannels * nrSubbands);
+	observation.setNrPaddedChannels(observation.getNrChannels() + (observation.getNrChannels() % 4));
 		
 	// Read the raw file with the actual data
 	ifstream rawFile;
@@ -135,7 +135,7 @@ template< typename T > void readLOFAR(string headerFilename, string rawFilename,
 
 	for ( unsigned int second = 0; second < observation.getNrSeconds(); second++ ) {
 		data.at(second) = new GPUData< T >("second" + toStringValue< unsigned int >(second), true, true);
-		(data.at(second))->allocateHostData(nrSubbands * nrChannels * observation.getNrSamplesPerPaddedSecond());
+		(data.at(second))->allocateHostData(observation.getNrChannels() * observation.getNrSamplesPerPaddedSecond());
 		for ( unsigned int sample = 0; sample < observation.getNrSamplesPerSecond(); sample++ ) {
 			for ( unsigned int subband = 0; subband < nrSubbands; subband++ ) {
 				for ( unsigned int channel = 0; channel < nrChannels; channel++ ) {
