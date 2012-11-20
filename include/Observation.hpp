@@ -33,7 +33,7 @@ public:
 	Observation(string name, string dataType);
 	~Observation();
 
-	// Set values
+	// General observation parameters
 	inline void setNrSeconds(unsigned int seconds);
 	inline void setNrStations(unsigned int nrStations);
 	inline void setNrBeams(unsigned int beams);
@@ -42,28 +42,34 @@ public:
 	void setNrChannels(unsigned int channels);
 	inline void setNrPaddedChannels(unsigned int channels);
 
+	// Frequency parameters
 	inline void setMinFreq(float freq);
 	inline void setMaxFreq(float freq);
 	inline void setChannelBandwidth(float bandwidth);
 
+	// Statistical properties
 	inline void setMinValue(T value);
 	inline void setMaxValue(T value);
 	inline void setAverage(unsigned int channel, double avg);
 	inline void setVariance(unsigned int channel, double var);
 	inline void setStdDev(unsigned int channel, double dev);
 
+	// Dispersion measures
 	inline void setNrDMs(unsigned int dms);
 	inline void setNrPaddedDMs(unsigned int dms);
 	inline void setFirstDM(float dm);
 	inline void setDMStep(float step);
 
+	// Periods
 	inline void setNrPeriods(unsigned int periods);
 	inline void setNrPaddedPeriods(unsigned int periods);
+	inline void setNrBins(unsigned int bins);
+	inline void setNrPaddedBins(unsigned int bins);
 
-	// Get values
 	inline string getName();
 	inline string getDataType();
 
+	// General observation parameters
 	inline unsigned int getNrSeconds();
 	inline unsigned int getNrStations();
 	inline unsigned int getNrBeams();
@@ -73,23 +79,29 @@ public:
 	inline unsigned int getNrChannels();
 	inline unsigned int getNrPaddedChannels();
 
+	// Frequency parameters
 	inline float getMinFreq();
 	inline float getMaxFreq();
 	inline float getChannelBandwidth();
 
+	// Statistical properties
 	inline T getMinValue();
 	inline T getMaxValue();
 	inline double getAverage(unsigned int channel);
 	inline double getVariance(unsigned int channel);
 	inline double getStdDev(unsigned int channel);
 
+	// Dispersion measures
 	inline unsigned int getNrDMs();
 	inline unsigned int getNrPaddedDMs();
 	inline float getFirstDM();
 	inline float getDMStep();
 
+	// Periods
 	inline unsigned int getNrPeriods();
 	inline unsigned int getNrPaddedPeriods();
+	inline unsigned int getNrBins();
+	inline unsigned int getNrPaddedBins();
 
 private:
 	string name;
@@ -121,12 +133,14 @@ private:
 
 	unsigned int nrPeriods;
 	unsigned int nrPaddedPeriods;
+	unsigned int nrBins;
+	unsigned int nrPaddedBins;
 };
 
 
 // Implementation
 
-template< typename T > Observation< T >::Observation(string name, string dataType) : name(name), dataType(dataType), nrSeconds(0), nrStations(0), nrBeams(0), nrSamplesPerSecond(0), samplingRate(0.0f), nrSamplesPerPaddedSecond(0), nrChannels(0), nrPaddedChannels(0), minFreq(0.0f), maxFreq(0.0f), channelBandwidth(0.0f), minValue(numeric_limits< T >::max()), maxValue(numeric_limits< T >::min()), average(0.0), variance(0.0), stdDev(0.0), nrDMs(0), nrPaddedDMs(0), firstDM(0.0f), DMStep(0.0f), nrPeriods(0), nrPaddedPeriods(0) {}
+template< typename T > Observation< T >::Observation(string name, string dataType) : name(name), dataType(dataType), nrSeconds(0), nrStations(0), nrBeams(0), nrSamplesPerSecond(0), samplingRate(0.0f), nrSamplesPerPaddedSecond(0), nrChannels(0), nrPaddedChannels(0), minFreq(0.0f), maxFreq(0.0f), channelBandwidth(0.0f), minValue(numeric_limits< T >::max()), maxValue(numeric_limits< T >::min()), average(0.0), variance(0.0), stdDev(0.0), nrDMs(0), nrPaddedDMs(0), firstDM(0.0f), DMStep(0.0f), nrPeriods(0), nrPaddedPeriods(0), nrBins(0), nrPaddedBins(0) {}
 
 template< typename T > Observation< T >::~Observation() {
 	delete [] average;
@@ -223,6 +237,14 @@ template< typename T > inline void Observation< T >::setNrPaddedPeriods(unsigned
 	nrPaddedPeriods = periods;
 }
 
+template< typename T > inline void Observation< T >::setNrBins(unsigned int bins) {
+	nrBins = bins;
+}
+
+template< typename T > inline void Observation< T >::setNrPaddedBins(unsigned int bins) {
+	nrPaddedBins = bins;
+}
+
 template< typename T > inline string Observation< T >::getName() {
 	return name;
 }
@@ -317,6 +339,14 @@ template< typename T > inline unsigned int Observation< T >::getNrPeriods() {
 
 template< typename T > inline unsigned int Observation< T >::getNrPaddedPeriods() {
 	return nrPaddedPeriods;
+}
+
+template< typename T > inline unsigned int Observation< T >::getNrBins() {
+	return nrBins;
+}
+
+template< typename T > inline unsigned int Observation< T >::getNrPaddedBins() {
+	return nrPaddedBins;
 }
 
 } // AstroData
