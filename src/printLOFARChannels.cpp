@@ -105,6 +105,11 @@ int main(int argc, char *argv[]) {
 	cout << "Max sample: \t\t" << observation.getMaxValue() << endl;
 	cout << endl;	
 
+	if ( (firstSecond + nrOutputSeconds) > observation.getNrSeconds() ) {
+		cerr << "It is not possible to output more seconds than " << observation.getNrSeconds() << "." << endl;
+		return 1;
+	}
+
 	// Plot the output
 	float diffMinMax = observation.getMaxValue() - observation.getMinValue();
 	CImg< unsigned char > oImage(nrOutputSeconds * (observation.getNrSamplesPerSecond() / timeIntegrationFactor), observation.getNrChannels() * channelMagnifyingFactor, 1, 3);

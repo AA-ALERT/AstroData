@@ -73,6 +73,11 @@ int main(int argc, char *argv[]) {
 	observation.setSamplingRate(1.0f / observation.getNrSamplesPerSecond());
 	observation.setNrSamplesPerPaddedSecond(observation.getNrSamplesPerSecond() + (observation.getNrSamplesPerSecond() % 4));
 
+	if ( nrOutputSeconds > observation.getNrSeconds() ) {
+		cerr << "It is not possible to output more seconds than " << observation.getNrSeconds() << "." << endl;
+		return 1;
+	}
+
 	// Load input
 	vector< GPUData< float > * > *input = new vector< GPUData< float > * >(observation.getNrSeconds());
 	

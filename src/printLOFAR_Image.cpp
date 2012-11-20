@@ -101,6 +101,11 @@ int main(int argc, char *argv[]) {
 	cout << "Max sample: \t\t" << observation.getMaxValue() << endl;
 	cout << endl;	
 
+	if ( (firstSecond + nrOutputSeconds) > observation.getNrSeconds() ) {
+		cerr << "It is not possible to output more seconds than " << observation.getNrSeconds() << "." << endl;
+		return 1;
+	}
+
 	// Plot the output
 	float minSample = numeric_limits< float >::max();
 	float maxSample = numeric_limits< float >::min();

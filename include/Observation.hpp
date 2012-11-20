@@ -52,6 +52,10 @@ public:
 	inline void setVariance(unsigned int channel, double var);
 	inline void setStdDev(unsigned int channel, double dev);
 
+	inline void setNrDMs(unsigned int dms);
+	inline void setFirstDM(float dm);
+	inline void setDMStep(float step);
+
 	// Get values
 	inline string getName();
 	inline string getDataType();
@@ -74,6 +78,10 @@ public:
 	inline double getVariance(unsigned int channel);
 	inline double getStdDev(unsigned int channel);
 
+	inline unsigned int getNrDMs();
+	inline float getFirstDM();
+	inline float getDMStep();
+
 private:
 	string name;
 	string dataType;
@@ -95,12 +103,16 @@ private:
 	double *average;
 	double *variance;
 	double *stdDev;
+
+	unsigned int nrDMs;
+	float firstDM;
+	float DMStep;
 };
 
 
 // Implementation
 
-template< typename T > Observation< T >::Observation(string name, string dataType) : name(name), dataType(dataType), nrSeconds(0), nrStations(0), nrBeams(0), nrSamplesPerSecond(0), nrSamplesPerPaddedSecond(0), nrChannels(0), samplingRate(0.0f), minFreq(0.0f), maxFreq(0.0f), channelBandwidth(0.0f), minValue(numeric_limits< T >::max()), maxValue(numeric_limits< T >::min()), average(0), variance(0), stdDev(0) {}
+template< typename T > Observation< T >::Observation(string name, string dataType) : name(name), dataType(dataType), nrSeconds(0), nrStations(0), nrBeams(0), nrSamplesPerSecond(0), nrSamplesPerPaddedSecond(0), nrChannels(0), samplingRate(0.0f), minFreq(0.0f), maxFreq(0.0f), channelBandwidth(0.0f), minValue(numeric_limits< T >::max()), maxValue(numeric_limits< T >::min()), average(0.0), variance(0.0), stdDev(0.0), nrDMs(0), firstDM(0.0f), DMStep(0.0f) {}
 
 template< typename T > Observation< T >::~Observation() {
 	delete [] average;
@@ -172,6 +184,17 @@ template< typename T > inline void Observation< T >::setStdDev(unsigned int chan
 	stdDev[channel] = dev;
 }
 
+template< typename T > inline void Observation< T >::setNrDMs(unsigned int dms) {
+	nrDMs = dms;
+}
+
+template< typename T > inline void Observation< T >::setFirstDM(float dm) {
+	firstDM = dm;
+}
+
+template< typename T > inline void Observation< T >::setDMStep(float step) {
+}
+
 template< typename T > inline string Observation< T >::getName() {
 	return name;
 }
@@ -238,6 +261,18 @@ template< typename T > inline double Observation< T >::getVariance(unsigned int 
 
 template< typename T > inline double Observation< T >::getStdDev(unsigned int channel) {
 	return stdDev[channel];
+}
+
+template< typename T > inline unsigned int Observation< T >::getNrDMs() {
+	return nrDMs;
+}
+
+template< typename T > inline float Observation< T >::getFirstDM() {
+	return firstDM;
+}
+
+template< typename T > inline float Observation< T >::getDMStep() {
+	return DMStep;
 }
 
 } // AstroData
