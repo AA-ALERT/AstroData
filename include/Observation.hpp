@@ -65,6 +65,8 @@ public:
 	inline void setNrPaddedPeriods(unsigned int periods);
 	inline void setNrBins(unsigned int bins);
 	inline void setNrPaddedBins(unsigned int bins);
+	inline void setFirstPeriod(unsigned int period);
+	inline void setPeriodStep(unsigned int step);
 
 	inline string getName();
 	inline string getDataType();
@@ -102,6 +104,8 @@ public:
 	inline unsigned int getNrPaddedPeriods();
 	inline unsigned int getNrBins();
 	inline unsigned int getNrPaddedBins();
+	inline unsigned int getFirstPeriod();
+	inline unsigned int getPeriodStep();
 
 private:
 	string name;
@@ -135,12 +139,14 @@ private:
 	unsigned int nrPaddedPeriods;
 	unsigned int nrBins;
 	unsigned int nrPaddedBins;
+	unsigned int firstPeriod;
+	unsigned int periodStep;
 };
 
 
 // Implementation
 
-template< typename T > Observation< T >::Observation(string name, string dataType) : name(name), dataType(dataType), nrSeconds(0), nrStations(0), nrBeams(0), nrSamplesPerSecond(0), samplingRate(0.0f), nrSamplesPerPaddedSecond(0), nrChannels(0), nrPaddedChannels(0), minFreq(0.0f), maxFreq(0.0f), channelBandwidth(0.0f), minValue(numeric_limits< T >::max()), maxValue(numeric_limits< T >::min()), average(0.0), variance(0.0), stdDev(0.0), nrDMs(0), nrPaddedDMs(0), firstDM(0.0f), DMStep(0.0f), nrPeriods(0), nrPaddedPeriods(0), nrBins(0), nrPaddedBins(0) {}
+template< typename T > Observation< T >::Observation(string name, string dataType) : name(name), dataType(dataType), nrSeconds(0), nrStations(0), nrBeams(0), nrSamplesPerSecond(0), samplingRate(0.0f), nrSamplesPerPaddedSecond(0), nrChannels(0), nrPaddedChannels(0), minFreq(0.0f), maxFreq(0.0f), channelBandwidth(0.0f), minValue(numeric_limits< T >::max()), maxValue(numeric_limits< T >::min()), average(0.0), variance(0.0), stdDev(0.0), nrDMs(0), nrPaddedDMs(0), firstDM(0.0f), DMStep(0.0f), nrPeriods(0), nrPaddedPeriods(0), nrBins(0), nrPaddedBins(0), firstPeriod(0), periodStep(0) {}
 
 template< typename T > Observation< T >::~Observation() {
 	delete [] average;
@@ -245,6 +251,14 @@ template< typename T > inline void Observation< T >::setNrPaddedBins(unsigned in
 	nrPaddedBins = bins;
 }
 
+template< typename T > inline void Observation< T >::setFirstPeriod(unsigned int period) {
+	firstPeriod = period;
+}
+
+template< typename T > inline void Observation< T >::setPeriodStep(unsigned int step) {
+	periodStep = step;
+}
+
 template< typename T > inline string Observation< T >::getName() {
 	return name;
 }
@@ -347,6 +361,14 @@ template< typename T > inline unsigned int Observation< T >::getNrBins() {
 
 template< typename T > inline unsigned int Observation< T >::getNrPaddedBins() {
 	return nrPaddedBins;
+}
+
+template< typename T > inline unsigned int Observation< T >::getFirstPeriod() {
+	return firstPeriod;
+}
+
+template< typename T > inline unsigned int Observation< T >::getPeriodStep() {
+	return periodStep;
 }
 
 } // AstroData
