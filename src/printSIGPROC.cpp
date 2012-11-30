@@ -70,7 +70,6 @@ int main(int argc, char *argv[]) {
 		cerr << err.what() << endl;
 		return 1;
 	}
-	observation.setSamplingRate(1.0f / observation.getNrSamplesPerSecond());
 	observation.setNrSamplesPerPaddedSecond(observation.getNrSamplesPerSecond() + (observation.getNrSamplesPerSecond() % 4));
 
 	if ( nrOutputSeconds > observation.getNrSeconds() ) {
