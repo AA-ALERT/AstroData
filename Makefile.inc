@@ -1,5 +1,5 @@
 
-PROJ_BASE	:= /home/alessio/src/AstroData
+PROJ_BASE	:= $(HOME)/src/AstroData
 
 INCLUDES	:= -I"$(PROJ_BASE)/include" -I"$(OPENCL_INCLUDE)" -I"/home/alessio/src/utils/include" -I"/home/alessio/src/OpenCL/include"
 LIBS		:= -L"$(OPENCL_LIB)"

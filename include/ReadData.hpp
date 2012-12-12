@@ -119,9 +119,9 @@ template< typename T > void readLOFAR(string headerFilename, string rawFilename,
 	
 	observation.setNrSamplesPerSecond(static_cast< unsigned int >(totalSamples / totalIntegrationTime));
 	observation.setNrSeconds(static_cast< unsigned int >(totalIntegrationTime));
-	observation.setNrSamplesPerPaddedSecond(observation.getNrSamplesPerSecond() + (observation.getNrSamplesPerSecond() % 4));
+	observation.setNrSamplesPerPaddedSecond(observation.getNrSamplesPerSecond() + (4 - (observation.getNrSamplesPerSecond() % 4)));
 	observation.setNrChannels(nrChannels * nrSubbands);
-	observation.setNrPaddedChannels(observation.getNrChannels() + (observation.getNrChannels() % 4));
+	observation.setNrPaddedChannels(observation.getNrChannels() + (4 - (observation.getNrChannels() % 4)));
 		
 	// Read the raw file with the actual data
 	ifstream rawFile;

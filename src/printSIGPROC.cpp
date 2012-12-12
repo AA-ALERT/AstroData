@@ -70,7 +70,7 @@ int main(int argc, char *argv[]) {
 		cerr << err.what() << endl;
 		return 1;
 	}
-	observation.setNrSamplesPerPaddedSecond(observation.getNrSamplesPerSecond() + (observation.getNrSamplesPerSecond() % 4));
+	observation.setNrSamplesPerPaddedSecond(observation.getNrSamplesPerSecond() + (4 - (observation.getNrSamplesPerSecond() % 4)));
 
 	if ( nrOutputSeconds > observation.getNrSeconds() ) {
 		cerr << "It is not possible to output more seconds than " << observation.getNrSeconds() << "." << endl;
