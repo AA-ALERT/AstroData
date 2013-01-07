@@ -137,7 +137,7 @@ int main(int argc, char *argv[]) {
 				vCur = vOld + ((oSample - aOld) * (oSample - aCur));
 			}
 
-			oFile << setprecision(6) << ((second * observation.getNrSamplesPerSecond()) + sample) * observation.getSamplingRate() << " " << setprecision(3) << oSample << endl;
+			oFile << setprecision(6) << (((firstSecond + second) * observation.getNrSamplesPerSecond()) + sample) * observation.getSamplingRate() << " " << setprecision(3) << oSample << endl;
 		}
 	}
 	oFile.close();
@@ -145,7 +145,6 @@ int main(int argc, char *argv[]) {
 	cout << "Min: \t\t\t" << minSample << endl;
 	cout << "Max: \t\t\t" << maxSample << endl;
 	cout << "Average: \t\t" << aCur << endl;
-	//cout << "Variance: \t\t" << vCur / (nrOutputSeconds * observation.getNrSamplesPerSecond()) << endl;
 	cout << "Standard deviation: \t" << sqrt(vCur / (observation.getNrSeconds() * observation.getNrSamplesPerSecond())) << endl;
 	cout << endl;
 
