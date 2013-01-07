@@ -88,7 +88,7 @@ int main(int argc, char *argv[]) {
 	Observation< float > observation("LOFAR", "float");
 	vector< GPUData< float > * > *input = new vector< GPUData< float > * >(1);
 	
-	readLOFAR(headerFilename, rawFilename, observation, *input);
+	readLOFAR(headerFilename, rawFilename, observation, *input, nrOutputSeconds, firstSecond);
 
 	// Print some statistics
 	cout << fixed << setprecision(3) << endl;
@@ -106,24 +106,19 @@ int main(int argc, char *argv[]) {
 	cout << "Max sample: \t\t" << observation.getMaxValue() << endl;
 	cout << endl;	
 
-	if ( (firstSecond + nrOutputSeconds) > observation.getNrSeconds() ) {
-		cerr << "It is not possible to output more seconds than " << observation.getNrSeconds() << "." << endl;
-		return 1;
-	}
-
 	// Plot the output
 	float diffMinMax = observation.getMaxValue() - observation.getMinValue();
-	CImg< unsigned char > oImage(nrOutputSeconds * (observation.getNrSamplesPerSecond() / timeIntegrationFactor), observation.getNrChannels() * channelMagnifyingFactor, 1, 3);
+	CImg< unsigned char > oImage(observation.getNrSeconds() * (observation.getNrSamplesPerSecond() / timeIntegrationFactor), observation.getNrChannels() * channelMagnifyingFactor, 1, 3);
 	Color *colorMap = getColorMap();
 
-	for ( unsigned int second = firstSecond; second < firstSecond + nrOutputSeconds; second++ ) {
+	for ( unsigned int second = 0; second < observation.getNrSeconds(); second++ ) {
 		for ( unsigned int channel = 0; channel < observation.getNrChannels(); channel++ ) {
 			for ( unsigned int sample = 0; sample < observation.getNrSamplesPerSecond(); sample += timeIntegrationFactor ) {
 				unsigned int counter = 0;
 				float value = 0.0f;
 				
 				for ( unsigned int time = 0; time < timeIntegrationFactor; time++ ) {
-					long long unsigned int element = ((second - firstSecond) * observation.getNrSamplesPerSecond()) + (sample + time);
+					long long unsigned int element = (second * observation.getNrSamplesPerSecond()) + (sample + time);
 
 					if ( (sample + time) < observation.getNrSamplesPerSecond() ) {
 						float temp = (input->at(second)->getHostData())[(channel * observation.getNrSamplesPerPaddedSecond()) + (sample + time)] - observation.getMinValue();
@@ -149,7 +144,6 @@ int main(int argc, char *argv[]) {
 
 	for ( unsigned int channel = 0; channel < observation.getNrChannels(); channel++ ) {
 		cout << "Average channel " << channel << ": \t" << observation.getAverage(channel) << endl;
-		//cout << "Variance channel " << channel << ": \t" << observation.getVariance(channel) << endl;
 		cout << "Std. dev. channel " << channel << ": \t" << observation.getStdDev(channel) << endl;
 	}
 	cout << endl;

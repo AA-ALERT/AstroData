@@ -77,7 +77,7 @@ int main(int argc, char *argv[]) {
 	Observation< float > observation("LOFAR", "float");
 	vector< GPUData< float > * > *input = new vector< GPUData< float > * >(1);
 
-	readLOFAR(headerFilename, rawFilename, observation, *input);
+	readLOFAR(headerFilename, rawFilename, observation, *input, nrOutputSeconds, firstSecond);
 
 	// Print some statistics
 	cout << fixed << setprecision(3) << endl;
@@ -95,11 +95,6 @@ int main(int argc, char *argv[]) {
 	cout << "Max sample: \t\t" << observation.getMaxValue() << endl;
 	cout << endl;	
 
-	if ( (firstSecond + nrOutputSeconds) > observation.getNrSeconds() ) {
-		cerr << "It is not possible to output more seconds than " << observation.getNrSeconds() << "." << endl;
-		return 1;
-	}
-
 	// Plot the output
 	float minSample = numeric_limits< float >::max();
 	float maxSample = numeric_limits< float >::min();
@@ -111,9 +106,9 @@ int main(int argc, char *argv[]) {
 	
 	oFile.open(outFilename.c_str());
 	oFile << fixed;
-	for ( unsigned int second = firstSecond; second < firstSecond + nrOutputSeconds; second++ ) {
+	for ( unsigned int second = 0; second < observation.getNrSeconds(); second++ ) {
 		for ( unsigned int sample = 0; sample < observation.getNrSamplesPerSecond(); sample++ ) {
-			long long unsigned int element = ((second - firstSecond) * observation.getNrSamplesPerSecond()) + sample;
+			long long unsigned int element = (second * observation.getNrSamplesPerSecond()) + sample;
 			float oSample = 0.0f;
 
 			for ( unsigned int channel = 0; channel < observation.getNrChannels(); channel++ ) {
@@ -139,7 +134,7 @@ int main(int argc, char *argv[]) {
 				vCur = vOld + ((oSample - aOld) * (oSample - aCur));
 			}
 
-			oFile << setprecision(6) << ((second * observation.getNrSamplesPerSecond()) + sample) * observation.getSamplingRate() << " " << setprecision(3) << oSample << endl;
+			oFile << setprecision(6) << (((second + firstSecond) * observation.getNrSamplesPerSecond()) + sample) * observation.getSamplingRate() << " " << setprecision(3) << oSample << endl;
 		}
 	}
 	oFile.close();
@@ -147,8 +142,7 @@ int main(int argc, char *argv[]) {
 	cout << "Min: \t\t\t" << minSample << endl;
 	cout << "Max: \t\t\t" << maxSample << endl;
 	cout << "Average: \t\t" << aCur << endl;
-	//cout << "Variance: \t\t" << vCur / (nrOutputSeconds * observation.getNrSamplesPerSecond()) << endl;
-	cout << "Standard deviation: \t" << sqrt(vCur / (nrOutputSeconds * observation.getNrSamplesPerSecond())) << endl;
+	cout << "Standard deviation: \t" << sqrt(vCur / (observation.getNrSeconds() * observation.getNrSamplesPerSecond())) << endl;
 	cout << endl;
 
 	return 0;
