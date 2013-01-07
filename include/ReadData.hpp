@@ -48,13 +48,13 @@ using isa::utils::changeEndianness;
 
 namespace AstroData {
 
-template< typename T > void readSIGPROC(Observation< T > &observation, unsigned int bytestoSkip, string inputFilename, vector< GPUData< T > * > &data);
-template< typename T > void readLOFAR(string headerFilename, string rawFilename, Observation< T > &observation, vector< GPUData< T > * > &data);
+template< typename T > void readSIGPROC(Observation< T > &observation, unsigned int bytestoSkip, string inputFilename, vector< GPUData< T > * > &data, unsigned int firstSecond = 0);
+template< typename T > void readLOFAR(string headerFilename, string rawFilename, Observation< T > &observation, vector< GPUData< T > * > &data, unsigned int nrSeconds = 1, unsigned int firstSecond = 0);
 
 
 // Implementation
 
-template< typename T > void readSIGPROC(Observation< T > &observation, unsigned int bytesToSkip, string inputFilename, vector< GPUData< T > * > &data) {
+template< typename T > void readSIGPROC(Observation< T > &observation, unsigned int bytesToSkip, string inputFilename, vector< GPUData< T > * > &data, unsigned int firstSecond) {
 	ifstream inputFile;
 	const unsigned int BUFFER_DIM = 4;
 	char *buffer = new char [BUFFER_DIM];
@@ -62,6 +62,7 @@ template< typename T > void readSIGPROC(Observation< T > &observation, unsigned 
 	inputFile.open(inputFilename.c_str());
 	inputFile.sync_with_stdio(false);
 	inputFile.ignore(bytesToSkip);
+	inputFile.seekg(firstSecond * observation.getNrSamplesPerSecond(), ios::beg);
 	for ( unsigned int second = 0; second < observation.getNrSeconds(); second++ ) {
 		data.at(second) = new GPUData< T >("second" + toStringValue< unsigned int >(second), true, true);
 		(data.at(second))->allocateHostData(observation.getNrSamplesPerPaddedSecond() * observation.getNrChannels());
@@ -79,7 +80,7 @@ template< typename T > void readSIGPROC(Observation< T > &observation, unsigned 
 }
 
 
-template< typename T > void readLOFAR(string headerFilename, string rawFilename, Observation< T > &observation, vector< GPUData< T > * > &data) {
+template< typename T > void readLOFAR(string headerFilename, string rawFilename, Observation< T > &observation, vector< GPUData< T > * > &data, unsigned int nrSeconds, unsigned int firstSecond) {
 	unsigned int totalSamples = 0;
 	unsigned int nrSubbands = 0;
 	unsigned int nrChannels = 0;
@@ -118,7 +119,12 @@ template< typename T > void readLOFAR(string headerFilename, string rawFilename,
 	headerFile.close();
 	
 	observation.setNrSamplesPerSecond(static_cast< unsigned int >(totalSamples / totalIntegrationTime));
-	observation.setNrSeconds(static_cast< unsigned int >(totalIntegrationTime));
+	if ( static_cast< unsigned int >(totalIntegrationTime) > (firstSecond + nrSeconds) ) {
+		observation.setNrSeconds(nrSeconds);
+	}
+	else {
+		observation.setNrSeconds(static_cast< unsigned int >(totalIntegrationTime));
+	}
 	if ( (observation.getNrSamplesPerSecond() % 4) != 0 ) {
 		observation.setNrSamplesPerPaddedSecond(observation.getNrSamplesPerSecond() + (4 - (observation.getNrSamplesPerSecond() % 4)));
 	}
@@ -137,6 +143,7 @@ template< typename T > void readLOFAR(string headerFilename, string rawFilename,
 	ifstream rawFile;
 	rawFile.open(rawFilename.c_str(), ios::binary);
 	rawFile.sync_with_stdio(false);
+	rawFile.seekg(firstSecond * observation.getNrSamplesPerSecond(), ios::beg);
 		
 	data.resize(observation.getNrSeconds());
 	

@@ -79,7 +79,7 @@ int main(int argc, char *argv[]) {
 	Observation< float > observation("LOFAR", "float");
 	vector< GPUData< float > * > *input = new vector< GPUData< float > * >(1);
 
-	readLOFAR(headerFilename, rawFilename, observation, *input);
+	readLOFAR(headerFilename, rawFilename, observation, *input, nrOutputSeconds, firstSecond);
 
 	// Print some statistics
 	cout << fixed << setprecision(3) << endl;
