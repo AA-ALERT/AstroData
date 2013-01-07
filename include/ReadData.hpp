@@ -62,7 +62,7 @@ template< typename T > void readSIGPROC(Observation< T > &observation, unsigned 
 	inputFile.open(inputFilename.c_str());
 	inputFile.sync_with_stdio(false);
 	inputFile.ignore(bytesToSkip);
-	inputFile.seekg(firstSecond * observation.getNrSamplesPerSecond(), ios::beg);
+	inputFile.seekg(firstSecond * observation.getNrChannels() * observation.getNrSamplesPerSecond(), ios::beg);
 	for ( unsigned int second = 0; second < observation.getNrSeconds(); second++ ) {
 		data.at(second) = new GPUData< T >("second" + toStringValue< unsigned int >(second), true, true);
 		(data.at(second))->allocateHostData(observation.getNrSamplesPerPaddedSecond() * observation.getNrChannels());
@@ -143,7 +143,7 @@ template< typename T > void readLOFAR(string headerFilename, string rawFilename,
 	ifstream rawFile;
 	rawFile.open(rawFilename.c_str(), ios::binary);
 	rawFile.sync_with_stdio(false);
-	rawFile.seekg(firstSecond * observation.getNrSamplesPerSecond(), ios::beg);
+	rawFile.seekg(firstSecond * observation.getNrSamplesPerSecond() * nrSubbands * nrChannels, ios::beg);
 		
 	data.resize(observation.getNrSeconds());
 	

@@ -97,10 +97,6 @@ int main(int argc, char *argv[]) {
 	cout << "Max sample: \t\t" << observation.getMaxValue() << endl;
 	cout << endl;	
 
-	if ( (firstSecond + nrOutputSeconds) > observation.getNrSeconds() ) {
-		cerr << "It is not possible to output more seconds than " << observation.getNrSeconds() << "." << endl;
-		return 1;
-	}
 	if ( channel >= observation.getNrChannels() ) {
 		cerr << "It is not possible to print channel " << channel << "." << endl;
 		return 1;
@@ -117,7 +113,7 @@ int main(int argc, char *argv[]) {
 	
 	oFile.open(outFilename.c_str());
 	oFile << fixed;
-	for ( unsigned int second = firstSecond; second < firstSecond + nrOutputSeconds; second++ ) {
+	for ( unsigned int second = 0; second < observation.getNrSeconds(); second++ ) {
 		for ( unsigned int sample = 0; sample < observation.getNrSamplesPerSecond(); sample++ ) {
 			long long unsigned int element = ((second - firstSecond) * observation.getNrSamplesPerSecond()) + sample;
 			float oSample = (input->at(second)->getHostData())[(channel * observation.getNrSamplesPerPaddedSecond()) + sample];
