@@ -56,7 +56,7 @@ int main(int argc, char *argv[]) {
 	unsigned int channel = 0;
 
 	// Parse command line
-	if ( argc != 11 ) {
+	if ( argc != 13 ) {
 		cerr << "Usage: " << argv[0] << " -hf <header_file> -rf <raw_file> -of <output_file> -fs <first_second> -os <output_seconds> -ch <channel>" << endl;
 		return 1;
 	}
