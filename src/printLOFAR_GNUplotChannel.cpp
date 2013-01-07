@@ -115,7 +115,7 @@ int main(int argc, char *argv[]) {
 	oFile << fixed;
 	for ( unsigned int second = 0; second < observation.getNrSeconds(); second++ ) {
 		for ( unsigned int sample = 0; sample < observation.getNrSamplesPerSecond(); sample++ ) {
-			long long unsigned int element = ((second - firstSecond) * observation.getNrSamplesPerSecond()) + sample;
+			long long unsigned int element = (second * observation.getNrSamplesPerSecond()) + sample;
 			float oSample = (input->at(second)->getHostData())[(channel * observation.getNrSamplesPerPaddedSecond()) + sample];
 
 			if ( oSample < minSample ) {
@@ -146,7 +146,7 @@ int main(int argc, char *argv[]) {
 	cout << "Max: \t\t\t" << maxSample << endl;
 	cout << "Average: \t\t" << aCur << endl;
 	//cout << "Variance: \t\t" << vCur / (nrOutputSeconds * observation.getNrSamplesPerSecond()) << endl;
-	cout << "Standard deviation: \t" << sqrt(vCur / (nrOutputSeconds * observation.getNrSamplesPerSecond())) << endl;
+	cout << "Standard deviation: \t" << sqrt(vCur / (observation.getNrSeconds() * observation.getNrSamplesPerSecond())) << endl;
 	cout << endl;
 
 	return 0;
