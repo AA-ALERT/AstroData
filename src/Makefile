@@ -3,13 +3,16 @@ debug		:= 0
 include		../Makefile.inc
 
 
-all: clean printSIGPROC printLOFAR_GNUplot printLOFAR_Image printLOFARChannels
+all: clean printSIGPROC printLOFAR_GNUplot printLOFAR_GNUplotChannel printLOFAR_Image printLOFARChannels
  
 printSIGPROC: printSIGPROC.cpp
 	$(LINKER) -o $(PROJ_BASE)/bin/printSIGPROC printSIGPROC.cpp $(UTILS_SRC) $(INCLUDES) $(LIBS) $(CFLAGS) $(LDFLAGS) 
 
 printLOFAR_GNUplot: printLOFAR_GNUplot.cpp
 	$(LINKER) -o $(PROJ_BASE)/bin/printLOFAR_GNUplot printLOFAR_GNUplot.cpp $(UTILS_SRC) $(INCLUDES) $(LIBS) $(CFLAGS) $(LDFLAGS) 
+
+printLOFAR_GNUplotChannel: printLOFAR_GNUplotChannel.cpp
+	$(LINKER) -o $(PROJ_BASE)/bin/printLOFAR_GNUplotChannel printLOFAR_GNUplotChannel.cpp $(UTILS_SRC) $(INCLUDES) $(LIBS) $(CFLAGS) $(LDFLAGS) 
 
 printLOFAR_Image: printLOFAR_Image.cpp
 	$(LINKER) -o $(PROJ_BASE)/bin/printLOFAR_Image printLOFAR_Image.cpp $(UTILS_SRC) $(INCLUDES) $(LIBS) $(CFLAGS) $(LDFLAGS) -lX11
