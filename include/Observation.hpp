@@ -153,7 +153,7 @@ template< typename T > Observation< T >::~Observation() {
 	delete [] stdDev;
 }
 
-template< typename T > Observation< T >::setPadding(unsigned int pad) {
+template< typename T > inline void Observation< T >::setPadding(unsigned int pad) {
 	padding = pad;
 }
 
