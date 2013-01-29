@@ -22,7 +22,6 @@
 #include <string>
 #include <cmath>
 #include <H5Cpp.h>
-
 using std::ios;
 using std::string;
 using std::ifstream;
@@ -37,7 +36,6 @@ using H5::IntType;
 #include <Observation.hpp>
 #include <GPUData.hpp>
 #include <utils.hpp>
-
 using isa::OpenCL::GPUData;
 using isa::utils::toStringValue;
 using isa::utils::changeEndianness;
@@ -125,15 +123,15 @@ template< typename T > void readLOFAR(string headerFilename, string rawFilename,
 	else {
 		observation.setNrSeconds(static_cast< unsigned int >(totalIntegrationTime) - firstSecond);
 	}
-	if ( (observation.getNrSamplesPerSecond() % 4) != 0 ) {
-		observation.setNrSamplesPerPaddedSecond(observation.getNrSamplesPerSecond() + (4 - (observation.getNrSamplesPerSecond() % 4)));
+	if ( (observation.getNrSamplesPerSecond() % observation.getPadding()) != 0 ) {
+		observation.setNrSamplesPerPaddedSecond(observation.getNrSamplesPerSecond() + (observation.getPadding() - (observation.getNrSamplesPerSecond() % observation.getPadding())));
 	}
 	else {
 		observation.setNrSamplesPerPaddedSecond(observation.getNrSamplesPerSecond());
 	}
 	observation.setNrChannels(nrChannels * nrSubbands);
-	if ( (observation.getNrChannels() % 4) != 0 ) {
-		observation.setNrPaddedChannels(observation.getNrChannels() + (4 - (observation.getNrChannels() % 4)));
+	if ( (observation.getNrChannels() % observation.getPadding()) != 0 ) {
+		observation.setNrPaddedChannels(observation.getNrChannels() + (observation.getPadding() - (observation.getNrChannels() % observation.getPadding())));
 	}
 	else {
 		observation.setNrPaddedChannels(observation.getNrChannels());
