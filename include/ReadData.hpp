@@ -62,7 +62,8 @@ template< typename T > void readSIGPROC(Observation< T > &observation, unsigned 
 	inputFile.ignore(bytesToSkip);
 	inputFile.seekg(firstSecond * observation.getNrChannels() * observation.getNrSamplesPerSecond(), ios::beg);
 	for ( unsigned int second = 0; second < observation.getNrSeconds(); second++ ) {
-		data.at(second) = new CLData< T >("second" + toStringValue< unsigned int >(second), true, true);
+		data.at(second) = new CLData< T >("second" + toStringValue< unsigned int >(second), true);
+		(data.at(second))->setDeviceReadOnly();
 		(data.at(second))->allocateHostData(observation.getNrSamplesPerPaddedSecond() * observation.getNrChannels());
 		
 		for ( unsigned int sample = 0; sample < observation.getNrSamplesPerSecond(); sample++ ) {
@@ -138,7 +139,8 @@ template< typename T > void readLOFAR(string headerFilename, string rawFilename,
 	double *vOld = new double [nrSubbands * nrChannels];
 
 	for ( unsigned int second = 0; second < observation.getNrSeconds(); second++ ) {
-		data.at(second) = new CLData< T >("second" + toStringValue< unsigned int >(second), true, true);
+		data.at(second) = new CLData< T >("second" + toStringValue< unsigned int >(second), true);
+		(data.at(second))->setDeviceReadOnly();
 		(data.at(second))->allocateHostData(observation.getNrChannels() * observation.getNrSamplesPerPaddedSecond());
 		for ( unsigned int sample = 0; sample < observation.getNrSamplesPerSecond(); sample++ ) {
 			for ( unsigned int subband = 0; subband < nrSubbands; subband++ ) {
