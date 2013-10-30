@@ -47,7 +47,7 @@ using isa::utils::changeEndianness;
 namespace AstroData {
 
 template< typename T > void readSIGPROC(Observation< T > &observation, unsigned int bytestoSkip, string inputFilename, vector< CLData< T > * > &data, unsigned int firstSecond = 0);
-template< typename T > void readLOFAR(string headerFilename, string rawFilename, Observation< T > &observation, vector< CLData< T > * > &data, unsigned int nrSeconds = 1, unsigned int firstSecond = 0);
+template< typename T > void readLOFAR(string headerFilename, string rawFilename, Observation< T > &observation, vector< CLData< T > * > &data, unsigned int nrSeconds = 0, unsigned int firstSecond = 0);
 
 
 // Implementation
@@ -118,13 +118,15 @@ template< typename T > void readLOFAR(string headerFilename, string rawFilename,
 	headerFile.close();
 	
 	observation.setNrSamplesPerSecond(static_cast< unsigned int >(totalSamples / totalIntegrationTime));
-	if ( static_cast< unsigned int >(totalIntegrationTime) >= (firstSecond + nrSeconds) ) {
-		observation.setNrSeconds(nrSeconds);
+	if ( nrSeconds == 0 ) {
+		observation.setNrSeconds(static_cast< unsigned int >(totalIntegrationTime))
+	} else {
+		if ( static_cast< unsigned int >(totalIntegrationTime) >= (firstSecond + nrSeconds) ) {
+			observation.setNrSeconds(nrSeconds);
+		} else {
+			observation.setNrSeconds(static_cast< unsigned int >(totalIntegrationTime) - firstSecond);
+		}
 	}
-	else {
-		observation.setNrSeconds(static_cast< unsigned int >(totalIntegrationTime) - firstSecond);
-	}
-	
 	observation.setNrChannels(nrChannels * nrSubbands);
 			
 	// Read the raw file with the actual data
