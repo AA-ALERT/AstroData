@@ -62,6 +62,7 @@ public:
 	// Periods
 			void 				setNrPeriods(unsigned int periods);
 			void 				setNrBins(unsigned int bins);
+	inline 	void				setBasePeriod(unsigned int period);
 	inline 	void 				setFirstPeriod(unsigned int period);
 	inline 	void 				setPeriodStep(unsigned int step);
 
@@ -102,6 +103,7 @@ public:
 	inline 	unsigned int 		getNrPaddedPeriods() const;
 	inline 	unsigned int 		getNrBins() const;
 	inline 	unsigned int 		getNrPaddedBins() const;
+	inline 	unsigned int 		getBasePeriod() const;
 	inline 	unsigned int 		getFirstPeriod() const;
 	inline 	unsigned int 		getPeriodStep() const;
 
@@ -138,6 +140,7 @@ private:
 			unsigned int 		nrPaddedPeriods;
 			unsigned int 		nrBins;
 			unsigned int 		nrPaddedBins;
+			unsigned int 		basePeriod;
 			unsigned int 		firstPeriod;
 			unsigned int 		periodStep;
 };
@@ -145,7 +148,7 @@ private:
 
 // Implementation
 
-template< typename T > Observation< T >::Observation(string name, string dataType) : name(name), dataType(dataType), padding(1), nrSeconds(0), nrStations(0), nrBeams(0), nrSamplesPerSecond(0), samplingRate(0.0f), nrSamplesPerPaddedSecond(0), nrChannels(0), nrPaddedChannels(0), minFreq(0.0f), maxFreq(0.0f), channelBandwidth(0.0f), minValue(numeric_limits< T >::max()), maxValue(numeric_limits< T >::min()), average(0), variance(0), stdDev(0), nrDMs(0), nrPaddedDMs(0), firstDM(0.0f), DMStep(0.0f), nrPeriods(0), nrPaddedPeriods(0), nrBins(0), nrPaddedBins(0), firstPeriod(0), periodStep(0) {}
+template< typename T > Observation< T >::Observation(string name, string dataType) : name(name), dataType(dataType), padding(1), nrSeconds(0), nrStations(0), nrBeams(0), nrSamplesPerSecond(0), samplingRate(0.0f), nrSamplesPerPaddedSecond(0), nrChannels(0), nrPaddedChannels(0), minFreq(0.0f), maxFreq(0.0f), channelBandwidth(0.0f), minValue(numeric_limits< T >::max()), maxValue(numeric_limits< T >::min()), average(0), variance(0), stdDev(0), nrDMs(0), nrPaddedDMs(0), firstDM(0.0f), DMStep(0.0f), nrPeriods(0), nrPaddedPeriods(0), nrBins(0), nrPaddedBins(0), basePeriod(0), firstPeriod(0), periodStep(0) {}
 
 template< typename T > Observation< T >::~Observation() {
 	delete [] average;
@@ -268,6 +271,10 @@ template< typename T > void Observation< T >::setNrBins(unsigned int bins) {
 	}
 }
 
+template< typename T > inline void Observation< T >::setBasePeriod(unsigned int period) {
+	basePeriod = period;
+}
+
 template< typename T > inline void Observation< T >::setFirstPeriod(unsigned int period) {
 	firstPeriod = period;
 }
@@ -382,6 +389,10 @@ template< typename T > inline unsigned int Observation< T >::getNrBins() const {
 
 template< typename T > inline unsigned int Observation< T >::getNrPaddedBins() const {
 	return nrPaddedBins;
+}
+
+template< typename T > inline unsigned int Observation< T >::getBasePeriod() const {
+	return basePeriod;
 }
 
 template< typename T > inline unsigned int Observation< T >::getFirstPeriod() const {
