@@ -119,7 +119,7 @@ template< typename T > void readLOFAR(string headerFilename, string rawFilename,
 	
 	observation.setNrSamplesPerSecond(static_cast< unsigned int >(totalSamples / totalIntegrationTime));
 	if ( nrSeconds == 0 ) {
-		observation.setNrSeconds(static_cast< unsigned int >(totalIntegrationTime))
+		observation.setNrSeconds(static_cast< unsigned int >(totalIntegrationTime));
 	} else {
 		if ( static_cast< unsigned int >(totalIntegrationTime) >= (firstSecond + nrSeconds) ) {
 			observation.setNrSeconds(nrSeconds);
