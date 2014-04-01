@@ -29,13 +29,15 @@ using std::string;
 using isa::utils::ArgumentList;
 #include <Observation.hpp>
 using AstroData::Observation;
+#include <CLData.hpp>
+using isa::OpenCL::CLData;
 #include <ReadData.hpp>
 using AstroData::readSIGPROC;
 
 
 int main(int argc, char *argv[]) {
   unsigned int bytesToSkip = 0;
-  Observation< int > obs("SIGPROC", "int");
+  Observation< float > obs("SIGPROC", "int");
   string dataFile;
 
   try {
@@ -47,17 +49,17 @@ int main(int argc, char *argv[]) {
     obs.setNrChannels(args.getSwitchArgument< unsigned int >("-channels"));
     obs.setNrSamplesPerSecond(args.getSwitchArgument< unsigned int >("-samples"));
   } catch ( exception &err ) {
-    cerr << e.what() << endl;
+    cerr << err.what() << endl;
     return 1;
   }
 
-  vector< CLData< dataType > * > * input = new vector< CLData< dataType > * >(obs.getNrSeconds());
+  vector< CLData< float > * > * input = new vector< CLData< float > * >(obs.getNrSeconds());
   readSIGPROC(obs, bytesToSkip, dataFile, *input);
 
   for ( unsigned int second = 0; second < obs.getNrSeconds(); second++ ) {
     for ( unsigned int channel = 0; channel < obs.getNrChannels(); channel++ ) {
       for ( unsigned int sample = 0; sample < obs.getNrSamplesPerSecond(); sample++ ) {
-        cout << ;
+        cout << (*input->at(second))[(channel * obs.getNrSamplesPerPaddedSecond()) + sample] << " ";
       }
       cout << endl;
     }
