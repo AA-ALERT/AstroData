@@ -46,26 +46,25 @@ using isa::utils::changeEndianness;
 
 namespace AstroData {
 
-template< typename T > void readSIGPROC(Observation< T > &observation, unsigned int bytestoSkip, string inputFilename, vector< CLData< T > * > &data, unsigned int firstSecond = 0);
-template< typename T > void readLOFAR(string headerFilename, string rawFilename, Observation< T > &observation, vector< CLData< T > * > &data, unsigned int nrSeconds = 0, unsigned int firstSecond = 0);
+template< typename T > void readSIGPROC(Observation< T > & observation, unsigned int bytestoSkip, string inputFilename, vector< CLData< T > * > & data, unsigned int firstSecond = 0);
+template< typename T > void readLOFAR(string headerFilename, string rawFilename, Observation< T > &observation, vector< CLData< T > * > & data, unsigned int nrSeconds = 0, unsigned int firstSecond = 0);
 
 
 // Implementation
 
-template< typename T > void readSIGPROC(Observation< T > &observation, unsigned int bytesToSkip, string inputFilename, vector< CLData< T > * > &data, unsigned int firstSecond) {
+template< typename T > void readSIGPROC(Observation< T > & observation, unsigned int bytesToSkip, string inputFilename, vector< CLData< T > * > & data, unsigned int firstSecond) {
 	ifstream inputFile;
 	const unsigned int BUFFER_DIM = 4;
-	char *buffer = new char [BUFFER_DIM];
+	char * buffer = new char [BUFFER_DIM];
 
-	inputFile.open(inputFilename.c_str());
+	inputFile.open(inputFilename.c_str(), ios::binary);
 	inputFile.sync_with_stdio(false);
 	inputFile.ignore(bytesToSkip);
-	inputFile.seekg(firstSecond * observation.getNrChannels() * observation.getNrSamplesPerSecond(), ios::beg);
 	for ( unsigned int second = 0; second < observation.getNrSeconds(); second++ ) {
 		data.at(second) = new CLData< T >("second" + toStringValue< unsigned int >(second), true);
 		(data.at(second))->setDeviceReadOnly();
 		(data.at(second))->allocateHostData(observation.getNrSamplesPerPaddedSecond() * observation.getNrChannels());
-		
+
 		for ( unsigned int sample = 0; sample < observation.getNrSamplesPerSecond(); sample++ ) {
 			for ( unsigned int channel = observation.getNrChannels(); channel > 0; channel-- ) {
 				inputFile.read(buffer, BUFFER_DIM);
@@ -79,11 +78,11 @@ template< typename T > void readSIGPROC(Observation< T > &observation, unsigned 
 }
 
 
-template< typename T > void readLOFAR(string headerFilename, string rawFilename, Observation< T > &observation, vector< CLData< T > * > &data, unsigned int nrSeconds, unsigned int firstSecond) {
+template< typename T > void readLOFAR(string headerFilename, string rawFilename, Observation< T > &observation, vector< CLData< T > * > & data, unsigned int nrSeconds, unsigned int firstSecond) {
 	unsigned int totalSamples = 0;
 	unsigned int nrSubbands = 0;
 	unsigned int nrChannels = 0;
-	char *word = new char[4];
+	char * word = new char[4];
 	double totalIntegrationTime = 0.0;
 
 	// Read the HDF5 file with the metadata
@@ -116,7 +115,7 @@ template< typename T > void readLOFAR(string headerFilename, string rawFilename,
 	currentData.openAttribute("NOF_SUBBANDS").read(typeUInt, reinterpret_cast< void * >(&valueUInt));
 	nrSubbands = valueUInt;
 	headerFile.close();
-	
+
 	observation.setNrSamplesPerSecond(static_cast< unsigned int >(totalSamples / totalIntegrationTime));
 	if ( nrSeconds == 0 ) {
 		observation.setNrSeconds(static_cast< unsigned int >(totalIntegrationTime));
@@ -128,15 +127,15 @@ template< typename T > void readLOFAR(string headerFilename, string rawFilename,
 		}
 	}
 	observation.setNrChannels(nrChannels * nrSubbands);
-			
+
 	// Read the raw file with the actual data
 	ifstream rawFile;
 	rawFile.open(rawFilename.c_str(), ios::binary);
 	rawFile.sync_with_stdio(false);
 	rawFile.seekg(firstSecond * observation.getNrSamplesPerSecond() * nrSubbands * nrChannels, ios::beg);
-		
+
 	data.resize(observation.getNrSeconds());
-	
+
 	double *aOld = new double [nrSubbands * nrChannels];
 	double *vOld = new double [nrSubbands * nrChannels];
 

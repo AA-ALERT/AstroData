@@ -57,8 +57,8 @@ int main(int argc, char *argv[]) {
   readSIGPROC(obs, bytesToSkip, dataFile, *input);
 
   for ( unsigned int second = 0; second < obs.getNrSeconds(); second++ ) {
-    for ( unsigned int channel = 0; channel < obs.getNrChannels(); channel++ ) {
-      for ( unsigned int sample = 0; sample < obs.getNrSamplesPerSecond(); sample++ ) {
+    for ( unsigned int sample = 0; sample < obs.getNrSamplesPerSecond(); sample++ ) {
+      for ( int channel = obs.getNrChannels() - 1; channel >= 0; channel-- ) {
         cout << (*input->at(second))[(channel * obs.getNrSamplesPerPaddedSecond()) + sample] << " ";
       }
       cout << endl;
