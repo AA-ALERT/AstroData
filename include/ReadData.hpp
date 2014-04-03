@@ -33,7 +33,7 @@ using H5::IntType;
 #include <utils.hpp>
 using isa::OpenCL::CLData;
 using isa::utils::toStringValue;
-using isa::utils::changeEndianness;
+using isa::utils::bigEndianToLittleEndian;
 
 
 #ifndef READ_DATA_HPP
@@ -54,7 +54,7 @@ template< typename T > void readSIGPROC(Observation< T > & observation, unsigned
 
 	inputFile.open(inputFilename.c_str(), ios::binary);
 	inputFile.sync_with_stdio(false);
-	inputFile.ignore(bytesToSkip);
+	inputFile.seekg(bytesToSkip, ios::beg);
 	for ( unsigned int second = 0; second < observation.getNrSeconds(); second++ ) {
 		data.at(second) = new CLData< T >("second" + toStringValue< unsigned int >(second), true);
 		(data.at(second))->setDeviceReadOnly();
@@ -63,7 +63,7 @@ template< typename T > void readSIGPROC(Observation< T > & observation, unsigned
 		for ( unsigned int sample = 0; sample < observation.getNrSamplesPerSecond(); sample++ ) {
 			for ( unsigned int channel = observation.getNrChannels(); channel > 0; channel-- ) {
 				inputFile.read(buffer, BUFFER_DIM);
-				((data.at(second))->getHostData())[((channel - 1) * observation.getNrSamplesPerPaddedSecond()) + sample] = *(reinterpret_cast< T * >(buffer));
+				(data.at(second))->setHostDataItem((static_cast< long long unsigned int >(channel - 1) * observation.getNrSamplesPerPaddedSecond()) + sample, *(reinterpret_cast< T * >(buffer)));
 			}
 		}
 	}
@@ -74,12 +74,6 @@ template< typename T > void readSIGPROC(Observation< T > & observation, unsigned
 
 
 template< typename T > void readLOFAR(string headerFilename, string rawFilename, Observation< T > &observation, vector< CLData< T > * > & data, unsigned int nrSeconds, unsigned int firstSecond) {
-	unsigned int totalSamples = 0;
-	unsigned int nrSubbands = 0;
-	unsigned int nrChannels = 0;
-	char * word = new char[4];
-	double totalIntegrationTime = 0.0;
-
 	// Read the HDF5 file with the metadata
 	H5File headerFile = H5File(headerFilename, H5F_ACC_RDONLY);
 	FloatType typeDouble = FloatType(H5::PredType::NATIVE_DOUBLE);
@@ -94,21 +88,21 @@ template< typename T > void readLOFAR(string headerFilename, string rawFilename,
 	observation.setMinFreq(valueDouble);
 	currentNode = currentNode.openGroup(currentNode.getObjnameByIdx(0));
 	currentNode.openAttribute("TOTAL_INTEGRATION_TIME").read(typeDouble, reinterpret_cast< void * >(&valueDouble));
-	totalIntegrationTime = valueDouble;
+	double totalIntegrationTime = valueDouble;
 	currentNode.openAttribute("NOF_BEAMS").read(typeUInt, reinterpret_cast< void * >(&valueUInt));
 	observation.setNrBeams(valueUInt);
 	currentNode = currentNode.openGroup(currentNode.getObjnameByIdx(0));
 	currentNode.openAttribute("NOF_SAMPLES").read(typeUInt, reinterpret_cast< void * >(&valueUInt));
-	totalSamples = valueUInt;
+	unsigned int totalSamples = valueUInt;
 	currentNode.openAttribute("NOF_STATIONS").read(typeUInt, reinterpret_cast< void * >(&valueUInt));
 	observation.setNrStations(valueUInt);
 	currentNode.openAttribute("CHANNELS_PER_SUBBAND").read(typeUInt, reinterpret_cast< void * >(&valueUInt));
-	nrChannels = valueUInt;
+	unsigned int nrChannels = valueUInt;
 	currentNode.openAttribute("CHANNEL_WIDTH").read(typeDouble, reinterpret_cast< void * >(&valueDouble));
 	observation.setChannelBandwidth(valueDouble / 1000000);
 	DataSet currentData = currentNode.openDataSet("STOKES_0");
 	currentData.openAttribute("NOF_SUBBANDS").read(typeUInt, reinterpret_cast< void * >(&valueUInt));
-	nrSubbands = valueUInt;
+	unsigned int nrSubbands = valueUInt;
 	headerFile.close();
 
 	observation.setNrSamplesPerSecond(static_cast< unsigned int >(totalSamples / totalIntegrationTime));
@@ -127,13 +121,12 @@ template< typename T > void readLOFAR(string headerFilename, string rawFilename,
 	ifstream rawFile;
 	rawFile.open(rawFilename.c_str(), ios::binary);
 	rawFile.sync_with_stdio(false);
-	rawFile.seekg(firstSecond * observation.getNrSamplesPerSecond() * nrSubbands * nrChannels, ios::beg);
-
+	if ( firstSecond > 0 ) {
+		rawFile.seekg(firstSecond * observation.getNrSamplesPerSecond() * nrSubbands * nrChannels, ios::beg);
+	}
 	data.resize(observation.getNrSeconds());
 
-	double *aOld = new double [nrSubbands * nrChannels];
-	double *vOld = new double [nrSubbands * nrChannels];
-
+	char * word = new char [4];
 	for ( unsigned int second = 0; second < observation.getNrSeconds(); second++ ) {
 		data.at(second) = new CLData< T >("second" + toStringValue< unsigned int >(second), true);
 		(data.at(second))->setDeviceReadOnly();
@@ -141,46 +134,16 @@ template< typename T > void readLOFAR(string headerFilename, string rawFilename,
 		for ( unsigned int sample = 0; sample < observation.getNrSamplesPerSecond(); sample++ ) {
 			for ( unsigned int subband = 0; subband < nrSubbands; subband++ ) {
 				for ( unsigned int channel = 0; channel < nrChannels; channel++ ) {
-					long long unsigned int element = (second * observation.getNrSamplesPerSecond()) + sample;
-					T value = 0;
-
 					rawFile.read(word, 4);
-					changeEndianness(word);
-					value = *(reinterpret_cast< T * >(word));
+					bigEndianToLittleEndian(word);
 
-					((data.at(second))->getHostData())[(((subband * nrChannels) + channel) * observation.getNrSamplesPerPaddedSecond()) + sample] = value;
-					if ( value <  observation.getMinValue() ) {
-						observation.setMinValue(value);
-					}
-					if ( value > observation.getMaxValue() ) {
-						observation.setMaxValue(value);
-					}
-
-					if ( element == 0 ) {
-						observation.setAverage((subband * nrChannels) + channel, value);
-						observation.setVariance((subband * nrChannels) + channel, 0.0);
-					}
-					else {
-						aOld[(subband * nrChannels) + channel] = observation.getAverage((subband * nrChannels) + channel);
-						vOld[(subband * nrChannels) + channel] = observation.getVariance((subband * nrChannels) + channel);
-
-						observation.setAverage((subband * nrChannels) + channel, aOld[(subband * nrChannels) + channel] + ((value - aOld[(subband * nrChannels) + channel]) / (element + 1)));
-						observation.setVariance((subband * nrChannels) + channel, vOld[(subband * nrChannels) + channel] + ((value - aOld[(subband * nrChannels) + channel]) * (value - observation.getAverage((subband * nrChannels) + channel))));
-					}
+					(data.at(second))->setHostDataItem((static_cast< long long unsigned int >(second) * observation.getNrSamplesPerSecond()) + sample, *(reinterpret_cast< T * >(word)));
 				}
 			}
 		}
 	}
 	rawFile.close();
-
-	for ( unsigned int channel = 0; channel < observation.getNrChannels(); channel++ ) {
-		observation.setVariance(channel, observation.getVariance(channel) / (observation.getNrSeconds() * observation.getNrSamplesPerSecond()));
-		observation.setStdDev(channel, sqrt(observation.getVariance(channel)));
-	}
-
 	delete [] word;
-	delete [] aOld;
-	delete [] vOld;
 }
 
 } // AstroData
