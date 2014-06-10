@@ -50,6 +50,7 @@ public:
 	inline 	void 				setStdDev(unsigned int channel, double dev);
 
 	// Dispersion measures
+  void setNrSamplesPerDispersedChannel(unsigned int samples);
 			void 				setNrDMs(unsigned int dms);
 	inline 	void 				setFirstDM(float dm);
 	inline 	void 				setDMStep(float step);
@@ -87,6 +88,7 @@ public:
 	inline 	double 				getStdDev(unsigned int channel) const;
 
 	// Dispersion measures
+  inline unsigned int getNrSamplesPerDispersedChannel() const;
 	inline 	unsigned int 		getNrDMs() const;
 	inline 	unsigned int 		getNrPaddedDMs() const;
 	inline 	float 				getFirstDM() const;
@@ -124,6 +126,7 @@ private:
 			double *			variance;
 			double *			stdDev;
 
+      unsigned int nrSamplesPerDispersedChannel;
 			unsigned int 		nrDMs;
 			unsigned int 		nrPaddedDMs;
 			float 				firstDM;
@@ -140,7 +143,7 @@ private:
 
 // Implementation
 
-template< typename T > Observation< T >::Observation(string name, string dataType) : name(name), dataType(dataType), padding(1), nrSeconds(0), nrStations(0), nrBeams(0), nrSamplesPerSecond(0), samplingRate(0.0f), nrSamplesPerPaddedSecond(0), nrChannels(0), nrPaddedChannels(0), minFreq(0.0f), maxFreq(0.0f), channelBandwidth(0.0f), minValue(numeric_limits< T >::max()), maxValue(numeric_limits< T >::min()), average(0), variance(0), stdDev(0), nrDMs(0), nrPaddedDMs(0), firstDM(0.0f), DMStep(0.0f), nrPeriods(0), nrPaddedPeriods(0), nrBins(0), nrPaddedBins(0), firstPeriod(0), periodStep(0) {}
+template< typename T > Observation< T >::Observation(string name, string dataType) : name(name), dataType(dataType), padding(1), nrSeconds(0), nrStations(0), nrBeams(0), nrSamplesPerSecond(0), samplingRate(0.0f), nrSamplesPerPaddedSecond(0), nrChannels(0), nrPaddedChannels(0), minFreq(0.0f), maxFreq(0.0f), channelBandwidth(0.0f), minValue(numeric_limits< T >::max()), maxValue(numeric_limits< T >::min()), average(0), variance(0), stdDev(0), nrSamplesPerDispersedChannel(0), nrDMs(0), nrPaddedDMs(0), firstDM(0.0f), DMStep(0.0f), nrPeriods(0), nrPaddedPeriods(0), nrBins(0), nrPaddedBins(0), firstPeriod(0), periodStep(0) {}
 
 template< typename T > Observation< T >::~Observation() {
 	delete [] average;
@@ -220,6 +223,10 @@ template< typename T > inline void Observation< T >::setVariance(unsigned int ch
 
 template< typename T > inline void Observation< T >::setStdDev(unsigned int channel, double dev) {
 	stdDev[channel] = dev;
+}
+
+template< typename T > void Observation< T >::setNrSamplesPerDispersedChannel(unsigned int samples) {
+  nrSamplesPerDispersedChannel = isa::utils::pad(samples, padding);
 }
 
 template< typename T > void Observation< T >::setNrDMs(unsigned int dms) {
