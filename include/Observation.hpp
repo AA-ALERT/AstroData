@@ -14,8 +14,8 @@
 
 #include <string>
 #include <limits>
-using std::string;
-using std::numeric_limits;
+
+#include <utils.hpp>
 
 
 #ifndef OBSERVATION_HPP
@@ -25,7 +25,7 @@ namespace AstroData {
 
 template< typename T > class Observation {
 public:
-								Observation(string name, string dataType);
+								Observation(std::string name, std::string dataType);
 								~Observation();
 
 	inline	void				setPadding(unsigned int pad);
@@ -61,8 +61,8 @@ public:
 	inline 	void 				setFirstPeriod(unsigned int period);
 	inline 	void 				setPeriodStep(unsigned int step);
 
-	inline 	string 				getName() const;
-	inline 	string 				getDataType() const;
+	inline 	std::string 				getName() const;
+	inline 	std::string 				getDataType() const;
 	inline 	unsigned int 		getPadding() const;
 
 	// General observation parameters
@@ -103,8 +103,8 @@ public:
 	inline 	unsigned int 		getPeriodStep() const;
 
 private:
-			string 				name;
-			string 				dataType;
+			std::string 				name;
+			std::string 				dataType;
 			unsigned int 		padding;
 
 			unsigned int 		nrSeconds;
@@ -143,7 +143,7 @@ private:
 
 // Implementation
 
-template< typename T > Observation< T >::Observation(string name, string dataType) : name(name), dataType(dataType), padding(1), nrSeconds(0), nrStations(0), nrBeams(0), nrSamplesPerSecond(0), samplingRate(0.0f), nrSamplesPerPaddedSecond(0), nrChannels(0), nrPaddedChannels(0), minFreq(0.0f), maxFreq(0.0f), channelBandwidth(0.0f), minValue(numeric_limits< T >::max()), maxValue(numeric_limits< T >::min()), average(0), variance(0), stdDev(0), nrSamplesPerDispersedChannel(0), nrDMs(0), nrPaddedDMs(0), firstDM(0.0f), DMStep(0.0f), nrPeriods(0), nrPaddedPeriods(0), nrBins(0), nrPaddedBins(0), firstPeriod(0), periodStep(0) {}
+template< typename T > Observation< T >::Observation(std::string name, std::string dataType) : name(name), dataType(dataType), padding(1), nrSeconds(0), nrStations(0), nrBeams(0), nrSamplesPerSecond(0), samplingRate(0.0f), nrSamplesPerPaddedSecond(0), nrChannels(0), nrPaddedChannels(0), minFreq(0.0f), maxFreq(0.0f), channelBandwidth(0.0f), minValue(std::numeric_limits< T >::max()), maxValue(std::numeric_limits< T >::min()), average(0), variance(0), stdDev(0), nrSamplesPerDispersedChannel(0), nrDMs(0), nrPaddedDMs(0), firstDM(0.0f), DMStep(0.0f), nrPeriods(0), nrPaddedPeriods(0), nrBins(0), nrPaddedBins(0), firstPeriod(0), periodStep(0) {}
 
 template< typename T > Observation< T >::~Observation() {
 	delete [] average;
@@ -278,11 +278,11 @@ template< typename T > inline void Observation< T >::setPeriodStep(unsigned int 
 	periodStep = step;
 }
 
-template< typename T > inline string Observation< T >::getName() const {
+template< typename T > inline std::string Observation< T >::getName() const {
 	return name;
 }
 
-template< typename T > inline string Observation< T >::getDataType() const {
+template< typename T > inline std::string Observation< T >::getDataType() const {
 	return dataType;
 }
 
