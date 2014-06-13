@@ -354,6 +354,10 @@ template< typename T > inline double Observation< T >::getStdDev(unsigned int ch
 	return stdDev[channel];
 }
 
+template< typename T > inline unsigned int Observation< T >::getNrSamplesPerDispersedChannel() const {
+  return nrSamplesPerDispersedChannel;
+}
+
 template< typename T > inline unsigned int Observation< T >::getNrDMs() const {
 	return nrDMs;
 }
