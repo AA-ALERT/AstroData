@@ -72,13 +72,13 @@ public:
   void setNrSamplesPerDispersedChannel(const unsigned int samples);
 
   // Frequency parameters
-  void setFrequencyRange(const unsigned int channels, const float bandwidth, const float baseFrequency);
+  void setFrequencyRange(const unsigned int channels, const float baseFrequency, const float bandwidth);
 
   // Dispersion measures
   void setDMRange(const unsigned int dms, const float baseDM, const float step);
 
   // Periods
-  voit setPeriodRange(const unsigned int periods, const unsigned int basePeriod, const unsigned int step);
+  void setPeriodRange(const unsigned int periods, const unsigned int basePeriod, const unsigned int step);
   void setNrBins(const unsigned int bins);
 
 private:
@@ -115,258 +115,162 @@ private:
 
 // Implementation
 
-template< typename T > Observation< T >::Observation(std::string name, std::string dataType) : name(name), dataType(dataType), padding(1), nrSeconds(0), nrStations(0), nrBeams(0), nrSamplesPerSecond(0), samplingRate(0.0f), nrSamplesPerPaddedSecond(0), nrChannels(0), nrPaddedChannels(0), minFreq(0.0f), maxFreq(0.0f), channelBandwidth(0.0f), minValue(std::numeric_limits< T >::max()), maxValue(std::numeric_limits< T >::min()), average(0), variance(0), stdDev(0), nrSamplesPerDispersedChannel(0), nrDMs(0), nrPaddedDMs(0), firstDM(0.0f), DMStep(0.0f), nrPeriods(0), nrPaddedPeriods(0), nrBins(0), nrPaddedBins(0), firstPeriod(0), periodStep(0) {}
+Observation::Observation() : padding(0), nrSeconds(0), nrStations(0), nrBeams(0), samplingRate(0.0f), nrSamplesPerSecond(0), nrSamplesPerPaddedSecond(0), nrSamplesPerDispersedChannel(0), nrChannels(0), nrPaddedChannels(0), minFreq(0.0f), maxFreq(0.0f), channelBandwidth(0.0f), nrDMs(0), nrPaddedDMs(0), firstDM(0.0f), lastDM(0.0f), DMStep(0.0f), nrPeriods(0), nrPaddedPeriods(0), firstPeriod(0), lastPeriod(0), periodStep(0), nrBins(0), nrPaddedBins(0) {}
 
-template< typename T > Observation< T >::~Observation() {
-	delete [] average;
-	delete [] variance;
-	delete [] stdDev;
-}
+Observation::~Observation() {}
 
-template< typename T > inline void Observation< T >::setPadding(unsigned int pad) {
+inline void Observation::setPadding(const unsigned int pad) {
 	padding = pad;
 }
 
-template< typename T > inline void Observation< T >::setNrSeconds(unsigned int seconds) {
+inline void Observation::setNrSeconds(const unsigned int seconds) {
 	nrSeconds = seconds;
 }
 
-template< typename T > inline void Observation< T >::setNrStations(unsigned int stations) {
+inline void Observation::setNrStations(const unsigned int stations) {
 	nrStations = stations;
 }
 
-template< typename T > inline void Observation< T >::setNrBeams(unsigned int beams) {
+inline void Observation::setNrBeams(const unsigned int beams) {
 	nrBeams = beams;
 }
 
-template< typename T > void Observation< T >::setNrSamplesPerSecond(unsigned int samples) {
-	nrSamplesPerSecond = samples;
+void Observation::setNrSamplesPerSecond(const unsigned int samples) {
 	samplingRate = 1.0f / samples;
-	if ( (nrSamplesPerSecond % padding) == 0 ) {
-		nrSamplesPerPaddedSecond = nrSamplesPerSecond;
-	}
-	else {
-		nrSamplesPerPaddedSecond = nrSamplesPerSecond + (padding - (nrSamplesPerSecond % padding));
-	}
+	nrSamplesPerSecond = samples;
+  nrSamplesPerPaddedSecond = isa::utils::pad(samples, padding);
 }
 
-template< typename T > void Observation< T >::setNrChannels(unsigned int channels) {
-	nrChannels = channels;
-
-	average = new double [channels];
-	variance = new double [channels];
-	stdDev = new double [channels];
-
-	if ( (nrChannels % padding) == 0 ) {
-		nrPaddedChannels = nrChannels;
-	}
-	else {
-		nrPaddedChannels = nrChannels + (padding - (nrChannels % padding));
-	}
-}
-
-template< typename T > inline void Observation< T >::setMinFreq(float freq) {
-	minFreq = freq;
-}
-
-template< typename T > inline void Observation< T >::setMaxFreq(float freq) {
-	maxFreq = freq;
-}
-
-template< typename T > inline void Observation< T >::setChannelBandwidth(float bandwidth) {
-	channelBandwidth = bandwidth;
-}
-
-template< typename T > inline void Observation< T >::setMinValue(T value) {
-	minValue = value;
-}
-
-template< typename T > inline void Observation< T >::setMaxValue(T value) {
-	maxValue = value;
-}
-
-template< typename T > inline void Observation< T >::setAverage(unsigned int channel, double avg) {
-	average[channel] = avg;
-}
-
-template< typename T > inline void Observation< T >::setVariance(unsigned int channel, double var) {
-	variance[channel] = var;
-}
-
-template< typename T > inline void Observation< T >::setStdDev(unsigned int channel, double dev) {
-	stdDev[channel] = dev;
-}
-
-template< typename T > void Observation< T >::setNrSamplesPerDispersedChannel(unsigned int samples) {
+void Observation::setNrSamplesPerDispersedChannel(const unsigned int samples) {
   nrSamplesPerDispersedChannel = isa::utils::pad(samples, padding);
 }
 
-template< typename T > void Observation< T >::setNrDMs(unsigned int dms) {
+void Observation::setFrequencyRange(const unsigned int channels, const float baseFrequency, const float bandwidth) {
+  nrChannels = channels;
+  nrPaddedChannels = isa::utils::pad(channels, padding);
+  channelBandwidth = bandwidth;
+  minFreq = baseFrequency;
+  maxFreq = baseFrequency + ((channels - 1) * bandwidth);
+}
+
+void Observation::setDMRange(const unsigned int dms, const float baseDM, const float step) {
 	nrDMs = dms;
-
-	if ( (nrDMs % padding) == 0 ) {
-		nrPaddedDMs = nrDMs;
-	}
-	else {
-		nrPaddedDMs = nrDMs + (padding - (nrDMs % padding));
-	}
+  nrPaddedDMs = isa::utils::pad(dms, padding);
+  DMStep = step;
+  firstDM = baseDM;
+  lastDM = baseDM + ((dms - 1) * step);
 }
 
-template< typename T > inline void Observation< T >::setFirstDM(float dm) {
-	firstDM = dm;
+void Observation::setPeriodRange(const unsigned int periods, const unsigned int basePeriod, const unsigned int step) {
+  nrPeriods = periods;
+  nrPaddedPeriods = isa::utils::pad(periods, padding);
+  periodStep = step;
+  firstPeriod = basePeriod;
+  lastPeriod = basePeriod + ((periods - 1) * step);
 }
 
-template< typename T > inline void Observation< T >::setDMStep(float step) {
-	DMStep = step;
+void Observation::setNrBins(const unsigned int bins) {
+  nrBins = bins;
+  nrPaddedBins = isa::utils::pad(bins, padding);
 }
 
-template< typename T > void Observation< T >::setNrPeriods(unsigned int periods) {
-	nrPeriods = periods;
-
-	if ( (nrPeriods % padding) == 0 ) {
-		nrPaddedPeriods = nrPeriods;
-	}
-	else {
-		nrPaddedPeriods = nrPeriods + (padding - (nrPeriods % padding));
-	}
-}
-
-template< typename T > void Observation< T >::setNrBins(unsigned int bins) {
-	nrBins = bins;
-
-	if ( (nrBins % padding) == 0 ) {
-		nrPaddedBins = nrBins;
-	}
-	else {
-		nrPaddedBins = nrBins + (padding - (nrBins % padding));
-	}
-}
-
-template< typename T > inline void Observation< T >::setFirstPeriod(unsigned int period) {
-	firstPeriod = period;
-}
-
-template< typename T > inline void Observation< T >::setPeriodStep(unsigned int step) {
-	periodStep = step;
-}
-
-template< typename T > inline std::string Observation< T >::getName() const {
-	return name;
-}
-
-template< typename T > inline std::string Observation< T >::getDataType() const {
-	return dataType;
-}
-
-template< typename T > inline unsigned int Observation< T >::getPadding() const {
+inline unsigned int Observation::getPadding() const {
 	return padding;
 }
 
-template< typename T > inline unsigned int Observation< T >::getNrSeconds() const {
+inline unsigned int Observation::getNrSeconds() const {
 	return nrSeconds;
 }
 
-template< typename T > inline unsigned int Observation< T >::getNrStations() const {
+inline unsigned int Observation::getNrStations() const {
 	return nrStations;
 }
 
-template< typename T > inline unsigned int Observation< T >::getNrBeams() const {
+inline unsigned int Observation::getNrBeams() const {
 	return nrBeams;
 }
 
-template< typename T > inline unsigned int Observation< T >::getNrSamplesPerSecond() const {
+inline unsigned int Observation::getNrSamplesPerSecond() const {
 	return nrSamplesPerSecond;
 }
 
-template< typename T > inline float Observation< T >::getSamplingRate() const {
+inline float Observation::getSamplingRate() const {
 	return samplingRate;
 }
 
-template< typename T > inline unsigned int Observation< T >::getNrSamplesPerPaddedSecond() const {
+inline unsigned int Observation::getNrSamplesPerPaddedSecond() const {
 	return nrSamplesPerPaddedSecond;
 }
 
-template< typename T > inline unsigned int Observation< T >::getNrChannels() const {
+inline unsigned int Observation::getNrChannels() const {
 	return nrChannels;
 }
 
-template< typename T > inline unsigned int Observation< T >::getNrPaddedChannels() const {
+inline unsigned int Observation::getNrPaddedChannels() const {
 	return nrPaddedChannels;
 }
 
-template< typename T > inline float Observation< T >::getMinFreq() const {
+inline float Observation::getMinFreq() const {
 	return minFreq;
 }
 
-template< typename T > inline float Observation< T >::getMaxFreq() const {
+inline float Observation::getMaxFreq() const {
 	return maxFreq;
 }
 
-template< typename T > inline float Observation< T >::getChannelBandwidth() const {
+inline float Observation::getChannelBandwidth() const {
 	return channelBandwidth;
 }
 
-template< typename T > inline T Observation< T >::getMinValue() const {
-	return minValue;
-}
-
-template< typename T > inline T Observation< T >::getMaxValue() const {
-	return maxValue;
-}
-
-template< typename T > inline double Observation< T >::getAverage(unsigned int channel) const {
-	return average[channel];
-}
-
-template< typename T > inline double Observation< T >::getVariance(unsigned int channel) const {
-	return variance[channel];
-}
-
-template< typename T > inline double Observation< T >::getStdDev(unsigned int channel) const {
-	return stdDev[channel];
-}
-
-template< typename T > inline unsigned int Observation< T >::getNrSamplesPerDispersedChannel() const {
+inline unsigned int Observation::getNrSamplesPerDispersedChannel() const {
   return nrSamplesPerDispersedChannel;
 }
 
-template< typename T > inline unsigned int Observation< T >::getNrDMs() const {
+inline unsigned int Observation::getNrDMs() const {
 	return nrDMs;
 }
 
-template< typename T > inline unsigned int Observation< T >::getNrPaddedDMs() const {
+inline unsigned int Observation::getNrPaddedDMs() const {
 	return nrPaddedDMs;
 }
 
-template< typename T > inline float Observation< T >::getFirstDM() const {
+inline float Observation::getFirstDM() const {
 	return firstDM;
 }
 
-template< typename T > inline float Observation< T >::getDMStep() const {
+inlilne float Observation::getLastDM() const {
+  return lastDM;
+}
+
+inline float Observation::getDMStep() const {
 	return DMStep;
 }
 
-template< typename T > inline unsigned int Observation< T >::getNrPeriods() const {
+inline unsigned int Observation::getNrPeriods() const {
 	return nrPeriods;
 }
 
-template< typename T > inline unsigned int Observation< T >::getNrPaddedPeriods() const {
+inline unsigned int Observation::getNrPaddedPeriods() const {
 	return nrPaddedPeriods;
 }
 
-template< typename T > inline unsigned int Observation< T >::getNrBins() const {
+inline unsigned int Observation::getNrBins() const {
 	return nrBins;
 }
 
-template< typename T > inline unsigned int Observation< T >::getNrPaddedBins() const {
+inline unsigned int Observation::getNrPaddedBins() const {
 	return nrPaddedBins;
 }
 
-template< typename T > inline unsigned int Observation< T >::getFirstPeriod() const {
+inline unsigned int Observation::getFirstPeriod() const {
 	return firstPeriod;
 }
 
-template< typename T > inline unsigned int Observation< T >::getPeriodStep() const {
+inline unsigned int Observation::getLastPeriod() const {
+  return lastPeriod;
+}
+
+inline unsigned int Observation::getPeriodStep() const {
 	return periodStep;
 }
 
