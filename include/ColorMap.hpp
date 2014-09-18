@@ -330,3 +330,4 @@ inline unsigned char Color::getB() {
 } // AstroData
 
 #endif // COLOR_MAP_HPP
+
