@@ -23,121 +23,93 @@
 
 namespace AstroData {
 
-template< typename T > class Observation {
+class Observation {
 public:
-								Observation(std::string name, std::string dataType);
-								~Observation();
+  Observation();
+  ~Observation();
 
-	inline	void				setPadding(unsigned int pad);
-
-	// General observation parameters
-	inline	void 				setNrSeconds(unsigned int seconds);
-	inline 	void 				setNrStations(unsigned int nrStations);
-	inline 	void 				setNrBeams(unsigned int beams);
-			void 				setNrSamplesPerSecond(unsigned int samples);
-			void 				setNrChannels(unsigned int channels);
-
-	// Frequency parameters
-	inline 	void 				setMinFreq(float freq);
-	inline 	void 				setMaxFreq(float freq);
-	inline 	void 				setChannelBandwidth(float bandwidth);
-
-	// Statistical properties
-	inline 	void 				setMinValue(T value);
-	inline 	void 				setMaxValue(T value);
-	inline 	void 				setAverage(unsigned int channel, double avg);
-	inline 	void 				setVariance(unsigned int channel, double var);
-	inline 	void 				setStdDev(unsigned int channel, double dev);
-
-	// Dispersion measures
-  void setNrSamplesPerDispersedChannel(unsigned int samples);
-			void 				setNrDMs(unsigned int dms);
-	inline 	void 				setFirstDM(float dm);
-	inline 	void 				setDMStep(float step);
-
-	// Periods
-			void 				setNrPeriods(unsigned int periods);
-			void 				setNrBins(unsigned int bins);
-	inline 	void 				setFirstPeriod(unsigned int period);
-	inline 	void 				setPeriodStep(unsigned int step);
-
-	inline 	std::string 				getName() const;
-	inline 	std::string 				getDataType() const;
-	inline 	unsigned int 		getPadding() const;
-
-	// General observation parameters
-	inline 	unsigned int 		getNrSeconds() const;
-	inline 	unsigned int 		getNrStations() const;
-	inline 	unsigned int 		getNrBeams() const;
-	inline 	unsigned int 		getNrSamplesPerSecond() const;
-	inline 	float 				getSamplingRate() const;
-	inline 	unsigned int 		getNrSamplesPerPaddedSecond() const;
-	inline 	unsigned int 		getNrChannels() const;
-	inline 	unsigned int 		getNrPaddedChannels() const;
-
-	// Frequency parameters
-	inline 	float 				getMinFreq() const;
-	inline 	float 				getMaxFreq() const;
-	inline 	float 				getChannelBandwidth() const;
-
-	// Statistical properties
-	inline 	T 					getMinValue() const;
-	inline 	T 					getMaxValue() const;
-	inline 	double 				getAverage(unsigned int channel) const;
-	inline 	double 				getVariance(unsigned int channel) const;
-	inline 	double 				getStdDev(unsigned int channel) const;
-
-	// Dispersion measures
+  // Getters
+  // General observation parameters
+  inline unsigned int getPadding() const;
+  inline unsigned int getNrSeconds() const;
+  inline unsigned int getNrStations() const;
+  inline unsigned int getNrBeams() const;
+  inline float getSamplingRate() const;
+  inline unsigned int getNrSamplesPerSecond() const;
+  inline unsigned int getNrSamplesPerPaddedSecond() const;
   inline unsigned int getNrSamplesPerDispersedChannel() const;
-	inline 	unsigned int 		getNrDMs() const;
-	inline 	unsigned int 		getNrPaddedDMs() const;
-	inline 	float 				getFirstDM() const;
-	inline 	float 				getDMStep() const;
+
+	// Frequency parameters
+  inline unsigned int getNrChannels() const;
+  inline unsigned int getNrPaddedChannels() const;
+  inline float getMinFreq() const;
+  inline float getMaxFreq() const;
+  inline float getChannelBandwidth() const;
+
+	// Dispersion measures
+  inline unsigned int getNrDMs() const;
+  inline unsigned int getNrPaddedDMs() const;
+  inline float getFirstDM() const;
+  inline float getLastDM() const;
+  inline float getDMStep() const;
 
 	// Periods
-	inline 	unsigned int 		getNrPeriods() const;
-	inline 	unsigned int 		getNrPaddedPeriods() const;
-	inline 	unsigned int 		getNrBins() const;
-	inline 	unsigned int 		getNrPaddedBins() const;
-	inline 	unsigned int 		getFirstPeriod() const;
-	inline 	unsigned int 		getPeriodStep() const;
+  inline unsigned int getNrPeriods() const;
+  inline unsigned int getNrPaddedPeriods() const;
+  inline unsigned int getFirstPeriod() const;
+  inline unsigned int getLastPeriod() const;
+  inline unsigned int getPeriodStep() const;
+  inline unsigned int getNrBins() const;
+  inline unsigned int getNrPaddedBins() const;
+
+  // Setters
+  // General observation parameters
+  inline void setPadding(const unsigned int pad);
+  inline void setNrSeconds(const unsigned int seconds);
+  inline void setNrStations(const unsigned int stations);
+  inline void setNrBeams(const unsigned int beams);
+  void setNrSamplesPerSecond(const unsigned int samples);
+  void setNrSamplesPerDispersedChannel(const unsigned int samples);
+
+  // Frequency parameters
+  void setFrequencyRange(const unsigned int channels, const float bandwidth, const float baseFrequency);
+
+  // Dispersion measures
+  void setDMRange(const unsigned int dms, const float baseDM, const float step);
+
+  // Periods
+  voit setPeriodRange(const unsigned int periods, const unsigned int basePeriod, const unsigned int step);
+  void setNrBins(const unsigned int bins);
 
 private:
-			std::string 				name;
-			std::string 				dataType;
-			unsigned int 		padding;
+  unsigned int padding;
+  unsigned int nrSeconds;
+  unsigned int nrStations;
+  unsigned int nrBeams;
+  float samplingRate;
+  unsigned int nrSamplesPerSecond;
+  unsigned int nrSamplesPerPaddedSecond;
+  unsigned int nrSamplesPerDispersedChannel;
 
-			unsigned int 		nrSeconds;
-			unsigned int 		nrStations;
-			unsigned int 		nrBeams;
-			unsigned int 		nrSamplesPerSecond;
-			float 				samplingRate;
-			unsigned int 		nrSamplesPerPaddedSecond;
-			unsigned int 		nrChannels;
-			unsigned int 		nrPaddedChannels;
+  unsigned int nrChannels;
+  unsigned int nrPaddedChannels;
+  float minFreq;
+  float maxFreq;
+  float channelBandwidth;
 
-			float 				minFreq;
-			float				maxFreq;
-			float 				channelBandwidth;
+  unsigned int nrDMs;
+  unsigned int nrPaddedDMs;
+  float firstDM;
+  float lastDM;
+  float DMStep;
 
-			T 					minValue;
-			T 					maxValue;
-			double *			average;
-			double *			variance;
-			double *			stdDev;
-
-      unsigned int nrSamplesPerDispersedChannel;
-			unsigned int 		nrDMs;
-			unsigned int 		nrPaddedDMs;
-			float 				firstDM;
-			float 				DMStep;
-
-			unsigned int 		nrPeriods;
-			unsigned int 		nrPaddedPeriods;
-			unsigned int 		nrBins;
-			unsigned int 		nrPaddedBins;
-			unsigned int 		firstPeriod;
-			unsigned int 		periodStep;
+  unsigned int nrPeriods;
+  unsigned int nrPaddedPeriods;
+  unsigned int firstPeriod;
+  unsigned int lastPeriod;
+  unsigned int periodStep;
+  unsigned int nrBins;
+  unsigned int nrPaddedBins;
 };
 
 
@@ -401,3 +373,4 @@ template< typename T > inline unsigned int Observation< T >::getPeriodStep() con
 } // AstroData
 
 #endif // OBSERVATION_HPP
+
