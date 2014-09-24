@@ -238,7 +238,7 @@ inline float Observation::getFirstDM() const {
 	return firstDM;
 }
 
-inlilne float Observation::getLastDM() const {
+inline float Observation::getLastDM() const {
   return lastDM;
 }
 
