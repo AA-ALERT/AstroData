@@ -67,15 +67,15 @@ template< typename T > void readLOFAR(std::string headerFilename, std::string ra
 	H5::IntType typeUInt = H5::IntType(H5::PredType::NATIVE_UINT);
 	unsigned int valueUInt = 0;
 
-	H5::Group currentNode = headerFile.openH5::Group("/");
+	H5::Group currentNode = headerFile.openGroup("/");
 	currentNode.openAttribute("OBSERVATION_FREQUENCY_MIN").read(typeDouble, reinterpret_cast< void * >(&valueDouble));
   minFreq = valueDouble;
-	currentNode = currentNode.openH5::Group(currentNode.getObjnameByIdx(0));
+	currentNode = currentNode.openGroup(currentNode.getObjnameByIdx(0));
 	currentNode.openAttribute("TOTAL_INTEGRATION_TIME").read(typeDouble, reinterpret_cast< void * >(&valueDouble));
 	double totalIntegrationTime = valueDouble;
 	currentNode.openAttribute("NOF_BEAMS").read(typeUInt, reinterpret_cast< void * >(&valueUInt));
 	observation.setNrBeams(valueUInt);
-	currentNode = currentNode.openH5::Group(currentNode.getObjnameByIdx(0));
+	currentNode = currentNode.openGroup(currentNode.getObjnameByIdx(0));
 	currentNode.openAttribute("NOF_SAMPLES").read(typeUInt, reinterpret_cast< void * >(&valueUInt));
 	unsigned int totalSamples = valueUInt;
 	currentNode.openAttribute("NOF_STATIONS").read(typeUInt, reinterpret_cast< void * >(&valueUInt));
@@ -84,7 +84,7 @@ template< typename T > void readLOFAR(std::string headerFilename, std::string ra
 	nrChannels = valueUInt;
 	currentNode.openAttribute("CHANNEL_WIDTH").read(typeDouble, reinterpret_cast< void * >(&valueDouble));
   channelBandwidth = valueDouble / 1000000;
-	H5::DataSet currentData = currentNode.openH5::DataSet("STOKES_0");
+	H5::DataSet currentData = currentNode.openDataSet("STOKES_0");
 	currentData.openAttribute("NOF_SUBBANDS").read(typeUInt, reinterpret_cast< void * >(&valueUInt));
 	nrSubbands = valueUInt;
 	headerFile.close();
