@@ -47,7 +47,7 @@ template< typename T > void readSIGPROC(Observation & observation, unsigned int 
 		for ( unsigned int sample = 0; sample < observation.getNrSamplesPerSecond(); sample++ ) {
 			for ( unsigned int channel = observation.getNrChannels(); channel > 0; channel-- ) {
 				inputFile.read(buffer, BUFFER_DIM);
-        data.at(second)[(static_cast< long long unsigned int >(channel - 1) * observation.getNrSamplesPerPaddedSecond()) + sample] = *(reinterpret_cast< T * >(buffer));
+        *(data.at(second))[(static_cast< long long unsigned int >(channel - 1) * observation.getNrSamplesPerPaddedSecond()) + sample] = *(reinterpret_cast< T * >(buffer));
 			}
 		}
 	}
@@ -118,7 +118,7 @@ template< typename T > void readLOFAR(std::string headerFilename, std::string ra
 				for ( unsigned int channel = 0; channel < nrChannels; channel++ ) {
 					rawFile.read(word, 4);
           isa::utils::bigEndianToLittleEndian(word);
-          data.at(second)[(static_cast< long long unsigned int >(second) * observation.getNrSamplesPerSecond()) + sample] = *(reinterpret_cast< T * >(word));
+          *(data.at(second))[(static_cast< long long unsigned int >(second) * observation.getNrSamplesPerSecond()) + sample] = *(reinterpret_cast< T * >(word));
 				}
 			}
 		}
