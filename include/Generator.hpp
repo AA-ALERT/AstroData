@@ -42,7 +42,7 @@ template< typename T > void generatePulsar(const unsigned int period, const unsi
       std::fill(data[second]->begin(), data[second]->end(), 0);
     }
   }
-  // generate the pulsar
+  // Generate the pulsar
 	float inverseHighFreq = 1.0f / (observation.getMaxFreq() * observation.getMaxFreq());
   float kDM = 4148.808f * DM;
   for ( unsigned int channel = 0; channel < observation.getNrChannels(); channel++ ) {
