@@ -31,7 +31,7 @@ template< typename T > void generatePulsar(const unsigned int period, const unsi
   std::srand(std::time(0));
   // Generate the  "noise"
   for ( unsigned int second = 0; second < observation.getNrSeconds(); second++ ) {
-    data.insert(new std::vector< T >(observation.getNrChannels() * observation.getNrSamplesPerPaddedSecond()));
+    data[second] = new std::vector< T >(observation.getNrChannels() * observation.getNrSamplesPerPaddedSecond());
     if ( random ) {
       for ( unsigned int channel = 0; channel < observation.getNrChannels(); channel++ ) {
         for ( unsigned int sample = 0; sample < observation.getNrSamplesPerSecond(); sample++ ) {
