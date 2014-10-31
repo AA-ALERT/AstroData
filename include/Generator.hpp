@@ -52,6 +52,9 @@ template< typename T > void generatePulsar(const unsigned int period, const unsi
 
     for ( unsigned int sample = shift; sample < observation.getNrSeconds() * observation.getNrSamplesPerSecond(); sample += period ) {
       for ( unsigned int i = 0; i < width; i++ ) {
+        if ( sample + i >= observation.getNrSeconds() * observation.getNrSamplesPerSecond() ) {
+        break;
+        }
         unsigned int second = (sample + i) / observation.getNrSamplesPerSecond();
         unsigned int internalSample = (sample + i) % observation.getNrSamplesPerSecond();
 
