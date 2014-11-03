@@ -39,7 +39,7 @@ template< typename T > void generatePulsar(const unsigned int period, const unsi
         }
       }
     } else {
-      std::fill(data[second]->begin(), data[second]->end(), 0);
+      std::fill(data[second]->begin(), data[second]->end(), 1);
     }
   }
   // Generate the pulsar
