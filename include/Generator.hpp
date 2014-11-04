@@ -39,7 +39,7 @@ template< typename T > void generatePulsar(const unsigned int period, const unsi
         }
       }
     } else {
-      std::fill(data[second]->begin(), data[second]->end(), 1);
+      std::fill(data[second]->begin(), data[second]->end(), 8);
     }
   }
   // Generate the pulsar
@@ -59,7 +59,7 @@ template< typename T > void generatePulsar(const unsigned int period, const unsi
         unsigned int internalSample = (sample + i) % observation.getNrSamplesPerSecond();
 
         if ( random ) {
-          data[second]->at((channel * observation.getNrSamplesPerPaddedSecond()) + internalSample) = std::rand() % 10000;
+          data[second]->at((channel * observation.getNrSamplesPerPaddedSecond()) + internalSample) = std::rand() % 500;
         } else {
           data[second]->at((channel * observation.getNrSamplesPerPaddedSecond()) + internalSample) = 42;
         }
