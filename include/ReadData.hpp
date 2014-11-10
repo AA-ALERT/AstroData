@@ -116,9 +116,11 @@ template< typename T > void readLOFAR(std::string headerFilename, std::string ra
 		for ( unsigned int sample = 0; sample < observation.getNrSamplesPerSecond(); sample++ ) {
 			for ( unsigned int subband = 0; subband < nrSubbands; subband++ ) {
 				for ( unsigned int channel = 0; channel < nrChannels; channel++ ) {
+          unsigned int globalChannel = (subband * nrChannels) + channel;
+
 					rawFile.read(word, 4);
           isa::utils::bigEndianToLittleEndian(word);
-          data.at(second)->at((static_cast< long long unsigned int >(second) * observation.getNrSamplesPerSecond()) + sample) = *(reinterpret_cast< T * >(word));
+          data.at(second)->at((globalChannel * observation.getNrSamplesPerPaddedSecond()) + sample) = *(reinterpret_cast< T * >(word));
 				}
 			}
 		}
