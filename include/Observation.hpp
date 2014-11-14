@@ -34,6 +34,7 @@ public:
   inline unsigned int getNrSeconds() const;
   inline unsigned int getNrStations() const;
   inline unsigned int getNrBeams() const;
+  inline unsigned int getNrPaddedBeams() const;
   inline float getSamplingRate() const;
   inline unsigned int getNrSamplesPerSecond() const;
   inline unsigned int getNrSamplesPerPaddedSecond() const;
@@ -188,6 +189,10 @@ inline unsigned int Observation::getNrStations() const {
 
 inline unsigned int Observation::getNrBeams() const {
 	return nrBeams;
+}
+
+inline unsigned int Observation::getNrPaddedBeams() const {
+	return isa::utils::pad(nrBeams, padding);
 }
 
 inline unsigned int Observation::getNrSamplesPerSecond() const {
