@@ -17,9 +17,6 @@
 
 namespace AstroData {
 
-// Returns an array of colors
-Color * getColorMap();
-
 class Color {
 public:
 	Color();
@@ -36,6 +33,9 @@ private:
 	unsigned char G;
 	unsigned char B;
 };
+
+// Returns an array of colors
+Color * getColorMap();
 
 } // AstroData
 
