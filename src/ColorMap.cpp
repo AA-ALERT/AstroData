@@ -290,17 +290,5 @@ Color::Color(unsigned char r, unsigned char g) : R(r), G(g), B(0) {}
 
 Color::Color(unsigned char r, unsigned char g, unsigned char b) : R(r), G(g), B(b) {}
 
-inline unsigned char Color::getR() {
-	return R;
-}
-
-inline unsigned char Color::getG() {
-	return G;
-}
-
-inline unsigned char Color::getB() {
-	return B;
-}
-
 } // AstroData
 

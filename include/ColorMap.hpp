@@ -24,9 +24,9 @@ public:
 	Color(unsigned char r, unsigned char g);
 	Color(unsigned char r, unsigned char g, unsigned char b);
 
-	inline unsigned char getR();
-	inline unsigned char getG();
-	inline unsigned char getB();
+	unsigned char getR();
+	unsigned char getG();
+	unsigned char getB();
 
 private:
 	unsigned char R;
@@ -36,6 +36,21 @@ private:
 
 // Returns an array of colors
 Color * getColorMap();
+
+
+// Implementations
+
+inline unsigned char Color::getR() {
+	return R;
+}
+
+inline unsigned char Color::getG() {
+	return G;
+}
+
+inline unsigned char Color::getB() {
+	return B;
+}
 
 } // AstroData
 

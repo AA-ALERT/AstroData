@@ -30,55 +30,49 @@ public:
 
   // Getters
   // General observation parameters
-  inline unsigned int getPadding() const;
-  inline unsigned int getNrSeconds() const;
-  inline unsigned int getNrStations() const;
-  inline unsigned int getNrPaddedStations() const;
-  inline unsigned int getNrBeams() const;
-  inline unsigned int getNrPaddedBeams() const;
-  inline float getSamplingRate() const;
-  inline unsigned int getNrSamplesPerSecond() const;
-  inline unsigned int getNrSamplesPerPaddedSecond() const;
-  inline unsigned int getNrSamplesPerDispersedChannel() const;
-
+  unsigned int getPadding() const;
+  unsigned int getNrSeconds() const;
+  unsigned int getNrStations() const;
+  unsigned int getNrPaddedStations() const;
+  unsigned int getNrBeams() const;
+  unsigned int getNrPaddedBeams() const;
+  float getSamplingRate() const;
+  unsigned int getNrSamplesPerSecond() const;
+  unsigned int getNrSamplesPerPaddedSecond() const;
+  unsigned int getNrSamplesPerDispersedChannel() const;
 	// Frequency parameters
-  inline unsigned int getNrChannels() const;
-  inline unsigned int getNrPaddedChannels() const;
-  inline float getMinFreq() const;
-  inline float getMaxFreq() const;
-  inline float getChannelBandwidth() const;
-
+  unsigned int getNrChannels() const;
+  unsigned int getNrPaddedChannels() const;
+  float getMinFreq() const;
+  float getMaxFreq() const;
+  float getChannelBandwidth() const;
 	// Dispersion measures
-  inline unsigned int getNrDMs() const;
-  inline unsigned int getNrPaddedDMs() const;
-  inline float getFirstDM() const;
-  inline float getLastDM() const;
-  inline float getDMStep() const;
-
+  unsigned int getNrDMs() const;
+  unsigned int getNrPaddedDMs() const;
+  float getFirstDM() const;
+  float getLastDM() const;
+  float getDMStep() const;
 	// Periods
-  inline unsigned int getNrPeriods() const;
-  inline unsigned int getNrPaddedPeriods() const;
-  inline unsigned int getFirstPeriod() const;
-  inline unsigned int getLastPeriod() const;
-  inline unsigned int getPeriodStep() const;
-  inline unsigned int getNrBins() const;
-  inline unsigned int getNrPaddedBins() const;
+  unsigned int getNrPeriods() const;
+  unsigned int getNrPaddedPeriods() const;
+  unsigned int getFirstPeriod() const;
+  unsigned int getLastPeriod() const;
+  unsigned int getPeriodStep() const;
+  unsigned int getNrBins() const;
+  unsigned int getNrPaddedBins() const;
 
   // Setters
   // General observation parameters
-  inline void setPadding(const unsigned int pad);
-  inline void setNrSeconds(const unsigned int seconds);
-  inline void setNrStations(const unsigned int stations);
-  inline void setNrBeams(const unsigned int beams);
+  void setPadding(const unsigned int pad);
+  void setNrSeconds(const unsigned int seconds);
+  void setNrStations(const unsigned int stations);
+  void setNrBeams(const unsigned int beams);
   void setNrSamplesPerSecond(const unsigned int samples);
   void setNrSamplesPerDispersedChannel(const unsigned int samples);
-
   // Frequency parameters
   void setFrequencyRange(const unsigned int channels, const float baseFrequency, const float bandwidth);
-
   // Dispersion measures
   void setDMRange(const unsigned int dms, const float baseDM, const float step);
-
   // Periods
   void setPeriodRange(const unsigned int periods, const unsigned int basePeriod, const unsigned int step);
   void setNrBins(const unsigned int bins);
@@ -108,6 +102,132 @@ private:
   unsigned int periodStep;
   unsigned int nrBins;
 };
+
+// Implementations
+
+inline void Observation::setPadding(const unsigned int pad) {
+	padding = pad;
+}
+
+inline void Observation::setNrSeconds(const unsigned int seconds) {
+	nrSeconds = seconds;
+}
+
+inline void Observation::setNrStations(const unsigned int stations) {
+	nrStations = stations;
+}
+
+inline void Observation::setNrBeams(const unsigned int beams) {
+	nrBeams = beams;
+}
+
+inline unsigned int Observation::getPadding() const {
+	return padding;
+}
+
+inline unsigned int Observation::getNrSeconds() const {
+	return nrSeconds;
+}
+
+inline unsigned int Observation::getNrStations() const {
+	return nrStations;
+}
+
+inline unsigned int Observation::getNrPaddedStations() const {
+	return isa::utils::pad(nrStations, padding);
+}
+
+inline unsigned int Observation::getNrBeams() const {
+	return nrBeams;
+}
+
+inline unsigned int Observation::getNrPaddedBeams() const {
+	return isa::utils::pad(nrBeams, padding);
+}
+
+inline unsigned int Observation::getNrSamplesPerSecond() const {
+	return nrSamplesPerSecond;
+}
+
+inline float Observation::getSamplingRate() const {
+	return samplingRate;
+}
+
+inline unsigned int Observation::getNrSamplesPerPaddedSecond() const {
+	return isa::utils::pad(nrSamplesPerSecond, padding);
+}
+
+inline unsigned int Observation::getNrChannels() const {
+	return nrChannels;
+}
+
+inline unsigned int Observation::getNrPaddedChannels() const {
+	return isa::utils::pad(nrChannels, padding);
+}
+
+inline float Observation::getMinFreq() const {
+	return minFreq;
+}
+
+inline float Observation::getMaxFreq() const {
+	return maxFreq;
+}
+
+inline float Observation::getChannelBandwidth() const {
+	return channelBandwidth;
+}
+
+inline unsigned int Observation::getNrSamplesPerDispersedChannel() const {
+  return nrSamplesPerDispersedChannel;
+}
+
+inline unsigned int Observation::getNrDMs() const {
+	return nrDMs;
+}
+
+inline unsigned int Observation::getNrPaddedDMs() const {
+	return isa::utils::pad(nrDMs, padding);
+}
+
+inline float Observation::getFirstDM() const {
+	return firstDM;
+}
+
+inline float Observation::getLastDM() const {
+  return lastDM;
+}
+
+inline float Observation::getDMStep() const {
+	return DMStep;
+}
+
+inline unsigned int Observation::getNrPeriods() const {
+	return nrPeriods;
+}
+
+inline unsigned int Observation::getNrPaddedPeriods() const {
+	return isa::utils::pad(nrPeriods, padding);
+}
+
+inline unsigned int Observation::getNrBins() const {
+	return nrBins;
+}
+
+inline unsigned int Observation::getNrPaddedBins() const {
+	return isa::utils::pad(nrBins, padding);
+}
+
+inline unsigned int Observation::getFirstPeriod() const {
+	return firstPeriod;
+}
+
+inline unsigned int Observation::getLastPeriod() const {
+  return lastPeriod;
+}
+
+inline unsigned int Observation::getPeriodStep() const {
+	return periodStep;
+}
 
 } // AstroData
 
