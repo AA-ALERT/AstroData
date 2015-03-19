@@ -47,6 +47,7 @@ public:
   float getMaxFreq() const;
   float getChannelBandwidth() const;
 	// Dispersion measures
+  unsigned int getNrDelaySeconds() const;
   unsigned int getNrDMs() const;
   unsigned int getNrPaddedDMs() const;
   float getFirstDM() const;
@@ -72,6 +73,7 @@ public:
   // Frequency parameters
   void setFrequencyRange(const unsigned int channels, const float baseFrequency, const float bandwidth);
   // Dispersion measures
+  void setNrDelaySeconds(const unsigned int seconds);
   void setDMRange(const unsigned int dms, const float baseDM, const float step);
   // Periods
   void setPeriodRange(const unsigned int periods, const unsigned int basePeriod, const unsigned int step);
@@ -91,6 +93,7 @@ private:
   float maxFreq;
   float channelBandwidth;
 
+  unsigned int nrDelaySeconds;
   unsigned int nrDMs;
   float firstDM;
   float lastDM;
@@ -119,6 +122,10 @@ inline void Observation::setNrStations(const unsigned int stations) {
 
 inline void Observation::setNrBeams(const unsigned int beams) {
 	nrBeams = beams;
+}
+
+inline void Observation::setNrDelaySeconds(const unsigned int seconds) {
+  nrDelaySeconds = seconds;
 }
 
 inline unsigned int Observation::getPadding() const {
@@ -179,6 +186,10 @@ inline float Observation::getChannelBandwidth() const {
 
 inline unsigned int Observation::getNrSamplesPerDispersedChannel() const {
   return nrSamplesPerDispersedChannel;
+}
+
+inline unsigned int Observation::getNrDelaySeconds() const {
+  return nrDelaySeconds;
 }
 
 inline unsigned int Observation::getNrDMs() const {

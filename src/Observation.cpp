@@ -16,7 +16,7 @@
 
 namespace AstroData {
 
-Observation::Observation() : padding(0), nrSeconds(0), nrStations(0), nrBeams(0), samplingRate(0.0f), nrSamplesPerSecond(0), nrSamplesPerDispersedChannel(0), nrChannels(0), minFreq(0.0f), maxFreq(0.0f), channelBandwidth(0.0f), nrDMs(0), firstDM(0.0f), lastDM(0.0f), DMStep(0.0f), nrPeriods(0), firstPeriod(0), lastPeriod(0), periodStep(0), nrBins(0) {}
+Observation::Observation() : padding(0), nrSeconds(0), nrStations(0), nrBeams(0), samplingRate(0.0f), nrSamplesPerSecond(0), nrSamplesPerDispersedChannel(0), nrChannels(0), minFreq(0.0f), maxFreq(0.0f), channelBandwidth(0.0f), nrDelaySeconds(0), nrDMs(0), firstDM(0.0f), lastDM(0.0f), DMStep(0.0f), nrPeriods(0), firstPeriod(0), lastPeriod(0), periodStep(0), nrBins(0) {}
 
 Observation::~Observation() {}
 
