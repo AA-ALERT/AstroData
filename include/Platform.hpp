@@ -16,6 +16,8 @@
 #include <map>
 #include <fstream>
 
+#include <utils.hpp>
+
 #ifndef PLATFORM_HPP
 #define PLATFORM_HPP
 
