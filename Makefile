@@ -18,8 +18,8 @@ bin/ColorMap.o: include/ColorMap.hpp src/ColorMap.cpp
 bin/Observation.o: $(UTILS)/include/utils.hpp include/Observation.hpp src/Observation.cpp
 	$(CC) -o bin/Observation.o -c src/Observation.cpp -I"include" -I"$(UTILS)/include" $(CFLAGS)
 
-bin/Platform.o: include/Platform.hpp src/Platform.cpp
-	$(CC) -o bin/Platform.o -c src/Platform.cpp -I"include" $(CFLAGS)
+bin/Platform.o: $(UTILS)/include/utils.hpp include/Platform.hpp src/Platform.cpp
+	$(CC) -o bin/Platform.o -c src/Platform.cpp -I"include" -I"$(UTILS)/include" $(CFLAGS)
 
 clean:
 	-@rm bin/*.o
