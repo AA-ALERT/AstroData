@@ -35,7 +35,7 @@ template< typename T > void readLOFAR(std::string headerFilename, std::string ra
 
 template< typename T > void readSIGPROC(Observation & observation, unsigned int bytesToSkip, std::string inputFilename, std::vector< std::vector< T > * > & data, unsigned int firstSecond) {
 	std::ifstream inputFile;
-	const unsigned int BUFFER_DIM = 4;
+	const unsigned int BUFFER_DIM = sizeof(T);
 	char * buffer = new char [BUFFER_DIM];
 
 	inputFile.open(inputFilename.c_str(), std::ios::binary);
