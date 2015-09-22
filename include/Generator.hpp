@@ -77,7 +77,7 @@ template< typename T > void generateSinglePulse(const unsigned int width, const 
     if ( random ) {
       for ( unsigned int channel = 0; channel < observation.getNrChannels(); channel++ ) {
         for ( unsigned int sample = 0; sample < observation.getNrSamplesPerSecond(); sample++ ) {
-          data[second]->at((channel * observation.getNrSamplesPerPaddedSecond()) + sample) = std::rand() % 100;
+          data[second]->at((channel * observation.getNrSamplesPerPaddedSecond()) + sample) = std::rand() % 50;
         }
       }
     } else {
@@ -109,7 +109,7 @@ template< typename T > void generateSinglePulse(const unsigned int width, const 
       }
 
       if ( random ) {
-        data[second]->at((channel * observation.getNrSamplesPerPaddedSecond()) + (sample + shift)) = std::rand() % 500;
+        data[second]->at((channel * observation.getNrSamplesPerPaddedSecond()) + (sample + shift)) = std::rand() % 256;
       } else {
         data[second]->at((channel * observation.getNrSamplesPerPaddedSecond()) + (sample + shift)) = 42;
       }
