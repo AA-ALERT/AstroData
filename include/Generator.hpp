@@ -36,11 +36,11 @@ template< typename T > void generatePulsar(const unsigned int period, const unsi
     if ( random ) {
       for ( unsigned int channel = 0; channel < observation.getNrChannels(); channel++ ) {
         for ( unsigned int sample = 0; sample < observation.getNrSamplesPerSecond(); sample++ ) {
-          data[second]->at((channel * observation.getNrSamplesPerPaddedSecond()) + sample) = std::rand() % 100;
+          data[second]->at((channel * observation.getNrSamplesPerPaddedSecond()) + sample) = static_cast< T >(std::rand() % 100);
         }
       }
     } else {
-      std::fill(data[second]->begin(), data[second]->end(), 8);
+      std::fill(data[second]->begin(), data[second]->end(), static_cast< T >(8));
     }
   }
   // Generate the pulsar
@@ -60,9 +60,9 @@ template< typename T > void generatePulsar(const unsigned int period, const unsi
         unsigned int internalSample = (sample + i) % observation.getNrSamplesPerSecond();
 
         if ( random ) {
-          data[second]->at((channel * observation.getNrSamplesPerPaddedSecond()) + internalSample) = std::rand() % 500;
+          data[second]->at((channel * observation.getNrSamplesPerPaddedSecond()) + internalSample) = static_cast< T >(std::rand() % 500);
         } else {
-          data[second]->at((channel * observation.getNrSamplesPerPaddedSecond()) + internalSample) = 42;
+          data[second]->at((channel * observation.getNrSamplesPerPaddedSecond()) + internalSample) = static_cast< T >(42);
         }
       }
     }
@@ -77,11 +77,11 @@ template< typename T > void generateSinglePulse(const unsigned int width, const 
     if ( random ) {
       for ( unsigned int channel = 0; channel < observation.getNrChannels(); channel++ ) {
         for ( unsigned int sample = 0; sample < observation.getNrSamplesPerSecond(); sample++ ) {
-          data[second]->at((channel * observation.getNrSamplesPerPaddedSecond()) + sample) = std::rand() % 50;
+          data[second]->at((channel * observation.getNrSamplesPerPaddedSecond()) + sample) = static_cast< T >(std::rand() % 50);
         }
       }
     } else {
-      std::fill(data[second]->begin(), data[second]->end(), 8);
+      std::fill(data[second]->begin(), data[second]->end(), static_cast< T >(8));
     }
   }
   // Generate the pulse
@@ -109,9 +109,9 @@ template< typename T > void generateSinglePulse(const unsigned int width, const 
       }
 
       if ( random ) {
-        data[second]->at((channel * observation.getNrSamplesPerPaddedSecond()) + (sample + shift)) = std::rand() % 256;
+        data[second]->at((channel * observation.getNrSamplesPerPaddedSecond()) + (sample + shift)) = static_cast< T >(std::rand() % 256);
       } else {
-        data[second]->at((channel * observation.getNrSamplesPerPaddedSecond()) + (sample + shift)) = 42;
+        data[second]->at((channel * observation.getNrSamplesPerPaddedSecond()) + (sample + shift)) = static_cast< T >(42);
       }
     }
   }
