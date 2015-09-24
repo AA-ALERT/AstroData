@@ -36,7 +36,7 @@ template< typename T > void generatePulsar(const unsigned int period, const unsi
     if ( random ) {
       for ( unsigned int channel = 0; channel < observation.getNrChannels(); channel++ ) {
         for ( unsigned int sample = 0; sample < observation.getNrSamplesPerSecond(); sample++ ) {
-          data[second]->at((channel * observation.getNrSamplesPerPaddedSecond()) + sample) = static_cast< T >(std::rand() % 100);
+          data[second]->at((channel * observation.getNrSamplesPerPaddedSecond()) + sample) = static_cast< T >(std::rand() % 25);
         }
       }
     } else {
@@ -60,7 +60,7 @@ template< typename T > void generatePulsar(const unsigned int period, const unsi
         unsigned int internalSample = (sample + i) % observation.getNrSamplesPerSecond();
 
         if ( random ) {
-          data[second]->at((channel * observation.getNrSamplesPerPaddedSecond()) + internalSample) = static_cast< T >(std::rand() % 500);
+          data[second]->at((channel * observation.getNrSamplesPerPaddedSecond()) + internalSample) = static_cast< T >(std::rand() % 128);
         } else {
           data[second]->at((channel * observation.getNrSamplesPerPaddedSecond()) + internalSample) = static_cast< T >(42);
         }
@@ -77,7 +77,7 @@ template< typename T > void generateSinglePulse(const unsigned int width, const 
     if ( random ) {
       for ( unsigned int channel = 0; channel < observation.getNrChannels(); channel++ ) {
         for ( unsigned int sample = 0; sample < observation.getNrSamplesPerSecond(); sample++ ) {
-          data[second]->at((channel * observation.getNrSamplesPerPaddedSecond()) + sample) = static_cast< T >(std::rand() % 50);
+          data[second]->at((channel * observation.getNrSamplesPerPaddedSecond()) + sample) = static_cast< T >(std::rand() % 25);
         }
       }
     } else {
@@ -109,7 +109,7 @@ template< typename T > void generateSinglePulse(const unsigned int width, const 
       }
 
       if ( random ) {
-        data[second]->at((channel * observation.getNrSamplesPerPaddedSecond()) + (sample + i + shift)) = static_cast< T >(std::rand() % 256);
+        data[second]->at((channel * observation.getNrSamplesPerPaddedSecond()) + (sample + i + shift)) = static_cast< T >(std::rand() % 128);
       } else {
         data[second]->at((channel * observation.getNrSamplesPerPaddedSecond()) + (sample + i + shift)) = static_cast< T >(42);
       }
