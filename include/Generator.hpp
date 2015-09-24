@@ -109,9 +109,9 @@ template< typename T > void generateSinglePulse(const unsigned int width, const 
       }
 
       if ( random ) {
-        data[second]->at((channel * observation.getNrSamplesPerPaddedSecond()) + (sample + shift)) = static_cast< T >(std::rand() % 256);
+        data[second]->at((channel * observation.getNrSamplesPerPaddedSecond()) + (sample + i + shift)) = static_cast< T >(std::rand() % 256);
       } else {
-        data[second]->at((channel * observation.getNrSamplesPerPaddedSecond()) + (sample + shift)) = static_cast< T >(42);
+        data[second]->at((channel * observation.getNrSamplesPerPaddedSecond()) + (sample + i + shift)) = static_cast< T >(42);
       }
     }
   }
