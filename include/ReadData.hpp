@@ -19,6 +19,7 @@
 #include <exception>
 #include <H5Cpp.h>
 #include <dada_hdu.h>
+#include <ascii_header.h>
 
 #include <Observation.hpp>
 #include <utils.hpp>
@@ -40,6 +41,7 @@ public:
 
 template< typename T > void readSIGPROC(Observation & observation, const unsigned int bytestoSkip, std::string inputFilename, std::vector< std::vector< T > * > & data, unsigned int firstSecond = 0);
 template< typename T > void readLOFAR(std::string headerFilename, std::string rawFilename, Observation & observation, std::vector< std::vector< T > * > & data, unsigned int nrSeconds = 0, unsigned int firstSecond = 0);
+template< typename T > void readPSRDadaHeader(Observation & observation, dada_hdu_t & ringBuffer) throw(RingBufferError);
 template< typename T > inline void readPSRDada(Observation & observation, dada_hdu_t & ringBuffer, std::vector< T > * data) throw(RingBufferError);
 
 
@@ -139,6 +141,31 @@ template< typename T > void readLOFAR(std::string headerFilename, std::string ra
 	}
 	rawFile.close();
 	delete [] word;
+}
+
+template< typename T > void readPSRDadaHeader(Observation & observation, dada_hdu_t & ringBuffer) throw(RingBufferError) {
+  // Staging variables for the header elements
+  unsigned int uintValue = 0;
+  float floatValue[2] = {0.0f, 0.0f};
+  // Header string
+  uint64_t headerBytes = 0;
+  char * header = 0;
+
+  header = ipcbuf_get_next_read(ringBuffer.header_block, &headerBytes);
+
+  if ( (header == 0) || (headerBytes == 0 ) ) {
+    throw RingBufferError();
+  }
+
+  ascii_header_get(header, "SAMPLES_PER_SECOND", "%d", &uintValue);
+  observation.setNrSamplesPerSecond(uintValue);
+  ascii_header_get(header, "CHANNELS", "%d", &uintValue);
+  ascii_header_get(header, "MIN_FREQUENCY", "%f", &floatValue[0]);
+  ascii_header_get(header, "CHANNEL_BANDWIDTH", "%f", &floatValue[1]);
+  observation.setFrequencyRange(uintValue, floatValue[0], floatValue[1]);
+  ipcbuf_mark_cleared(ringBuffer.header_block);
+
+  delete header;
 }
 
 template< typename T > inline void readPSRDada(Observation & observation, dada_hdu_t & ringBuffer, std::vector< T > * data) throw(RingBufferError) {
