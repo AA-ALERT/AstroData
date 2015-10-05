@@ -1,5 +1,6 @@
 
 UTILS := $(HOME)/src/utils
+PSRDADA := $(HOME)/src/psrdada
 
 CC := g++
 CFLAGS := -std=c++11 -Wall
@@ -10,7 +11,10 @@ else
 endif
 
 
-all: bin/ColorMap.o bin/Observation.o bin/Platform.o
+all: bin/ColorMap.o bin/Observation.o bin/Platform.o bin/ReadData.o
+
+bin/ReadData.o: include/ReadData.hpp src/ReadData.cpp
+	$(CC) -o bin/ReadData.o -c src/ReadData.cpp -I"include" -I"$(PSRDADA)/include" $(CFLAGS)
 
 bin/ColorMap.o: include/ColorMap.hpp src/ColorMap.cpp
 	$(CC) -o bin/ColorMap.o -c src/ColorMap.cpp -I"include" $(CFLAGS)
