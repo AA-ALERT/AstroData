@@ -16,7 +16,9 @@
 #include <vector>
 #include <string>
 #include <cmath>
+#include <exception>
 #include <H5Cpp.h>
+#include <dada_hdu.h>
 
 #include <Observation.hpp>
 #include <utils.hpp>
@@ -27,8 +29,18 @@
 
 namespace AstroData {
 
+// Exception: the PSRDada ring buffer does not work
+class RingBufferError : public std::exception {
+public:
+  RingBufferError();
+  ~RingBufferError() throw ();
+
+  const char * what() const throw ();
+};
+
 template< typename T > void readSIGPROC(Observation & observation, const unsigned int bytestoSkip, std::string inputFilename, std::vector< std::vector< T > * > & data, unsigned int firstSecond = 0);
 template< typename T > void readLOFAR(std::string headerFilename, std::string rawFilename, Observation & observation, std::vector< std::vector< T > * > & data, unsigned int nrSeconds = 0, unsigned int firstSecond = 0);
+template< typename T > inline void readPSRDada(Observation & observation, dada_hdu_t & ringBuffer, std::vector< T > * data) throw(RingBufferError);
 
 
 // Implementation
@@ -127,6 +139,12 @@ template< typename T > void readLOFAR(std::string headerFilename, std::string ra
 	}
 	rawFile.close();
 	delete [] word;
+}
+
+template< typename T > inline void readPSRDada(Observation & observation, dada_hdu_t & ringBuffer, std::vector< T > * data) throw(RingBufferError) {
+  if ( (ipcio_read(ringBuffer.data_block, reinterpret_cast< char * >(data->data()), observation.getNrChannels() * observation.getNrSamplesPerPaddedSecond() * sizeof(T))) < 0 ) {
+    throw RingBufferError();
+  }
 }
 
 } // AstroData
