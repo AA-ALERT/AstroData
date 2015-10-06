@@ -21,7 +21,7 @@ RingBufferError::RingBufferError() {}
 RingBufferError::~RingBufferError() throw () {}
 
 const char * RingBufferError::what() const throw() {
-    return ("Impossible to read from the PSRDada ring buffer.").c_str();
+    return ("Impossible to read from the PSRDada ring buffer.");
 }
 
 } // AstroData
