@@ -18,7 +18,7 @@ namespace AstroData {
 
 RingBufferError::RingBufferError() {}
 
-RingBufferError::~RingBufferErrror() throw () {}
+RingBufferError::~RingBufferError() throw () {}
 
 const char * RingBufferError::what() const throw() {
     return ("Impossible to read from the PSRDada ring buffer.").c_str();
