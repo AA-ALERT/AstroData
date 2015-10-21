@@ -39,7 +39,7 @@ public:
   const char * what() const throw ();
 };
 
-template< typename T > void readSIGPROC(Observation & observation, const unsigned int bytestoSkip, std::string inputFilename, std::vector< std::vector< T > * > & data, unsigned int firstSecond = 0);
+template< typename T > void readSIGPROC(const Observation & observation, const uint8_t inputBits, const unsigned int bytesToSkip, const std::string & inputFilename, std::vector< std::vector< T > * > & data, const unsigned int firstSecond = 0);
 template< typename T > void readLOFAR(std::string headerFilename, std::string rawFilename, Observation & observation, std::vector< std::vector< T > * > & data, unsigned int nrSeconds = 0, unsigned int firstSecond = 0);
 template< typename T > void readPSRDadaHeader(Observation & observation, dada_hdu_t & ringBuffer) throw(RingBufferError);
 template< typename T > inline void readPSRDada(Observation & observation, dada_hdu_t & ringBuffer, std::vector< T > * data) throw(RingBufferError);
@@ -47,7 +47,7 @@ template< typename T > inline void readPSRDada(Observation & observation, dada_h
 
 // Implementation
 
-template< typename T > void readSIGPROC(Observation & observation, unsigned int bytesToSkip, std::string inputFilename, std::vector< std::vector< T > * > & data, unsigned int firstSecond) {
+template< typename T > void readSIGPROC(const Observation & observation, const uint8_t inputBits, const unsigned int bytesToSkip, const std::string & inputFilename, std::vector< std::vector< T > * > & data, const unsigned int firstSecond = 0) {
 	std::ifstream inputFile;
 	const unsigned int BUFFER_DIM = sizeof(T);
 	char * buffer = new char [BUFFER_DIM];
@@ -56,14 +56,23 @@ template< typename T > void readSIGPROC(Observation & observation, unsigned int 
 	inputFile.sync_with_stdio(false);
 	inputFile.seekg(bytesToSkip, std::ios::beg);
 	for ( unsigned int second = 0; second < observation.getNrSeconds(); second++ ) {
-		data.at(second) = new std::vector< T >(observation.getNrSamplesPerPaddedSecond() * observation.getNrChannels());
-
-		for ( unsigned int sample = 0; sample < observation.getNrSamplesPerSecond(); sample++ ) {
-			for ( unsigned int channel = observation.getNrChannels(); channel > 0; channel-- ) {
-				inputFile.read(buffer, BUFFER_DIM);
-        data.at(second)->at((static_cast< long long unsigned int >(channel - 1) * observation.getNrSamplesPerPaddedSecond()) + sample) = *(reinterpret_cast< T * >(buffer));
-			}
-		}
+    if ( inputBits >= 8 ) {
+      data.at(second) = new std::vector< T >(observation.getNrChannels() * observation.getNrSamplesPerPaddedSecond());
+      for ( unsigned int sample = 0; sample < observation.getNrSamplesPerSecond(); sample++ ) {
+        for ( unsigned int channel = observation.getNrChannels(); channel > 0; channel-- ) {
+          inputFile.read(buffer, BUFFER_DIM);
+          data.at(second)->at((static_cast< uint64_t >(channel - 1) * observation.getNrSamplesPerPaddedSecond()) + sample) = *(reinterpret_cast< T * >(buffer));
+        }
+      }
+    } else {
+      data.at(second) = new std::vector< T >(observation.getNrChannels() * isa::utils::pad(observation.getNrSamplesPerSecond() / (8 / inputBits), observation.getPadding()));
+      for ( unsigned int sample = 0; sample < observation.getNrSamplesPerSecond() / (8 / inputBits); sample++ ) {
+        for ( unsigned int channel = observation.getNrChannels(); channel > 0; channel-- ) {
+          inputFile.read(buffer, BUFFER_DIM);
+          data.at(second)->at((static_cast< uint64_t >(channel - 1) * (observation.getNrSamplesPerSecond() / (8 / inputBits))) + sample) = *(reinterpret_cast< T * >(buffer));
+        }
+      }
+    }
 	}
 	inputFile.close();
 
