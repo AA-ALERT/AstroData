@@ -25,7 +25,7 @@
 namespace AstroData {
 
 template< typename T > void generatePulsar(const unsigned int period, const unsigned int width, const float DM, const AstroData::Observation & observation, std::vector< std::vector< T > * > & data, const bool random = false);
-template< typename T > void generateSinglePulse(const unsigned int width, const float DM, const AstroData::Observation & observation, std::vector< std::vector< T > * > & data, const bool random = false);
+template< typename T > void generateSinglePulse(const unsigned int width, const float DM, const AstroData::Observation & observation, std::vector< std::vector< T > * > & data, const uint8_t inputBits, const bool random = false);
 
 // Implementations
 template< typename T > void generatePulsar(const unsigned int period, const unsigned int width, const float DM, const AstroData::Observation & observation, std::vector< std::vector< T > * > & data, const bool random) {
@@ -69,19 +69,37 @@ template< typename T > void generatePulsar(const unsigned int period, const unsi
   }
 }
 
-template< typename T > void generateSinglePulse(const unsigned int width, const float DM, const AstroData::Observation & observation, std::vector< std::vector< T > * > & data, const bool random) {
+template< typename T > void generateSinglePulse(const unsigned int width, const float DM, const AstroData::Observation & observation, std::vector< std::vector< T > * > & data, const uint8_t inputBits, const bool random) {
   std::srand(std::time(0));
   // Generate the  "noise"
   for ( unsigned int second = 0; second < observation.getNrSeconds(); second++ ) {
-    data[second] = new std::vector< T >(observation.getNrChannels() * observation.getNrSamplesPerPaddedSecond());
+    if ( inputBits >= 8 ) {
+      data[second] = new std::vector< T >(observation.getNrChannels() * observation.getNrSamplesPerPaddedSecond());
+    } else {
+      data[second] = new std::vector< T >(observation.getNrChannels() * isa::utils::pad(observation.getNrSamplesPerSecond() / (8 / inputBits), observation.getPadding()));
+    }
     if ( random ) {
       for ( unsigned int channel = 0; channel < observation.getNrChannels(); channel++ ) {
         for ( unsigned int sample = 0; sample < observation.getNrSamplesPerSecond(); sample++ ) {
-          data[second]->at((channel * observation.getNrSamplesPerPaddedSecond()) + sample) = static_cast< T >(std::rand() % 25);
+          if ( inputBits >= 8 ) {
+            data[second]->at((channel * observation.getNrSamplesPerPaddedSecond()) + sample) = static_cast< T >(std::rand() % 25);
+          } else {
+            uint8_t value = static_cast< unsigned int >(std::rand() % (inputBits - 1));
+            char buffer = data[second]->at((channel * isa::utils::pad(observation.getNrSamplesPerSecond() / (8 / inputBits), observation.getPadding())) + (sample / (8 / inputBits)));
+
+            for ( uint8_t bit = 0; bit < inputBits; bit++ ) {
+              isa::utils::setBit(buffer, isa::utils::getBit(value, bit), (sample % (8 / inputBits)) + bit);
+            }
+            data[second]->at((channel * isa::utils::pad(observation.getNrSamplesPerSecond() / (8 / inputBits), observation.getPadding())) + sample) = buffer;
+          }
         }
       }
     } else {
-      std::fill(data[second]->begin(), data[second]->end(), static_cast< T >(8));
+      if ( inputBits >= 8 ) {
+        std::fill(data[second]->begin(), data[second]->end(), static_cast< T >(8));
+      } else {
+        std::fill(data[second]->begin(), data[second]->end(), static_cast< T >(0));
+      }
     }
   }
   // Generate the pulse
@@ -109,9 +127,28 @@ template< typename T > void generateSinglePulse(const unsigned int width, const 
       }
 
       if ( random ) {
-        data[second]->at((channel * observation.getNrSamplesPerPaddedSecond()) + (sample + i + shift)) = static_cast< T >(std::rand() % 128);
+        if ( inputBits >= 8 ) {
+          data[second]->at((channel * observation.getNrSamplesPerPaddedSecond()) + (sample + i + shift)) = static_cast< T >(std::rand() % 256);
+        } else {
+          uint8_t value = static_cast< unsigned int >(std::rand() % inputBits);
+          char buffer = data[second]->at((channel * isa::utils::pad(observation.getNrSamplesPerSecond() / (8 / inputBits), observation.getPadding())) + (sample / (8 / inputBits)));
+
+          for ( uint8_t bit = 0; bit < inputBits; bit++ ) {
+            isa::utils::setBit(buffer, isa::utils::getBit(value, bit), (sample % (8 / inputBits)) + bit);
+          }
+          data[second]->at((channel * isa::utils::pad(observation.getNrSamplesPerSecond() / (8 / inputBits), observation.getPadding())) + sample) = buffer;
+        }
       } else {
-        data[second]->at((channel * observation.getNrSamplesPerPaddedSecond()) + (sample + i + shift)) = static_cast< T >(42);
+        if ( inputBits >= 8 ) {
+          data[second]->at((channel * observation.getNrSamplesPerPaddedSecond()) + (sample + i + shift)) = static_cast< T >(42);
+        } else {
+          char buffer = data[second]->at((channel * isa::utils::pad(observation.getNrSamplesPerSecond() / (8 / inputBits), observation.getPadding())) + (sample / (8 / inputBits)));
+
+          for ( uint8_t bit = 0; bit < inputBits; bit++ ) {
+            isa::utils::setBit(buffer, isa::utils::getBit(inputBits, bit), (sample % (8 / inputBits)) + bit);
+          }
+          data[second]->at((channel * isa::utils::pad(observation.getNrSamplesPerSecond() / (8 / inputBits), observation.getPadding())) + sample) = buffer;
+        }
       }
     }
   }
