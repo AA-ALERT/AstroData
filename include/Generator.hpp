@@ -15,6 +15,7 @@
 #include <vector>
 #include <cstdlib>
 #include <ctime>
+#include <cmath>
 #include <algorithm>
 
 #include <Observation.hpp>
@@ -105,7 +106,7 @@ template< typename T > void generateSinglePulse(const unsigned int width, const 
   // Generate the pulse
   unsigned int second = 0;
   unsigned int sample = 0;
-	float inverseHighFreq = 1.0f / (observation.getMaxFreq() * observation.getMaxFreq());
+	float inverseHighFreq = 1.0f / std::pow(observation.getMaxFreq(), 2.0f);
   float kDM = 4148.808f * DM;
 
   if ( random ) {
@@ -117,9 +118,8 @@ template< typename T > void generateSinglePulse(const unsigned int width, const 
   }
 
   for ( unsigned int channel = 0; channel < observation.getNrChannels(); channel++ ) {
-    float inverseFreq = 1.0f / ((observation.getMinFreq() + (channel * observation.getChannelBandwidth())) * (observation.getMinFreq() + (channel * observation.getChannelBandwidth())));
-    float delta = kDM * (inverseFreq - inverseHighFreq);
-    unsigned int shift = static_cast< unsigned int >(delta * observation.getNrSamplesPerSecond());
+    float inverseFreq = 1.0f / std::pow(observation.getMinFreq() + (channel * observation.getChannelBandwidth()), 2.0f);
+    unsigned int shift = static_cast< unsigned int >(kDM * (inverseFreq - inverseHighFreq) * observation.getNrSamplesPerSecond());
 
     for ( unsigned int i = 0; i < width; i++ ) {
       if ( sample + i >= observation.getNrSamplesPerSecond() ) {
