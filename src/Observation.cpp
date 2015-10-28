@@ -26,7 +26,7 @@ void Observation::setNrSamplesPerSecond(const unsigned int samples) {
 }
 
 void Observation::setNrSamplesPerDispersedChannel(const unsigned int samples) {
-  nrSamplesPerDispersedChannel = isa::utils::pad(samples, padding);
+  nrSamplesPerDispersedChannel = samples;
 }
 
 void Observation::setFrequencyRange(const unsigned int channels, const float baseFrequency, const float bandwidth) {

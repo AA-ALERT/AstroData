@@ -40,6 +40,7 @@ public:
   unsigned int getNrSamplesPerSecond() const;
   unsigned int getNrSamplesPerPaddedSecond() const;
   unsigned int getNrSamplesPerDispersedChannel() const;
+  unsigned int getNrSamplesPerPaddedDispersedChannel() const;
 	// Frequency parameters
   unsigned int getNrChannels() const;
   unsigned int getNrPaddedChannels() const;
@@ -170,6 +171,10 @@ inline unsigned int Observation::getNrChannels() const {
 
 inline unsigned int Observation::getNrPaddedChannels() const {
 	return isa::utils::pad(nrChannels, padding);
+}
+
+inline unsigned int Observation::getNrSamplesPerPaddedDispersedChannel() const {
+  return isa::utils::pad(nrSamplesPerDispersedChannel, padding);
 }
 
 inline float Observation::getMinFreq() const {
