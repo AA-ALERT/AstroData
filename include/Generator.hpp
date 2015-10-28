@@ -136,7 +136,7 @@ template< typename T > void generateSinglePulse(const unsigned int width, const 
           for ( uint8_t bit = 0; bit < inputBits; bit++ ) {
             isa::utils::setBit(buffer, isa::utils::getBit(value, bit), ((sample + i + shift) % (8 / inputBits)) + bit);
           }
-          data[second]->at((channel * isa::utils::pad(observation.getNrSamplesPerSecond() / (8 / inputBits), observation.getPadding())) + (sample + i + shift)) = buffer;
+          data[second]->at((channel * isa::utils::pad(observation.getNrSamplesPerSecond() / (8 / inputBits), observation.getPadding())) + ((sample + i + shift) / (8 / inputBits))) = buffer;
         }
       } else {
         if ( inputBits >= 8 ) {
@@ -147,7 +147,7 @@ template< typename T > void generateSinglePulse(const unsigned int width, const 
           for ( uint8_t bit = 0; bit < inputBits; bit++ ) {
             isa::utils::setBit(buffer, isa::utils::getBit(inputBits, bit), ((sample + i + shift) % (8 / inputBits)) + bit);
           }
-          data[second]->at((channel * isa::utils::pad(observation.getNrSamplesPerSecond() / (8 / inputBits), observation.getPadding())) + (sample + i + shift)) = buffer;
+          data[second]->at((channel * isa::utils::pad(observation.getNrSamplesPerSecond() / (8 / inputBits), observation.getPadding())) + ((sample + i + shift) / (8 / inputBits))) = buffer;
         }
       }
     }
