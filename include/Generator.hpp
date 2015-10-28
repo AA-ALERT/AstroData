@@ -143,12 +143,9 @@ template< typename T > void generateSinglePulse(const unsigned int width, const 
           data[second]->at((channel * observation.getNrSamplesPerPaddedSecond()) + (sample + i + shift)) = static_cast< T >(42);
         } else {
           unsigned int byte = (sample + i + shift) / (8 / inputBits);
-          uint8_t firstBit = 0;
+          uint8_t firstBit = ((sample + i + shift) % (8 / inputBits)) * inputBits;
           unsigned char buffer = 0;
 
-          if ( (sample + i + shift) % (8 / inputBits) != 0 ) {
-            firstBit = ((sample + i + shift) % (8 / inputBits)) * inputBits;
-          }
           buffer = data[second]->at((channel * isa::utils::pad(observation.getNrSamplesPerSecond() / (8 / inputBits), observation.getPadding())) + byte);
 
           for ( uint8_t bit = 0; bit < inputBits; bit++ ) {
