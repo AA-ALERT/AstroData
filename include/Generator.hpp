@@ -146,8 +146,8 @@ template< typename T > void generateSinglePulse(const unsigned int width, const 
           uint8_t firstBit = 0;
           unsigned char buffer = 0;
 
-          if ( byte % (8 / inputBits) != 0 ) {
-            firstBit = (byte % (8 / inputBits)) * inputBits;
+          if ( (sample + i + shift) % (8 / inputBits) != 0 ) {
+            firstBit = ((sample + i + shift) % (8 / inputBits)) * inputBits;
           }
           buffer = data[second]->at((channel * isa::utils::pad(observation.getNrSamplesPerSecond() / (8 / inputBits), observation.getPadding())) + byte);
 
