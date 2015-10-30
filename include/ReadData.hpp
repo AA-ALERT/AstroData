@@ -74,8 +74,12 @@ template< typename T > void readSIGPROC(const Observation & observation, const u
           inputFile.read(buffer, BUFFER_DIM);
           for ( unsigned int item = 0; item < (8 / inputBits); item++ ) {
             uint8_t channelFirstBit = item * inputBits;
-            uint8_t sampleBuffer = data.at(second)->at((static_cast< uint64_t >((channel - 1) - item) * isa::utils::pad(observation.getNrSamplesPerSecond() / (8 / inputBits), observation.getPadding())) + sampleByte);
+            uint8_t sampleBuffer = 0;
 
+            if ( (channel - 1) - item >= observation.getNrChannels() ) {
+              break;
+            }
+            sampleBuffer = data.at(second)->at((static_cast< uint64_t >((channel - 1) - item) * isa::utils::pad(observation.getNrSamplesPerSecond() / (8 / inputBits), observation.getPadding())) + sampleByte);
             for ( uint8_t bit = 0; bit < inputBits; bit++ ) {
               isa::utils::setBit(sampleBuffer, isa::utils::getBit(*buffer, channelFirstBit + bit), sampleFirstBit + bit);
             }
