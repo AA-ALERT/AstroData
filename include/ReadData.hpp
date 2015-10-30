@@ -66,10 +66,21 @@ template< typename T > void readSIGPROC(const Observation & observation, const u
       }
     } else {
       data.at(second) = new std::vector< T >(observation.getNrChannels() * isa::utils::pad(observation.getNrSamplesPerSecond() / (8 / inputBits), observation.getPadding()));
-      for ( unsigned int sample = 0; sample < observation.getNrSamplesPerSecond() / (8 / inputBits); sample++ ) {
-        for ( unsigned int channel = observation.getNrChannels(); channel > 0; channel-- ) {
+      for ( unsigned int sample = 0; sample < observation.getNrSamplesPerSecond(); sample++ ) {
+        unsigned int sampleByte = sample / (8 / inputBits);
+        uint8_t sampleFirstBit = (sample % (8 / inputBits)) * inputBits;
+
+        for ( int channel = observation.getNrChannels(); channel > 0; channel -= (8 / inputBits) ) {
           inputFile.read(buffer, BUFFER_DIM);
-          data.at(second)->at((static_cast< uint64_t >(channel - 1) * isa::utils::pad(observation.getNrSamplesPerSecond() / (8 / inputBits), observation.getPadding())) + sample) = *(reinterpret_cast< T * >(buffer));
+          for ( unsigned int item = 0; item < (8 / inputBits); item++ ) {
+            uint8_t channelFirstBit = item * inputBits;
+            uint8_t sampleBuffer = data.at(second)->at((static_cast< uint64_t >((channel - 1) - item) * isa::utils::pad(observation.getNrSamplesPerSecond() / (8 / inputBits), observation.getPadding())) + sampleByte);
+
+            for ( uint8_t bit = 0; bit < inputBits; bit++ ) {
+              isa::utils::setBit(sampleBuffer, isa::utils::getBit(buffer, channelFirstBit + bit), sampleFirstBit + bit);
+            }
+            data.at(second)->at((static_cast< uint64_t >((channel - 1) - item) * isa::utils::pad(observation.getNrSamplesPerSecond() / (8 / inputBits), observation.getPadding())) + sampleByte) = sampleBuffer;
+          }
         }
       }
     }
