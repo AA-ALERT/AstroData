@@ -81,6 +81,7 @@ template< typename T > void readSIGPROC(const Observation & observation, const u
 
           if ( item > channel ) {
             // All channels read, the remaining elements are from the next sample
+            unsigned int channelOffset = 0;
             channel = (observation.getNrChannels() - 1);
             sample += 1;
             sampleByte = sample / (8 / inputBits);
@@ -88,12 +89,13 @@ template< typename T > void readSIGPROC(const Observation & observation, const u
 
             while ( item < (8 / inputBits) ) {
               channelFirstBit = item * inputBits;
-              sampleBuffer = data.at(second)->at((static_cast< uint64_t >(channel - item) * isa::utils::pad(observation.getNrSamplesPerSecond() / (8 / inputBits), observation.getPadding())) + sampleByte);
+              sampleBuffer = data.at(second)->at((static_cast< uint64_t >(channel - channelOffset) * isa::utils::pad(observation.getNrSamplesPerSecond() / (8 / inputBits), observation.getPadding())) + sampleByte);
               for ( uint8_t bit = 0; bit < inputBits; bit++ ) {
                 isa::utils::setBit(sampleBuffer, isa::utils::getBit(*buffer, channelFirstBit + bit), sampleFirstBit + bit);
               }
-              data.at(second)->at((static_cast< uint64_t >(channel - item) * isa::utils::pad(observation.getNrSamplesPerSecond() / (8 / inputBits), observation.getPadding())) + sampleByte) = sampleBuffer;
+              data.at(second)->at((static_cast< uint64_t >(channel - channelOffset) * isa::utils::pad(observation.getNrSamplesPerSecond() / (8 / inputBits), observation.getPadding())) + sampleByte) = sampleBuffer;
               item++;
+              channelOffset++;
             }
 
             break;
