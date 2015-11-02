@@ -65,7 +65,7 @@ template< typename T > void readSIGPROC(const Observation & observation, const u
         }
       }
     } else {
-      uint64_t bytesToRead = static_cast< uint64_t >(observation.getNrSamplesPerSecond() * std::ceil(observation.getNrChannels() / (8.0 / inputBits)));
+      uint64_t bytesToRead = static_cast< uint64_t >(observation.getNrSamplesPerSecond() * (observation.getNrChannels() / (8.0 / inputBits)));
 
       data.at(second) = new std::vector< T >(observation.getNrChannels() * isa::utils::pad(observation.getNrSamplesPerSecond() / (8 / inputBits), observation.getPadding()));
       for ( uint64_t byte = 0; byte < bytesToRead; byte++ ) {
