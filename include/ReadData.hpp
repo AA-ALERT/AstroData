@@ -69,8 +69,8 @@ template< typename T > void readSIGPROC(const Observation & observation, const u
 
       data.at(second) = new std::vector< T >(observation.getNrChannels() * isa::utils::pad(observation.getNrSamplesPerSecond() / (8 / inputBits), observation.getPadding()));
       for ( uint64_t byte = 0; byte < bytesToRead; byte++ ) {
-        unsigned int channel = (observation.getNrChannels() - 1) - ((byte * (8 / iputBits)) % observation.getNrChannels());
-        unsigned int sample = (byte * (8 / iputBits)) / observation.getNrChannels();
+        unsigned int channel = (observation.getNrChannels() - 1) - ((byte * (8 / inputBits)) % observation.getNrChannels());
+        unsigned int sample = (byte * (8 / inputBits)) / observation.getNrChannels();
         unsigned int sampleByte = sample / (8 / inputBits);
         uint8_t sampleFirstBit = (sample % (8 / inputBits)) * inputBits;
 
