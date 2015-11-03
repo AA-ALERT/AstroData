@@ -122,7 +122,7 @@ template< typename T > void generateSinglePulse(const unsigned int width, const 
     unsigned int shift = static_cast< unsigned int >(kDM * (inverseFreq - inverseHighFreq) * observation.getNrSamplesPerSecond());
 
     for ( unsigned int i = 0; i < width; i++ ) {
-      if ( second + (sample + i + shift / observation.getNrSamplesPerSecond()) >= observation.getNrSeconds() ) {
+      if ( second + ((sample + i + shift) / observation.getNrSamplesPerSecond()) >= observation.getNrSeconds() ) {
       break;
       }
 
