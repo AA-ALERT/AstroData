@@ -40,7 +40,7 @@ public:
 };
 
 template< typename T > void readSIGPROC(const Observation & observation, const unsigned int padding, const uint8_t inputBits, const unsigned int bytesToSkip, const std::string & inputFilename, std::vector< std::vector< T > * > & data, const unsigned int firstSecond = 0);
-template< typename T > void readLOFAR(const unsigned int padding, std::string headerFilename, std::string rawFilename, Observation & observation, std::vector< std::vector< T > * > & data, unsigned int nrSeconds = 0, unsigned int firstSecond = 0);
+template< typename T > void readLOFAR(std::string headerFilename, std::string rawFilename, Observation & observation, const unsigned int padding, std::vector< std::vector< T > * > & data, unsigned int nrSeconds = 0, unsigned int firstSecond = 0);
 template< typename T > void readPSRDadaHeader(Observation & observation, dada_hdu_t & ringBuffer) throw(RingBufferError);
 template< typename T > inline void readPSRDada(Observation & observation, const unsigned int padding, dada_hdu_t & ringBuffer, std::vector< T > * data) throw(RingBufferError);
 
@@ -115,7 +115,7 @@ template< typename T > void readSIGPROC(const Observation & observation, const u
 }
 
 
-template< typename T > void readLOFAR(const unsigned int padding, std::string headerFilename, std::string rawFilename, Observation & observation, std::vector< std::vector< T > * > & data, unsigned int nrSeconds, unsigned int firstSecond) {
+template< typename T > void readLOFAR(std::string headerFilename, std::string rawFilename, Observation & observation, const unsigned int padding, std::vector< std::vector< T > * > & data, unsigned int nrSeconds, unsigned int firstSecond) {
   unsigned int nrSubbands, nrChannels;
   float minFreq, channelBandwidth;
 	// Read the HDF5 file with the metadata
