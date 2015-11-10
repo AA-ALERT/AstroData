@@ -24,5 +24,20 @@ const char * RingBufferError::what() const throw() {
     return ("Impossible to read from the PSRDada ring buffer.");
 }
 
+void readZappedChannels(const Observation & observation, const unsigned int padding, const std::string & inputFileName, std::vector< bool > & zappedChannels) {
+  std::ifstream input;
+
+  input.open(inputFileName);
+  while ( !input.eof() ) {
+    unsigned int channel = 0;
+    std::string temp;
+
+    input >> temp;
+    channel = isa::utils::castToType< std::string, unsigned int >(temp);
+    zappedChannels[channel] = true;
+  }
+  input.close();
+}
+
 } // AstroData
 
