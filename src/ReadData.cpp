@@ -24,7 +24,7 @@ const char * RingBufferError::what() const throw() {
     return ("Impossible to read from the PSRDada ring buffer.");
 }
 
-void readZappedChannels(Observation & observation, const std::string & inputFileName, std::vector< bool > & zappedChannels) {
+void readZappedChannels(Observation & observation, const std::string & inputFileName, std::vector< uint8_t > & zappedChannels) {
   unsigned int nrChannels = 0;
   std::ifstream input;
 
@@ -35,7 +35,7 @@ void readZappedChannels(Observation & observation, const std::string & inputFile
 
     input >> temp;
     channel = isa::utils::castToType< std::string, unsigned int >(temp);
-    zappedChannels[channel] = true;
+    zappedChannels[channel] = 1;
     nrChannels++;
   }
   input.close();
