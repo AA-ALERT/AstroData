@@ -43,6 +43,7 @@ public:
 	// Frequency parameters
   unsigned int getNrChannels() const;
   unsigned int getNrPaddedChannels(unsigned int padding) const;
+  unsigned int getNrZappedChannels() const;
   float getMinFreq() const;
   float getMaxFreq() const;
   float getChannelBandwidth() const;
@@ -71,6 +72,7 @@ public:
   void setNrSamplesPerDispersedChannel(const unsigned int samples);
   // Frequency parameters
   void setFrequencyRange(const unsigned int channels, const float baseFrequency, const float bandwidth);
+  void setNrZappedChannels(const unsigned int zappedChannels);
   // Dispersion measures
   void setNrDelaySeconds(const unsigned int seconds);
   void setDMRange(const unsigned int dms, const float baseDM, const float step);
@@ -87,6 +89,7 @@ private:
   unsigned int nrSamplesPerDispersedChannel;
 
   unsigned int nrChannels;
+  unsigned int nrZappedChannels;
   float minFreq;
   float maxFreq;
   float channelBandwidth;
@@ -105,23 +108,6 @@ private:
 };
 
 // Implementations
-
-inline void Observation::setNrSeconds(const unsigned int seconds) {
-	nrSeconds = seconds;
-}
-
-inline void Observation::setNrStations(const unsigned int stations) {
-	nrStations = stations;
-}
-
-inline void Observation::setNrBeams(const unsigned int beams) {
-	nrBeams = beams;
-}
-
-inline void Observation::setNrDelaySeconds(const unsigned int seconds) {
-  nrDelaySeconds = seconds;
-}
-
 inline unsigned int Observation::getNrSeconds() const {
 	return nrSeconds;
 }
@@ -160,6 +146,10 @@ inline unsigned int Observation::getNrChannels() const {
 
 inline unsigned int Observation::getNrPaddedChannels(unsigned int padding) const {
 	return isa::utils::pad(nrChannels, padding);
+}
+
+inline unsigned int Observation::getNrZappedChannels() const {
+  return nrZappedChannels;
 }
 
 inline unsigned int Observation::getNrSamplesPerPaddedDispersedChannel(unsigned int padding) const {
