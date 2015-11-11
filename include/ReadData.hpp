@@ -40,7 +40,7 @@ public:
 };
 
 // Zapped channels
-void readZappedChannels(const Observation & observation, const unsigned int padding, const std::string & inputFileName, std::vector< bool > & zappedChannels);
+void readZappedChannels(const std::string & inputFileName, std::vector< bool > & zappedChannels);
 // SIGPROC
 template< typename T > void readSIGPROC(const Observation & observation, const unsigned int padding, const uint8_t inputBits, const unsigned int bytesToSkip, const std::string & inputFilename, std::vector< std::vector< T > * > & data, const unsigned int firstSecond = 0);
 // LOFAR
