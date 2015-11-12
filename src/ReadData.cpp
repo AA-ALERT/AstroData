@@ -30,7 +30,7 @@ void readZappedChannels(Observation & observation, const std::string & inputFile
 
   input.open(inputFileName);
   while ( !input.eof() ) {
-    unsigned int channel = 0;
+    unsigned int channel = observation.getNrChannels();
 
     input >> channel;
     if ( channel < observation.getNrChannels() ) {
