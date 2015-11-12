@@ -31,12 +31,12 @@ void readZappedChannels(Observation & observation, const std::string & inputFile
   input.open(inputFileName);
   while ( !input.eof() ) {
     unsigned int channel = 0;
-    std::string temp;
 
-    input >> temp;
-    channel = isa::utils::castToType< std::string, unsigned int >(temp);
-    zappedChannels[channel] = 1;
-    nrChannels++;
+    input >> channel;
+    if ( channel < observation.getNrChannels() ) {
+      zappedChannels[channel] = 1;
+      nrChannels++;
+    }
   }
   input.close();
   observation.setNrZappedChannels(nrChannels);
