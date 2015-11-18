@@ -39,7 +39,7 @@ public:
   const char * what() const throw ();
 };
 
-// Zapped channels
+// Zapped channels (excluded from computation)
 void readZappedChannels(Observation & observation, const std::string & inputFileName, std::vector< uint8_t > & zappedChannels);
 // SIGPROC data
 template< typename T > void readSIGPROC(const Observation & observation, const unsigned int padding, const uint8_t inputBits, const unsigned int bytesToSkip, const std::string & inputFilename, std::vector< std::vector< T > * > & data, const unsigned int firstSecond = 0);
