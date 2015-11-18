@@ -42,5 +42,20 @@ void readZappedChannels(Observation & observation, const std::string & inputFile
   observation.setNrZappedChannels(nrChannels);
 }
 
+void readIntegrationSteps(const Observation & observation, const std::string  & inputFileName, std::list< unsigned int > & integrationSteps) {
+  std::ifstream input;
+
+  input.open(inputFileName);
+  while ( !input.eof() ) {
+    unsigned int step = observation.getNrSamplesPerSecond();
+
+    input >> step;
+    if ( step < observation.getNrSamplesPerSecond() ) {
+      set.insert(step);
+    }
+  }
+  input.close()
+}
+
 } // AstroData
 
