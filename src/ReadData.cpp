@@ -42,7 +42,7 @@ void readZappedChannels(Observation & observation, const std::string & inputFile
   observation.setNrZappedChannels(nrChannels);
 }
 
-void readIntegrationSteps(const Observation & observation, const std::string  & inputFileName, std::list< unsigned int > & integrationSteps) {
+void readIntegrationSteps(const Observation & observation, const std::string  & inputFileName, std::set< unsigned int > & integrationSteps) {
   std::ifstream input;
 
   input.open(inputFileName);
@@ -51,7 +51,7 @@ void readIntegrationSteps(const Observation & observation, const std::string  & 
 
     input >> step;
     if ( step < observation.getNrSamplesPerSecond() ) {
-      set.insert(step);
+      integrationSteps.insert(step);
     }
   }
   input.close()
