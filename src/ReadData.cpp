@@ -54,7 +54,7 @@ void readIntegrationSteps(const Observation & observation, const std::string  & 
       integrationSteps.insert(step);
     }
   }
-  input.close()
+  input.close();
 }
 
 } // AstroData
