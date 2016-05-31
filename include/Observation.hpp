@@ -49,6 +49,7 @@ public:
   float getChannelBandwidth() const;
 	// Dispersion measures
   unsigned int getNrSamplesPerBatchSubbanding() const;
+  unsigned int getNrSamplesPerPaddedBatchSubbanding(unsigned int padding) const;
   unsigned int getNrDelaySecondsSubbanding() const;
   unsigned int getNrDelaySeconds() const;
   unsigned int getNrDMsSubbanding() const;
@@ -202,6 +203,10 @@ inline unsigned int Observation::getNrSamplesPerDispersedChannel() const {
 
 inline unsigned int Observation::getNrSamplesPerBatchSubbanding() const {
   return nrSamplesPerBatchSubbanding;
+}
+
+inline unsigned int Observation::getNrSamplesPerPaddedBatchSubbanding(unsigned int padding) const {
+	return isa::utils::pad(nrSamplesPerBatchSubbanding, padding);
 }
 
 inline unsigned int Observation::getNrDelaySecondsSubbanding() const {
