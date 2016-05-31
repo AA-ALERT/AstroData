@@ -39,7 +39,7 @@ public:
   unsigned int getNrSamplesPerSecond() const;
   unsigned int getNrSamplesPerPaddedSecond(unsigned int padding) const;
 	// Frequency parameters
-  unsigned int getnrSubbands() const;
+  unsigned int getNrSubbands() const;
   unsigned int getNrChannels() const;
   unsigned int getNrPaddedChannels(unsigned int padding) const;
   unsigned int getNrZappedChannels() const;
