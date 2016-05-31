@@ -16,7 +16,7 @@
 
 namespace AstroData {
 
-Observation::Observation() : nrSeconds(0), nrStations(0), nrBeams(0), samplingRate(0.0f), nrSamplesPerSecond(0), nrSamplesPerSubbandingDispersedChannel(0), nrSamplesPerDispersedChannel(0), nrSubbands(0), nrChannels(0), nrZappedChannels(0), minFreq(0.0f), maxFreq(0.0f), channelBandwidth(0.0f), nrDelaySecondsSubbanding(0), nrDelaySeconds(0), nrDMsSubbanding(0), nrDMs(0), firstDMSubbanding(0.0f), firstDM(0.0f), lastDMSubbanding(0.0f), lastDM(0.0f), DMSubbandingStep(0.0f), DMStep(0.0f), nrPeriods(0), firstPeriod(0), lastPeriod(0), periodStep(0), nrBins(0) {}
+Observation::Observation() : nrSeconds(0), nrStations(0), nrBeams(0), samplingRate(0.0f), nrSamplesPerSecond(0), nrSamplesPerSubbandingDispersedChannel(0), nrSamplesPerDispersedChannel(0), nrSubbands(0), nrChannels(0), nrChannelsPerSubband(0), nrZappedChannels(0), minFreq(0.0f), maxFreq(0.0f), channelBandwidth(0.0f), nrDelaySecondsSubbanding(0), nrDelaySeconds(0), nrDMsSubbanding(0), nrDMs(0), firstDMSubbanding(0.0f), firstDM(0.0f), lastDMSubbanding(0.0f), lastDM(0.0f), DMSubbandingStep(0.0f), DMStep(0.0f), nrPeriods(0), firstPeriod(0), lastPeriod(0), periodStep(0), nrBins(0) {}
 
 Observation::~Observation() {}
 
@@ -57,8 +57,10 @@ void Observation::setNrSubbands(unsigned int subbands) {
   nrSubbands = subbands;
 }
 
-void Observation::setFrequencyRange(const unsigned int channels, const float baseFrequency, const float bandwidth) {
+void Observation::setFrequencyRange(const unsigned int subbands, const unsigned int channels, const float baseFrequency, const float bandwidth) {
+  nrSubbands = subbands;
   nrChannels = channels;
+  nrChannelsPerSubband = channels / subbands;
   channelBandwidth = bandwidth;
   minFreq = baseFrequency;
   maxFreq = baseFrequency + ((channels - 1) * bandwidth);

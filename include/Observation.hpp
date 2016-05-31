@@ -41,6 +41,7 @@ public:
 	// Frequency parameters
   unsigned int getNrSubbands() const;
   unsigned int getNrChannels() const;
+  unsigned int getNrChannelsPerSubband() const;
   unsigned int getNrPaddedChannels(unsigned int padding) const;
   unsigned int getNrZappedChannels() const;
   float getMinFreq() const;
@@ -79,8 +80,7 @@ public:
   void setNrBeams(const unsigned int beams);
   void setNrSamplesPerSecond(const unsigned int samples);
   // Frequency parameters
-  void setNrSubbands(const unsigned int subbands);
-  void setFrequencyRange(const unsigned int channels, const float baseFrequency, const float bandwidth);
+  void setFrequencyRange(const unsigned int subbands, const unsigned int channels, const float baseFrequency, const float bandwidth);
   void setNrZappedChannels(const unsigned int zappedChannels);
   // Dispersion measures
   void setNrDelaySecondsSubbanding(const unsigned int seconds);
@@ -103,6 +103,7 @@ private:
 
   unsigned int nrSubbands;
   unsigned int nrChannels;
+  unsigned int nrChannelsPerSubband;
   unsigned int nrZappedChannels;
   float minFreq;
   float maxFreq;
