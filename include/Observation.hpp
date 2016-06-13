@@ -35,6 +35,8 @@ public:
   unsigned int getNrPaddedStations(unsigned int padding) const;
   unsigned int getNrBeams() const;
   unsigned int getNrPaddedBeams(unsigned int padding) const;
+  unsigned int getNrSyntheticBeams() const;
+  unsigned int getNrPaddedSyntheticBeams(const unsigned int padding) const;
   float getSamplingRate() const;
   unsigned int getNrSamplesPerBatch() const;
   unsigned int getNrSamplesPerPaddedBatch(unsigned int padding) const;
@@ -80,6 +82,7 @@ public:
   void setNrSeconds(const unsigned int seconds);
   void setNrStations(const unsigned int stations);
   void setNrBeams(const unsigned int beams);
+  void setNrSyntheticBeams(const unsigned int beams);
   void setSamplingRate(const float sampling);
   void setNrSamplesPerBatch(const unsigned int samples);
   // Frequency parameters
@@ -101,6 +104,7 @@ private:
   unsigned int nrSeconds;
   unsigned int nrStations;
   unsigned int nrBeams;
+  unsigned int nrSyntheticBeams;
   float samplingRate;
   unsigned int nrSamplesPerBatch;
   unsigned int nrSamplesPerDispersedChannel;
@@ -151,6 +155,14 @@ inline unsigned int Observation::getNrBeams() const {
 
 inline unsigned int Observation::getNrPaddedBeams(unsigned int padding) const {
 	return isa::utils::pad(nrBeams, padding);
+}
+
+inline unsigned int Observation::getNrBeams() const {
+  return nrSyntheticBeams;
+}
+
+inline unsigned int Observation::getNrPaddedSyntheticBeams(unsigned int padding) const {
+  return isa::utils::pad(nrSyntheticBeams, padding);
 }
 
 inline unsigned int Observation::getNrSamplesPerBatch() const {
