@@ -110,8 +110,10 @@ private:
   unsigned int nrBeams;
   unsigned int nrSyntheticBeams;
   float samplingRate;
+  unsigned int nrSamplesPerBatchSubbanding;
   unsigned int nrSamplesPerBatch;
   unsigned int nrSamplesPerDispersedChannel;
+  unsigned int nrSamplesPerSubbandingDispersedChannel;
 
   unsigned int nrSubbands;
   unsigned int nrChannels;
@@ -124,7 +126,6 @@ private:
   float maxFreq;
   float channelBandwidth;
 
-  unsigned int nrSamplesPerBatchSubbanding;
   unsigned int nrDelaySecondsSubbanding;
   unsigned int nrDelaySeconds;
   unsigned int nrDMsSubbanding;
