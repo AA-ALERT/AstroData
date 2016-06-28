@@ -112,8 +112,8 @@ private:
   float samplingRate;
   unsigned int nrSamplesPerBatchSubbanding;
   unsigned int nrSamplesPerBatch;
-  unsigned int nrSamplesPerDispersedChannel;
   unsigned int nrSamplesPerSubbandingDispersedChannel;
+  unsigned int nrSamplesPerDispersedChannel;
 
   unsigned int nrSubbands;
   unsigned int nrChannels;
