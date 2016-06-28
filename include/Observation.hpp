@@ -44,6 +44,7 @@ public:
   unsigned int getNrSubbands() const;
   unsigned int getNrChannels() const;
   unsigned int getNrChannelsPerSubband() const;
+  unsigned int getNrPaddedSubbands(unsigned int padding) const;
   unsigned int getNrPaddedChannels(unsigned int padding) const;
   unsigned int getNrZappedChannels() const;
   float getMinFreq() const;
@@ -183,6 +184,10 @@ inline unsigned int Observation::getNrSubbands() const {
 
 inline unsigned int Observation::getNrChannels() const {
 	return nrChannels;
+}
+
+inline unsigned int Observation::getNrPaddedSubbands(unsigned int padding) const {
+	return isa::utils::pad(nrSubbands, padding);
 }
 
 inline unsigned int Observation::getNrPaddedChannels(unsigned int padding) const {
