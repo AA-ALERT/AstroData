@@ -47,8 +47,8 @@ public:
   unsigned int getNrPaddedSubbands(unsigned int padding) const;
   unsigned int getNrPaddedChannels(unsigned int padding) const;
   unsigned int getNrZappedChannels() const;
-  float getMinSubbandFreq() const;
-  float getMaxSubbandFreq() const;
+  float getSubbandMinFreq() const;
+  float getSubbandMaxFreq() const;
   float getSubbandBandwidth() const;
   float getMinFreq() const;
   float getMaxFreq() const;
@@ -164,7 +164,7 @@ inline unsigned int Observation::getNrPaddedBeams(unsigned int padding) const {
 	return isa::utils::pad(nrBeams, padding);
 }
 
-inline unsigned int Observation::getNrBeams() const {
+inline unsigned int Observation::getNrSyntheticBeams() const {
   return nrSyntheticBeams;
 }
 
