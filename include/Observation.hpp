@@ -205,6 +205,10 @@ inline unsigned int Observation::getNrZappedChannels() const {
   return nrZappedChannels;
 }
 
+inline unsigned int Observation::getNrSamplesPerSubbandingPaddedDispersedChannel(unsigned int padding) const {
+  return isa::utils::pad(nrSamplesPerSubbandingDispersedChannel, padding);
+}
+
 inline unsigned int Observation::getNrSamplesPerPaddedDispersedChannel(unsigned int padding) const {
   return isa::utils::pad(nrSamplesPerDispersedChannel, padding);
 }
@@ -231,6 +235,10 @@ inline float Observation::getMaxFreq() const {
 
 inline float Observation::getChannelBandwidth() const {
 	return channelBandwidth;
+}
+
+inline unsigned int Observation::getNrSamplesPerSubbandingDispersedChannel() const {
+  return nrSamplesPerSubbandingDispersedChannel;
 }
 
 inline unsigned int Observation::getNrSamplesPerDispersedChannel() const {
