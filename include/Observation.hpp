@@ -205,7 +205,7 @@ inline unsigned int Observation::getNrZappedChannels() const {
   return nrZappedChannels;
 }
 
-inline unsigned int Observation::getNrSamplesPerSubbandingPaddedDispersedChannel(unsigned int padding) const {
+inline unsigned int Observation::getNrSamplesPerPaddedSubbandingDispersedChannel(unsigned int padding) const {
   return isa::utils::pad(nrSamplesPerSubbandingDispersedChannel, padding);
 }
 
