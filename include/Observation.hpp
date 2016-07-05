@@ -189,6 +189,10 @@ inline unsigned int Observation::getNrSubbands() const {
   return nrSubbands;
 }
 
+inline unsigned int Observation::getNrChannelsPerSubband() const {
+	return nrChannelsPerSubband;
+}
+
 inline unsigned int Observation::getNrChannels() const {
 	return nrChannels;
 }
