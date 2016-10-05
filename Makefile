@@ -1,7 +1,9 @@
 
-UTILS := $(HOME)/src/utils
-HDF5 := $(HOME)/src/hdf5
-PSRDADA := $(HOME)/src/psrdada
+ROOT ?= $(HOME)
+
+UTILS := $(ROOT)/src/utils
+HDF5 := $(ROOT)/src/hdf5
+PSRDADA := $(ROOT)/src/psrdada
 
 CC := g++
 CFLAGS := -std=c++11 -Wall
