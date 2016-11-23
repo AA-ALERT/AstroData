@@ -1,9 +1,9 @@
 
-ROOT ?= $(HOME)
+APERTIF_ROOT ?= $(HOME)
 
-UTILS := $(ROOT)/src/utils
-HDF5 := $(ROOT)/src/hdf5
-PSRDADA := $(ROOT)/src/psrdada
+UTILS := $(APERTIF_ROOT)/src/utils
+HDF5 := $(APERTIF_ROOT)/src/hdf5
+PSRDADA := $(APERTIF_ROOT)/src/psrdada
 
 CC := g++
 CFLAGS := -std=c++11 -Wall
