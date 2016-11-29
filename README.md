@@ -4,11 +4,11 @@ Set of C++ classes to read data and generate fake data for the pulsar search and
 
 # Installation
 
-Set the `APERTIF_ROOT` environment variable to the location of the pipeline sourcode.
+Set the `SOURCE_ROOT` environment variable to the location of the pipeline sourcode.
 If this package is installed in `$HOME/Code/APERTIF/AstroData` this would be:
 
 ```bash
- $ export APERTIF_ROOT=$HOME/Code/APERTIF
+ $ export SOURCE_ROOT=$HOME/Code/APERTIF
 ```
 
 Then build and test as follows:
