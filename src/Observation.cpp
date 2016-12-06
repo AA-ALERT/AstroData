@@ -16,7 +16,7 @@
 
 namespace AstroData {
 
-Observation::Observation() : nrSeconds(0), nrStations(0), nrBeams(0), nrSyntheticBeams(0), samplingRate(0.0f), nrSamplesPerBatchSubbanding(0), nrSamplesPerBatch(0), nrSamplesPerSubbandingDispersedChannel(0), nrSamplesPerDispersedChannel(0), nrSubbands(0), nrChannels(0), nrChannelsPerSubband(0), nrZappedChannels(0), subbandMinFreq(0.0), subbandMaxFreq(0.0), subbandBandwidth(0.0), minFreq(0.0f), maxFreq(0.0f), channelBandwidth(0.0f), nrDelaySecondsSubbanding(0), nrDelaySeconds(0), nrDMsSubbanding(0), nrDMs(0), firstDMSubbanding(0.0f), firstDM(0.0f), lastDMSubbanding(0.0f), lastDM(0.0f), DMSubbandingStep(0.0f), DMStep(0.0f), nrPeriods(0), firstPeriod(0), lastPeriod(0), periodStep(0), nrBins(0) {}
+Observation::Observation() : nrSeconds(0), nrStations(0), nrBeams(0), nrSynthesizedBeams(0), samplingRate(0.0f), nrSamplesPerBatchSubbanding(0), nrSamplesPerBatch(0), nrSamplesPerSubbandingDispersedChannel(0), nrSamplesPerDispersedChannel(0), nrSubbands(0), nrChannels(0), nrChannelsPerSubband(0), nrZappedChannels(0), subbandMinFreq(0.0), subbandMaxFreq(0.0), subbandBandwidth(0.0), minFreq(0.0f), maxFreq(0.0f), channelBandwidth(0.0f), nrDelaySecondsSubbanding(0), nrDelaySeconds(0), nrDMsSubbanding(0), nrDMs(0), firstDMSubbanding(0.0f), firstDM(0.0f), lastDMSubbanding(0.0f), lastDM(0.0f), DMSubbandingStep(0.0f), DMStep(0.0f), nrPeriods(0), firstPeriod(0), lastPeriod(0), periodStep(0), nrBins(0) {}
 
 Observation::~Observation() {}
 
@@ -32,8 +32,8 @@ void Observation::setNrBeams(const unsigned int beams) {
 	nrBeams = beams;
 }
 
-void Observation::setNrSyntheticBeams(const unsigned int beams) {
-  nrSyntheticBeams = beams;
+void Observation::setNrSynthesizedBeams(const unsigned int beams) {
+  nrSynthesizedBeams = beams;
 }
 
 void Observation::setNrDelaySecondsSubbanding(const unsigned int seconds) {
@@ -86,6 +86,7 @@ void Observation::setDMSubbandingRange(const unsigned int dms, const float baseD
   firstDMSubbanding = baseDM;
   lastDMSubbanding = baseDM + ((dms - 1) * step);
 }
+
 void Observation::setDMRange(const unsigned int dms, const float baseDM, const float step) {
 	nrDMs = dms;
   DMStep = step;
