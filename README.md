@@ -2,6 +2,14 @@
 
 Set of C++ classes to read data and generate fake data for the pulsar search and FRB pipeline.
 
+# Dependencies
+
+In order to compile this package you need to have in your system the following software:
+
+ * [HDF5](https://support.hdfgroup.org/HDF5/)
+ * [PSRDADA](http://psrdada.sourceforge.net/)
+ * [utils](https://github.com/isazi/utils) (master branch)
+
 # Installation
 
 Set the `SOURCE_ROOT` environment variable to the location of the pipeline sourcode.
@@ -22,7 +30,7 @@ Then build and test as follows:
 ## ReadData.hpp
 
 Data io functions:
- 
+
  * *readZappedChannels* Zapped channels (excluded from computation)
  * *readIntegrationSteps* Integration steps
  * *readSIGPROC* SIGPROC data
