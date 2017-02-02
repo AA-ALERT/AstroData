@@ -47,10 +47,10 @@ void readIntegrationSteps(const Observation & observation, const std::string  & 
 
   input.open(inputFileName);
   while ( !input.eof() ) {
-    unsigned int step = observation.getNrSamplesPerSecond();
+    unsigned int step = observation.getNrSamplesPerBatch();
 
     input >> step;
-    if ( step < observation.getNrSamplesPerSecond() ) {
+    if ( step < observation.getNrSamplesPerBatch() ) {
       integrationSteps.insert(step);
     }
   }

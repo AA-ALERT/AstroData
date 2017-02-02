@@ -65,17 +65,17 @@ template< typename T > void readSIGPROC(const Observation & observation, const u
 	inputFile.seekg(bytesToSkip, std::ios::beg);
 	for ( unsigned int second = 0; second < observation.getNrSeconds(); second++ ) {
     if ( inputBits >= 8 ) {
-      data.at(second) = new std::vector< T >(observation.getNrChannels() * observation.getNrSamplesPerPaddedSecond(padding / sizeof(T)));
-      for ( unsigned int sample = 0; sample < observation.getNrSamplesPerSecond(); sample++ ) {
+      data.at(second) = new std::vector< T >(observation.getNrChannels() * observation.getNrSamplesPerPaddedBatch(padding / sizeof(T)));
+      for ( unsigned int sample = 0; sample < observation.getNrSamplesPerBatch(); sample++ ) {
         for ( unsigned int channel = observation.getNrChannels(); channel > 0; channel-- ) {
           inputFile.read(buffer, BUFFER_DIM);
-          data.at(second)->at((static_cast< uint64_t >(channel - 1) * observation.getNrSamplesPerPaddedSecond(padding / sizeof(T))) + sample) = *(reinterpret_cast< T * >(buffer));
+          data.at(second)->at((static_cast< uint64_t >(channel - 1) * observation.getNrSamplesPerPaddedBatch(padding / sizeof(T))) + sample) = *(reinterpret_cast< T * >(buffer));
         }
       }
     } else {
-      uint64_t bytesToRead = static_cast< uint64_t >(observation.getNrSamplesPerSecond() * (observation.getNrChannels() / (8.0 / inputBits)));
+      uint64_t bytesToRead = static_cast< uint64_t >(observation.getNrSamplesPerBatch() * (observation.getNrChannels() / (8.0 / inputBits)));
 
-      data.at(second) = new std::vector< T >(observation.getNrChannels() * isa::utils::pad(observation.getNrSamplesPerSecond() / (8 / inputBits), padding / sizeof(T)));
+      data.at(second) = new std::vector< T >(observation.getNrChannels() * isa::utils::pad(observation.getNrSamplesPerBatch() / (8 / inputBits), padding / sizeof(T)));
       for ( uint64_t byte = 0; byte < bytesToRead; byte++ ) {
         unsigned int channel = (observation.getNrChannels() - 1) - ((byte * (8 / inputBits)) % observation.getNrChannels());
         unsigned int sample = (byte * (8 / inputBits)) / observation.getNrChannels();
@@ -97,22 +97,22 @@ template< typename T > void readSIGPROC(const Observation & observation, const u
 
             while ( item < (8 / inputBits) ) {
               channelFirstBit = item * inputBits;
-              sampleBuffer = data.at(second)->at((static_cast< uint64_t >(channel - channelOffset) * isa::utils::pad(observation.getNrSamplesPerSecond() / (8 / inputBits), padding / sizeof(T))) + sampleByte);
+              sampleBuffer = data.at(second)->at((static_cast< uint64_t >(channel - channelOffset) * isa::utils::pad(observation.getNrSamplesPerBatch() / (8 / inputBits), padding / sizeof(T))) + sampleByte);
               for ( uint8_t bit = 0; bit < inputBits; bit++ ) {
                 isa::utils::setBit(sampleBuffer, isa::utils::getBit(*buffer, channelFirstBit + bit), sampleFirstBit + bit);
               }
-              data.at(second)->at((static_cast< uint64_t >(channel - channelOffset) * isa::utils::pad(observation.getNrSamplesPerSecond() / (8 / inputBits), padding / sizeof(T))) + sampleByte) = sampleBuffer;
+              data.at(second)->at((static_cast< uint64_t >(channel - channelOffset) * isa::utils::pad(observation.getNrSamplesPerBatch() / (8 / inputBits), padding / sizeof(T))) + sampleByte) = sampleBuffer;
               item++;
               channelOffset++;
             }
 
             break;
           }
-          sampleBuffer = data.at(second)->at((static_cast< uint64_t >(channel - item) * isa::utils::pad(observation.getNrSamplesPerSecond() / (8 / inputBits), padding / sizeof(T))) + sampleByte);
+          sampleBuffer = data.at(second)->at((static_cast< uint64_t >(channel - item) * isa::utils::pad(observation.getNrSamplesPerBatch() / (8 / inputBits), padding / sizeof(T))) + sampleByte);
           for ( uint8_t bit = 0; bit < inputBits; bit++ ) {
             isa::utils::setBit(sampleBuffer, isa::utils::getBit(*buffer, channelFirstBit + bit), sampleFirstBit + bit);
           }
-          data.at(second)->at((static_cast< uint64_t >(channel - item) * isa::utils::pad(observation.getNrSamplesPerSecond() / (8 / inputBits), padding / sizeof(T))) + sampleByte) = sampleBuffer;
+          data.at(second)->at((static_cast< uint64_t >(channel - item) * isa::utils::pad(observation.getNrSamplesPerBatch() / (8 / inputBits), padding / sizeof(T))) + sampleByte) = sampleBuffer;
         }
       }
     }
@@ -154,7 +154,7 @@ template< typename T > void readLOFAR(std::string headerFilename, std::string ra
 	nrSubbands = valueUInt;
 	headerFile.close();
 
-	observation.setNrSamplesPerSecond(static_cast< unsigned int >(totalSamples / totalIntegrationTime));
+	observation.setNrSamplesPerBatch(static_cast< unsigned int >(totalSamples / totalIntegrationTime));
 	if ( nrSeconds == 0 ) {
 		observation.setNrSeconds(static_cast< unsigned int >(totalIntegrationTime));
 	} else {
@@ -164,28 +164,28 @@ template< typename T > void readLOFAR(std::string headerFilename, std::string ra
 			observation.setNrSeconds(static_cast< unsigned int >(totalIntegrationTime) - firstSecond);
 		}
 	}
-  observation.setFrequencyRange(nrSubbands * nrChannels, minFreq, channelBandwidth);
+  observation.setFrequencyRange(1, nrSubbands * nrChannels, minFreq, channelBandwidth);
 
 	// Read the raw file with the actual data
 	std::ifstream rawFile;
 	rawFile.open(rawFilename.c_str(), std::ios::binary);
 	rawFile.sync_with_stdio(false);
 	if ( firstSecond > 0 ) {
-		rawFile.seekg(firstSecond * observation.getNrSamplesPerSecond() * nrSubbands * nrChannels, std::ios::beg);
+		rawFile.seekg(firstSecond * observation.getNrSamplesPerBatch() * nrSubbands * nrChannels, std::ios::beg);
 	}
 	data.resize(observation.getNrSeconds());
 
 	char * word = new char [4];
 	for ( unsigned int second = 0; second < observation.getNrSeconds(); second++ ) {
-		data.at(second) = new std::vector< T >(observation.getNrChannels() * observation.getNrSamplesPerPaddedSecond(padding / sizeof(T)));
-		for ( unsigned int sample = 0; sample < observation.getNrSamplesPerSecond(); sample++ ) {
+		data.at(second) = new std::vector< T >(observation.getNrChannels() * observation.getNrSamplesPerPaddedBatch(padding / sizeof(T)));
+		for ( unsigned int sample = 0; sample < observation.getNrSamplesPerBatch(); sample++ ) {
 			for ( unsigned int subband = 0; subband < nrSubbands; subband++ ) {
 				for ( unsigned int channel = 0; channel < nrChannels; channel++ ) {
           unsigned int globalChannel = (subband * nrChannels) + channel;
 
 					rawFile.read(word, 4);
           isa::utils::bigEndianToLittleEndian(word);
-          data.at(second)->at((globalChannel * observation.getNrSamplesPerPaddedSecond(padding / sizeof(T))) + sample) = *(reinterpret_cast< T * >(word));
+          data.at(second)->at((globalChannel * observation.getNrSamplesPerPaddedBatch(padding / sizeof(T))) + sample) = *(reinterpret_cast< T * >(word));
 				}
 			}
 		}
@@ -209,18 +209,18 @@ template< typename T > void readPSRDadaHeader(Observation & observation, dada_hd
   }
 
   ascii_header_get(header, "SAMPLES_PER_SECOND", "%d", &uintValue);
-  observation.setNrSamplesPerSecond(uintValue);
+  observation.setNrSamplesPerBatch(uintValue);
   ascii_header_get(header, "CHANNELS", "%d", &uintValue);
   ascii_header_get(header, "MIN_FREQUENCY", "%f", &floatValue[0]);
   ascii_header_get(header, "CHANNEL_BANDWIDTH", "%f", &floatValue[1]);
-  observation.setFrequencyRange(uintValue, floatValue[0], floatValue[1]);
+  observation.setFrequencyRange(1, uintValue, floatValue[0], floatValue[1]);
   ipcbuf_mark_cleared(ringBuffer.header_block);
 
   delete header;
 }
 
 template< typename T > inline void readPSRDada(Observation & observation, const unsigned int padding, dada_hdu_t & ringBuffer, std::vector< T > * data) throw(RingBufferError) {
-  if ( (ipcio_read(ringBuffer.data_block, reinterpret_cast< char * >(data->data()), observation.getNrChannels() * observation.getNrSamplesPerPaddedSecond(padding / sizeof(T)) * sizeof(T))) < 0 ) {
+  if ( (ipcio_read(ringBuffer.data_block, reinterpret_cast< char * >(data->data()), observation.getNrChannels() * observation.getNrSamplesPerPaddedBatch(padding / sizeof(T)) * sizeof(T))) < 0 ) {
     throw RingBufferError();
   }
 }
