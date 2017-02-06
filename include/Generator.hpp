@@ -32,7 +32,7 @@ template< typename T > void generateSinglePulse(const unsigned int width, const 
 template< typename T > void generatePulsar(const unsigned int period, const unsigned int width, const float DM, const AstroData::Observation & observation, const unsigned int padding, std::vector< std::vector< T > * > & data, const bool random) {
   std::srand(std::time(0));
   // Generate the  "noise"
-  for ( unsigned int second = 0; second < observation.getNrSeconds(); second++ ) {
+  for ( unsigned int second = 0; second < observation.getNrBatches(); second++ ) {
     data[second] = new std::vector< T >(observation.getNrChannels() * observation.getNrSamplesPerPaddedBatch(padding / sizeof(T)));
     if ( random ) {
       for ( unsigned int channel = 0; channel < observation.getNrChannels(); channel++ ) {
@@ -52,9 +52,9 @@ template< typename T > void generatePulsar(const unsigned int period, const unsi
     float delta = kDM * (inverseFreq - inverseHighFreq);
     unsigned int shift = static_cast< unsigned int >(delta * observation.getNrSamplesPerBatch());
 
-    for ( unsigned int sample = shift; sample < observation.getNrSeconds() * observation.getNrSamplesPerBatch(); sample += period ) {
+    for ( unsigned int sample = shift; sample < observation.getNrBatches() * observation.getNrSamplesPerBatch(); sample += period ) {
       for ( unsigned int i = 0; i < width; i++ ) {
-        if ( sample + i >= observation.getNrSeconds() * observation.getNrSamplesPerBatch() ) {
+        if ( sample + i >= observation.getNrBatches() * observation.getNrSamplesPerBatch() ) {
         break;
         }
         unsigned int second = (sample + i) / observation.getNrSamplesPerBatch();
@@ -73,7 +73,7 @@ template< typename T > void generatePulsar(const unsigned int period, const unsi
 template< typename T > void generateSinglePulse(const unsigned int width, const float DM, const AstroData::Observation & observation, const unsigned int padding, std::vector< std::vector< T > * > & data, const uint8_t inputBits, const bool random) {
   std::srand(std::time(0));
   // Generate the  "noise"
-  for ( unsigned int second = 0; second < observation.getNrSeconds(); second++ ) {
+  for ( unsigned int second = 0; second < observation.getNrBatches(); second++ ) {
     if ( inputBits >= 8 ) {
       data[second] = new std::vector< T >(observation.getNrChannels() * observation.getNrSamplesPerPaddedBatch(padding / sizeof(T)));
     } else {
@@ -112,10 +112,10 @@ template< typename T > void generateSinglePulse(const unsigned int width, const 
   float kDM = 4148.808f * DM;
 
   if ( random ) {
-    second = std::rand() % (observation.getNrSeconds() / 2);
+    second = std::rand() % (observation.getNrBatches() / 2);
     sample = std::rand() % (observation.getNrSamplesPerBatch() - width);
   } else {
-    second = observation.getNrSeconds() / 2;
+    second = observation.getNrBatches() / 2;
     sample = observation.getNrSamplesPerBatch() / 2;
   }
 
@@ -124,7 +124,7 @@ template< typename T > void generateSinglePulse(const unsigned int width, const 
     unsigned int shift = static_cast< unsigned int >(kDM * (inverseFreq - inverseHighFreq) * observation.getNrSamplesPerBatch());
 
     for ( unsigned int i = 0; i < width; i++ ) {
-      if ( second + ((sample + i + shift) / observation.getNrSamplesPerBatch()) >= observation.getNrSeconds() ) {
+      if ( second + ((sample + i + shift) / observation.getNrSamplesPerBatch()) >= observation.getNrBatches() ) {
       break;
       }
 

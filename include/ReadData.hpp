@@ -47,7 +47,7 @@ void readIntegrationSteps(const Observation & observation, const std::string  & 
 // SIGPROC data
 template< typename T > void readSIGPROC(const Observation & observation, const unsigned int padding, const uint8_t inputBits, const unsigned int bytesToSkip, const std::string & inputFilename, std::vector< std::vector< T > * > & data, const unsigned int firstSecond = 0);
 // LOFAR data
-template< typename T > void readLOFAR(std::string headerFilename, std::string rawFilename, Observation & observation, const unsigned int padding, std::vector< std::vector< T > * > & data, unsigned int nrSeconds = 0, unsigned int firstSecond = 0);
+template< typename T > void readLOFAR(std::string headerFilename, std::string rawFilename, Observation & observation, const unsigned int padding, std::vector< std::vector< T > * > & data, unsigned int nrBatches = 0, unsigned int firstSecond = 0);
 // PSRDADA buffer
 template< typename T > void readPSRDadaHeader(Observation & observation, dada_hdu_t & ringBuffer) throw(RingBufferError);
 template< typename T > inline void readPSRDada(Observation & observation, const unsigned int padding, dada_hdu_t & ringBuffer, std::vector< T > * data) throw(RingBufferError);
@@ -63,7 +63,7 @@ template< typename T > void readSIGPROC(const Observation & observation, const u
 	inputFile.open(inputFilename.c_str(), std::ios::binary);
 	inputFile.sync_with_stdio(false);
 	inputFile.seekg(bytesToSkip, std::ios::beg);
-	for ( unsigned int second = 0; second < observation.getNrSeconds(); second++ ) {
+	for ( unsigned int second = 0; second < observation.getNrBatches(); second++ ) {
     if ( inputBits >= 8 ) {
       data.at(second) = new std::vector< T >(observation.getNrChannels() * observation.getNrSamplesPerPaddedBatch(padding / sizeof(T)));
       for ( unsigned int sample = 0; sample < observation.getNrSamplesPerBatch(); sample++ ) {
@@ -122,7 +122,7 @@ template< typename T > void readSIGPROC(const Observation & observation, const u
 	delete [] buffer;
 }
 
-template< typename T > void readLOFAR(std::string headerFilename, std::string rawFilename, Observation & observation, const unsigned int padding, std::vector< std::vector< T > * > & data, unsigned int nrSeconds, unsigned int firstSecond) {
+template< typename T > void readLOFAR(std::string headerFilename, std::string rawFilename, Observation & observation, const unsigned int padding, std::vector< std::vector< T > * > & data, unsigned int nrBatches, unsigned int firstSecond) {
   unsigned int nrSubbands, nrChannels;
   float minFreq, channelBandwidth;
 	// Read the HDF5 file with the metadata
@@ -155,13 +155,13 @@ template< typename T > void readLOFAR(std::string headerFilename, std::string ra
 	headerFile.close();
 
 	observation.setNrSamplesPerBatch(static_cast< unsigned int >(totalSamples / totalIntegrationTime));
-	if ( nrSeconds == 0 ) {
-		observation.setNrSeconds(static_cast< unsigned int >(totalIntegrationTime));
+	if ( nrBatches == 0 ) {
+		observation.setNrBatches(static_cast< unsigned int >(totalIntegrationTime));
 	} else {
-		if ( static_cast< unsigned int >(totalIntegrationTime) >= (firstSecond + nrSeconds) ) {
-			observation.setNrSeconds(nrSeconds);
+		if ( static_cast< unsigned int >(totalIntegrationTime) >= (firstSecond + nrBatches) ) {
+			observation.setNrBatches(nrBatches);
 		} else {
-			observation.setNrSeconds(static_cast< unsigned int >(totalIntegrationTime) - firstSecond);
+			observation.setNrBatches(static_cast< unsigned int >(totalIntegrationTime) - firstSecond);
 		}
 	}
   observation.setFrequencyRange(1, nrSubbands * nrChannels, minFreq, channelBandwidth);
@@ -173,10 +173,10 @@ template< typename T > void readLOFAR(std::string headerFilename, std::string ra
 	if ( firstSecond > 0 ) {
 		rawFile.seekg(firstSecond * observation.getNrSamplesPerBatch() * nrSubbands * nrChannels, std::ios::beg);
 	}
-	data.resize(observation.getNrSeconds());
+	data.resize(observation.getNrBatches());
 
 	char * word = new char [4];
-	for ( unsigned int second = 0; second < observation.getNrSeconds(); second++ ) {
+	for ( unsigned int second = 0; second < observation.getNrBatches(); second++ ) {
 		data.at(second) = new std::vector< T >(observation.getNrChannels() * observation.getNrSamplesPerPaddedBatch(padding / sizeof(T)));
 		for ( unsigned int sample = 0; sample < observation.getNrSamplesPerBatch(); sample++ ) {
 			for ( unsigned int subband = 0; subband < nrSubbands; subband++ ) {
