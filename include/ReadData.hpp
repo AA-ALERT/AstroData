@@ -50,7 +50,7 @@ template< typename T > void readSIGPROC(const Observation & observation, const u
 template< typename T > void readLOFAR(std::string headerFilename, std::string rawFilename, Observation & observation, const unsigned int padding, std::vector< std::vector< T > * > & data, unsigned int nrBatches = 0, unsigned int firstBatch = 0);
 // PSRDADA buffer
 template< typename T > void readPSRDADAHeader(Observation & observation, dada_hdu_t & ringBuffer) throw(RingBufferError);
-template< typename T > inline void readPSRDADA(Observation & observation, const unsigned int padding, dada_hdu_t & ringBuffer, std::vector< T > * data) throw(RingBufferError);
+template< typename T > inline void readPSRDADA(dada_hdu_t & ringBuffer, std::vector< T > * data) throw(RingBufferError);
 
 
 // Implementations
@@ -219,7 +219,7 @@ template< typename T > void readPSRDADAHeader(Observation & observation, dada_hd
   delete header;
 }
 
-template< typename T > inline void readPSRDADA(const unsigned int padding, dada_hdu_t & ringBuffer, std::vector< T > * data, const unsigned int dataSize) throw(RingBufferError) {
+template< typename T > inline void readPSRDADA(dada_hdu_t & ringBuffer, std::vector< T > * data) throw(RingBufferError) {
   uint8_t * buffer = 0;
   uint64_t bufferSize = 0;
 
