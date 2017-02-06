@@ -31,7 +31,7 @@
 
 namespace AstroData {
 
-// Exception: the PSRDada ring buffer does not work
+// Exception: the PSRDADA ring buffer does not work
 class RingBufferError : public std::exception {
 public:
   RingBufferError();
@@ -49,8 +49,8 @@ template< typename T > void readSIGPROC(const Observation & observation, const u
 // LOFAR data
 template< typename T > void readLOFAR(std::string headerFilename, std::string rawFilename, Observation & observation, const unsigned int padding, std::vector< std::vector< T > * > & data, unsigned int nrBatches = 0, unsigned int firstBatch = 0);
 // PSRDADA buffer
-template< typename T > void readPSRDadaHeader(Observation & observation, dada_hdu_t & ringBuffer) throw(RingBufferError);
-template< typename T > inline void readPSRDada(Observation & observation, const unsigned int padding, dada_hdu_t & ringBuffer, std::vector< T > * data) throw(RingBufferError);
+template< typename T > void readPSRDADAHeader(Observation & observation, dada_hdu_t & ringBuffer) throw(RingBufferError);
+template< typename T > inline void readPSRDADA(Observation & observation, const unsigned int padding, dada_hdu_t & ringBuffer, std::vector< T > * data) throw(RingBufferError);
 
 
 // Implementations
@@ -194,7 +194,7 @@ template< typename T > void readLOFAR(std::string headerFilename, std::string ra
 	delete [] word;
 }
 
-template< typename T > void readPSRDadaHeader(Observation & observation, dada_hdu_t & ringBuffer) throw(RingBufferError) {
+template< typename T > void readPSRDADAHeader(Observation & observation, dada_hdu_t & ringBuffer) throw(RingBufferError) {
   // Staging variables for the header elements
   unsigned int uintValue = 0;
   float floatValue[2] = {0.0f, 0.0f};
@@ -219,7 +219,7 @@ template< typename T > void readPSRDadaHeader(Observation & observation, dada_hd
   delete header;
 }
 
-template< typename T > inline void readPSRDada(const unsigned int padding, dada_hdu_t & ringBuffer, std::vector< T > * data, const unsigned int dataSize) throw(RingBufferError) {
+template< typename T > inline void readPSRDADA(const unsigned int padding, dada_hdu_t & ringBuffer, std::vector< T > * data, const unsigned int dataSize) throw(RingBufferError) {
   uint8_t * buffer = 0;
   uint64_t bufferSize = 0;
 
