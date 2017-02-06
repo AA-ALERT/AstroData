@@ -45,9 +45,9 @@ void readZappedChannels(Observation & observation, const std::string & inputFile
 // Integration steps
 void readIntegrationSteps(const Observation & observation, const std::string  & inputFileName, std::set< unsigned int > & integrationSteps);
 // SIGPROC data
-template< typename T > void readSIGPROC(const Observation & observation, const unsigned int padding, const uint8_t inputBits, const unsigned int bytesToSkip, const std::string & inputFilename, std::vector< std::vector< T > * > & data, const unsigned int firstSecond = 0);
+template< typename T > void readSIGPROC(const Observation & observation, const unsigned int padding, const uint8_t inputBits, const unsigned int bytesToSkip, const std::string & inputFilename, std::vector< std::vector< T > * > & data, const unsigned int firstBatch = 0);
 // LOFAR data
-template< typename T > void readLOFAR(std::string headerFilename, std::string rawFilename, Observation & observation, const unsigned int padding, std::vector< std::vector< T > * > & data, unsigned int nrBatches = 0, unsigned int firstSecond = 0);
+template< typename T > void readLOFAR(std::string headerFilename, std::string rawFilename, Observation & observation, const unsigned int padding, std::vector< std::vector< T > * > & data, unsigned int nrBatches = 0, unsigned int firstBatch = 0);
 // PSRDADA buffer
 template< typename T > void readPSRDadaHeader(Observation & observation, dada_hdu_t & ringBuffer) throw(RingBufferError);
 template< typename T > inline void readPSRDada(Observation & observation, const unsigned int padding, dada_hdu_t & ringBuffer, std::vector< T > * data) throw(RingBufferError);
@@ -55,7 +55,7 @@ template< typename T > inline void readPSRDada(Observation & observation, const 
 
 // Implementations
 
-template< typename T > void readSIGPROC(const Observation & observation, const unsigned int padding, const uint8_t inputBits, const unsigned int bytesToSkip, const std::string & inputFilename, std::vector< std::vector< T > * > & data, const unsigned int firstSecond = 0) {
+template< typename T > void readSIGPROC(const Observation & observation, const unsigned int padding, const uint8_t inputBits, const unsigned int bytesToSkip, const std::string & inputFilename, std::vector< std::vector< T > * > & data, const unsigned int firstBatch = 0) {
 	std::ifstream inputFile;
 	const unsigned int BUFFER_DIM = sizeof(T);
 	char * buffer = new char [BUFFER_DIM];
@@ -122,7 +122,7 @@ template< typename T > void readSIGPROC(const Observation & observation, const u
 	delete [] buffer;
 }
 
-template< typename T > void readLOFAR(std::string headerFilename, std::string rawFilename, Observation & observation, const unsigned int padding, std::vector< std::vector< T > * > & data, unsigned int nrBatches, unsigned int firstSecond) {
+template< typename T > void readLOFAR(std::string headerFilename, std::string rawFilename, Observation & observation, const unsigned int padding, std::vector< std::vector< T > * > & data, unsigned int nrBatches, unsigned int firstBatch) {
   unsigned int nrSubbands, nrChannels;
   float minFreq, channelBandwidth;
 	// Read the HDF5 file with the metadata
@@ -158,10 +158,10 @@ template< typename T > void readLOFAR(std::string headerFilename, std::string ra
 	if ( nrBatches == 0 ) {
 		observation.setNrBatches(static_cast< unsigned int >(totalIntegrationTime));
 	} else {
-		if ( static_cast< unsigned int >(totalIntegrationTime) >= (firstSecond + nrBatches) ) {
+		if ( static_cast< unsigned int >(totalIntegrationTime) >= (firstBatch + nrBatches) ) {
 			observation.setNrBatches(nrBatches);
 		} else {
-			observation.setNrBatches(static_cast< unsigned int >(totalIntegrationTime) - firstSecond);
+			observation.setNrBatches(static_cast< unsigned int >(totalIntegrationTime) - firstBatch);
 		}
 	}
   observation.setFrequencyRange(1, nrSubbands * nrChannels, minFreq, channelBandwidth);
@@ -170,8 +170,8 @@ template< typename T > void readLOFAR(std::string headerFilename, std::string ra
 	std::ifstream rawFile;
 	rawFile.open(rawFilename.c_str(), std::ios::binary);
 	rawFile.sync_with_stdio(false);
-	if ( firstSecond > 0 ) {
-		rawFile.seekg(firstSecond * observation.getNrSamplesPerBatch() * nrSubbands * nrChannels, std::ios::beg);
+	if ( firstBatch > 0 ) {
+		rawFile.seekg(firstBatch * observation.getNrSamplesPerBatch() * nrSubbands * nrChannels, std::ios::beg);
 	}
 	data.resize(observation.getNrBatches());
 
