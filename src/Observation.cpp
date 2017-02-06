@@ -20,8 +20,8 @@ Observation::Observation() : nrBatches(0), nrStations(0), nrBeams(0), nrSynthesi
 
 Observation::~Observation() {}
 
-void Observation::setNrBatches(const unsigned int batchs) {
-  nrBatches = batchs;
+void Observation::setNrBatches(const unsigned int batches) {
+  nrBatches = batches;
 }
 
 void Observation::setNrStations(const unsigned int stations) {
@@ -36,12 +36,12 @@ void Observation::setNrSynthesizedBeams(const unsigned int beams) {
   nrSynthesizedBeams = beams;
 }
 
-void Observation::setNrDelayBatchesSubbanding(const unsigned int batchs) {
-  nrDelayBatchesSubbanding = batchs;
+void Observation::setNrDelayBatchesSubbanding(const unsigned int batches) {
+  nrDelayBatchesSubbanding = batches;
 }
 
-void Observation::setNrDelayBatches(const unsigned int batchs) {
-  nrDelayBatches = batchs;
+void Observation::setNrDelayBatches(const unsigned int batches) {
+  nrDelayBatches = batches;
 }
 
 void Observation::setSamplingRate(const float sampling) {
