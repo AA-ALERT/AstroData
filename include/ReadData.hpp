@@ -224,10 +224,10 @@ template< typename T > inline void readPSRDADA(dada_hdu_t & ringBuffer, std::vec
   uint64_t bufferSize = 0;
 
   buffer = ipcbuf_get_next_read(reinterpret_cast< ipcbuf_t * >(&ringBuffer), &bufferSize);
-  if ( bufferSize < dataSize * sizeof(T) ) {
+  if ( bufferSize < data->size() * sizeof(T) ) {
     throw RingBufferError();
   }
-  memcpy(reinterpret_cast< void * >(data->data()), reinterpret_cast< const void * >(buffer), dataSize * sizeof(T));
+  memcpy(reinterpret_cast< void * >(data->data()), reinterpret_cast< const void * >(buffer), data->size() * sizeof(T));
   if ( (ipcbuf_mark_cleeared(reinterpret_cast< ipcbuf_t * >(&ringBuffer))) < 0 ) {
     throw RingBufferError();
   }
