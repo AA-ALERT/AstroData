@@ -208,19 +208,27 @@ template< typename T > void readPSRDadaHeader(Observation & observation, dada_hd
     throw RingBufferError();
   }
 
-  ascii_header_get(header, "SAMPLES_PER_SECOND", "%d", &uintValue);
+  ascii_header_get(header, "SAMPLES_PER_BATCH", "%d", &uintValue);
   observation.setNrSamplesPerBatch(uintValue);
   ascii_header_get(header, "CHANNELS", "%d", &uintValue);
   ascii_header_get(header, "MIN_FREQUENCY", "%f", &floatValue[0]);
   ascii_header_get(header, "CHANNEL_BANDWIDTH", "%f", &floatValue[1]);
   observation.setFrequencyRange(1, uintValue, floatValue[0], floatValue[1]);
-  ipcbuf_mark_cleared(ringBuffer.header_block);
+  ipcbuf_mark_cleared(reinterpret_cast< ipcbuf_t * >(ringBuffer.header_block));
 
   delete header;
 }
 
-template< typename T > inline void readPSRDada(Observation & observation, const unsigned int padding, dada_hdu_t & ringBuffer, std::vector< T > * data) throw(RingBufferError) {
-  if ( (ipcio_read(ringBuffer.data_block, reinterpret_cast< char * >(data->data()), observation.getNrChannels() * observation.getNrSamplesPerPaddedBatch(padding / sizeof(T)) * sizeof(T))) < 0 ) {
+template< typename T > inline void readPSRDada(const unsigned int padding, dada_hdu_t & ringBuffer, std::vector< T > * data, const unsigned int dataSize) throw(RingBufferError) {
+  uint8_t * buffer = 0;
+  uint64_t bufferSize = 0;
+
+  buffer = ipcbuf_get_next_read(reinterpret_cast< ipcbuf_t * >(&ringBuffer), &bufferSize);
+  if ( bufferSize < dataSize * sizeof(T) ) {
+    throw RingBufferError();
+  }
+  memcpy(reinterpret_cast< void * >(data->data()), reinterpret_cast< const void * >(buffer), dataSize * sizeof(T));
+  if ( (ipcbuf_mark_cleeared(reinterpret_cast< ipcbuf_t * >(&ringBuffer))) < 0 ) {
     throw RingBufferError();
   }
 }
