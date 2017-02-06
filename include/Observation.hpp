@@ -83,7 +83,7 @@ public:
 
   // Setters
   // General observation parameters
-  void setNrBatches(const unsigned int seconds);
+  void setNrBatches(const unsigned int batchs);
   void setNrStations(const unsigned int stations);
   void setNrBeams(const unsigned int beams);
   void setNrSynthesizedBeams(const unsigned int beams);
@@ -94,8 +94,8 @@ public:
   void setNrZappedChannels(const unsigned int zappedChannels);
   // Dispersion measures
   void setNrSamplesPerBatchSubbanding(const unsigned int samples);
-  void setNrDelayBatchesSubbanding(const unsigned int seconds);
-  void setNrDelayBatches(const unsigned int seconds);
+  void setNrDelayBatchesSubbanding(const unsigned int batchs);
+  void setNrDelayBatches(const unsigned int batchs);
   void setNrSamplesPerSubbandingDispersedChannel(const unsigned int samples);
   void setNrSamplesPerDispersedChannel(const unsigned int samples);
   void setDMSubbandingRange(const unsigned int dms, const float baseDM, const float step);
