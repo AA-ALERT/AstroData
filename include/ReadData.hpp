@@ -203,34 +203,34 @@ template< typename T > void readPSRDADAHeader(Observation & observation, dada_hd
   char * header = 0;
 
   header = ipcbuf_get_next_read(ringBuffer.header_block, &headerBytes);
-
   if ( (header == 0) || (headerBytes == 0 ) ) {
     throw RingBufferError();
   }
-
   ascii_header_get(header, "SAMPLES_PER_BATCH", "%d", &uintValue);
   observation.setNrSamplesPerBatch(uintValue);
   ascii_header_get(header, "CHANNELS", "%d", &uintValue);
   ascii_header_get(header, "MIN_FREQUENCY", "%f", &floatValue[0]);
   ascii_header_get(header, "CHANNEL_BANDWIDTH", "%f", &floatValue[1]);
   observation.setFrequencyRange(1, uintValue, floatValue[0], floatValue[1]);
-  ipcbuf_mark_cleared(reinterpret_cast< ipcbuf_t * >(ringBuffer.header_block));
-
+  if ( ipcbuf_mark_cleared(ringBuffer.header_block) < 0 ) {
+    throw RingBufferError();
+  }
   delete header;
 }
 
 template< typename T > inline void readPSRDADA(dada_hdu_t & ringBuffer, std::vector< T > * data) throw(RingBufferError) {
   uint8_t * buffer = 0;
-  uint64_t bufferSize = 0;
+  uint64_t bufferBytes = 0;
 
-  buffer = ipcbuf_get_next_read(reinterpret_cast< ipcbuf_t * >(&ringBuffer), &bufferSize);
-  if ( bufferSize < data->size() * sizeof(T) ) {
+  buffer = ipcbuf_get_next_read(ringBuffer.data_block, &bufferBytes);
+  if ( (buffer == 0) || (bufferBytes == 0) ) {
     throw RingBufferError();
   }
   memcpy(reinterpret_cast< void * >(data->data()), reinterpret_cast< const void * >(buffer), data->size() * sizeof(T));
-  if ( (ipcbuf_mark_cleeared(reinterpret_cast< ipcbuf_t * >(&ringBuffer))) < 0 ) {
+  if ( ipcbuf_mark_cleeared(ringBuffer.data_block) < 0 ) {
     throw RingBufferError();
   }
+  delete buffer;
 }
 
 } // AstroData
