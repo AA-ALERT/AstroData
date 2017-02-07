@@ -220,7 +220,7 @@ template< typename T > void readPSRDADAHeader(Observation & observation, dada_hd
 }
 
 template< typename T > inline void readPSRDADA(dada_hdu_t & ringBuffer, std::vector< T > * data) throw(RingBufferError) {
-  uint8_t * buffer = 0;
+  char * buffer = 0;
   uint64_t bufferBytes = 0;
 
   buffer = ipcbuf_get_next_read(&(ringBuffer.data_block->buf), &bufferBytes);
