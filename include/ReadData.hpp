@@ -195,30 +195,6 @@ template< typename T > void readLOFAR(std::string headerFilename, std::string ra
 	delete [] word;
 }
 
-template< typename T > void readPSRDADAHeader(Observation & observation, dada_hdu_t & ringBuffer) throw(RingBufferError) {
-  // Staging variables for the header elements
-  unsigned int uintValue = 0;
-  float floatValue[2] = {0.0f, 0.0f};
-  // Header string
-  uint64_t headerBytes = 0;
-  char * header = 0;
-
-  header = ipcbuf_get_next_read(ringBuffer.header_block, &headerBytes);
-  if ( (header == 0) || (headerBytes == 0 ) ) {
-    throw RingBufferError();
-  }
-  ascii_header_get(header, "SAMPLES_PER_BATCH", "%d", &uintValue);
-  observation.setNrSamplesPerBatch(uintValue);
-  ascii_header_get(header, "CHANNELS", "%d", &uintValue);
-  ascii_header_get(header, "MIN_FREQUENCY", "%f", &floatValue[0]);
-  ascii_header_get(header, "CHANNEL_BANDWIDTH", "%f", &floatValue[1]);
-  observation.setFrequencyRange(1, uintValue, floatValue[0], floatValue[1]);
-  if ( ipcbuf_mark_cleared(ringBuffer.header_block) < 0 ) {
-    throw RingBufferError();
-  }
-  delete header;
-}
-
 template< typename T > inline void readPSRDADA(dada_hdu_t & ringBuffer, std::vector< T > * data) throw(RingBufferError) {
   char * buffer = 0;
   uint64_t bufferBytes = 0;
