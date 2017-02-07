@@ -227,7 +227,7 @@ template< typename T > inline void readPSRDADA(dada_hdu_t & ringBuffer, std::vec
     throw RingBufferError();
   }
   memcpy(reinterpret_cast< void * >(data->data()), reinterpret_cast< const void * >(buffer), data->size() * sizeof(T));
-  if ( ipcbuf_mark_cleeared(ringBuffer.data_block) < 0 ) {
+  if ( ipcbuf_mark_cleared(ringBuffer.data_block) < 0 ) {
     throw RingBufferError();
   }
   delete buffer;
