@@ -35,7 +35,7 @@ namespace AstroData {
 // Exception: the PSRDADA ring buffer does not work
 class RingBufferError : public std::exception {
 public:
-  RingBufferError(std::string message);
+  explicit RingBufferError(std::string message);
   ~RingBufferError() throw ();
 
   const char * what() const throw ();
