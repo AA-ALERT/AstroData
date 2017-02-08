@@ -209,7 +209,6 @@ template< typename T > inline void readPSRDADA(dada_hdu_t & ringBuffer, std::vec
   if ( ipcbuf_mark_cleared(reinterpret_cast< ipcbuf_t * >(ringBuffer.data_block)) < 0 ) {
     throw RingBufferError("Impossible to mark the PSRDADA buffer as cleared.");
   }
-  delete buffer;
 }
 
 } // AstroData
