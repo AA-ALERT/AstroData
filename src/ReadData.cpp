@@ -67,7 +67,7 @@ void readPSRDADAHeader(Observation & observation, dada_hdu_t & ringBuffer) throw
 
   header = ipcbuf_get_next_read(ringBuffer.header_block, &headerBytes);
   if ( (header == 0) || (headerBytes == 0 ) ) {
-    throw RingBufferError();
+    throw RingBufferError("Impossible to read the PSRDADA header.");
   }
   ascii_header_get(header, "SAMPLES_PER_BATCH", "%d", &uintValue);
   observation.setNrSamplesPerBatch(uintValue);
@@ -76,7 +76,7 @@ void readPSRDADAHeader(Observation & observation, dada_hdu_t & ringBuffer) throw
   ascii_header_get(header, "CHANNEL_BANDWIDTH", "%f", &floatValue[1]);
   observation.setFrequencyRange(1, uintValue, floatValue[0], floatValue[1]);
   if ( ipcbuf_mark_cleared(ringBuffer.header_block) < 0 ) {
-    throw RingBufferError();
+    throw RingBufferError("Impossible to mark the PSRDADA header as cleared.");
   }
   delete header;
 }

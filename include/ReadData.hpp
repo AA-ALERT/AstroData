@@ -203,11 +203,11 @@ template< typename T > inline void readPSRDADA(dada_hdu_t & ringBuffer, std::vec
 
   buffer = ipcbuf_get_next_read(&(ringBuffer.data_block->buf), &bufferBytes);
   if ( (buffer == 0) || (bufferBytes == 0) ) {
-    throw RingBufferError();
+    throw RingBufferError("Impossible to read the PSRDADA buffer.");
   }
   std::memcpy(reinterpret_cast< void * >(data->data()), reinterpret_cast< const void * >(buffer), data->size() * sizeof(T));
   if ( ipcbuf_mark_cleared(&(ringBuffer.data_block->buf)) < 0 ) {
-    throw RingBufferError();
+    throw RingBufferError("Impossible to mark the PSRDADA buffer as cleared.");
   }
   delete buffer;
 }
