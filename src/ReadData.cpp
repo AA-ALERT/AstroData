@@ -78,7 +78,6 @@ void readPSRDADAHeader(Observation & observation, dada_hdu_t & ringBuffer) throw
   if ( ipcbuf_mark_cleared(ringBuffer.header_block) < 0 ) {
     throw RingBufferError("Impossible to mark the PSRDADA header as cleared.");
   }
-  delete header;
 }
 
 } // AstroData
