@@ -16,12 +16,12 @@
 
 namespace AstroData {
 
-RingBufferError::RingBufferError() {}
+RingBufferError::RingBufferError(std::string message) : message(message) {}
 
 RingBufferError::~RingBufferError() throw () {}
 
 const char * RingBufferError::what() const throw() {
-    return ("Impossible to read from the PSRDada ring buffer.");
+    return message.c_str();
 }
 
 void readZappedChannels(Observation & observation, const std::string & inputFileName, std::vector< uint8_t > & zappedChannels) {
