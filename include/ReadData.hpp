@@ -58,7 +58,7 @@ template< typename T > inline void readPSRDADA(dada_hdu_t & ringBuffer, std::vec
 
 // Implementations
 
-template< typename T > void readSIGPROC(const Observation & observation, const unsigned int padding, const uint8_t inputBits, const unsigned int bytesToSkip, const std::string & inputFilename, std::vector< std::vector< T > * > & data, const unsigned int firstBatch = 0) {
+template< typename T > void readSIGPROC(const Observation & observation, const unsigned int padding, const uint8_t inputBits, const unsigned int bytesToSkip, const std::string & inputFilename, std::vector< std::vector< T > * > & data, const unsigned int firstBatch) {
   std::ifstream inputFile;
   const unsigned int BUFFER_DIM = sizeof(T);
   char * buffer = new char [BUFFER_DIM];
