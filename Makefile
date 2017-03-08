@@ -3,7 +3,6 @@ SOURCE_ROOT ?= $(HOME)
 
 UTILS := $(SOURCE_ROOT)/utils
 HDF5_INCLUDE ?= -I/usr/include
-PSRDADA := $(SOURCE_ROOT)/psrdada
 
 CC := g++
 CFLAGS := -std=c++11 -Wall
@@ -13,6 +12,9 @@ else
 	CFLAGS += -O0 -g3
 endif
 
+ifdef PSRDADA
+	CFLAGS += -DHAVE_PSRDADA
+endif
 
 all: bin/ColorMap.o bin/Observation.o bin/Platform.o bin/ReadData.o
 

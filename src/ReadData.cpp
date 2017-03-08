@@ -57,6 +57,7 @@ void readIntegrationSteps(const Observation & observation, const std::string  & 
   input.close();
 }
 
+#ifdef HAVE_PSRDADA
 void readPSRDADAHeader(Observation & observation, dada_hdu_t & ringBuffer) throw(RingBufferError) {
   // Staging variables for the header elements
   unsigned int uintValue = 0;
@@ -79,6 +80,6 @@ void readPSRDADAHeader(Observation & observation, dada_hdu_t & ringBuffer) throw
     throw RingBufferError("Impossible to mark the PSRDADA header as cleared.");
   }
 }
-
+#endif
 } // AstroData
 

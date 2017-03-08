@@ -20,9 +20,13 @@ Then build and test as follows:
 ## Dependencies
 
  * [HDF5](https://support.hdfgroup.org/HDF5/)
- * [PSRDADA](http://psrdada.sourceforge.net/)
  * [utils](https://github.com/isazi/utils) - master branch
 
+## Optional dependencies
+
+ * [PSRDADA](http://psrdada.sourceforge.net/)
+
+Set the PSRDADA environment variable to location of the psrdada source, preferably `SOURCE_ROOT/psrdada`.
 
 # Included classes
 

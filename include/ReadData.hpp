@@ -20,7 +20,9 @@
 #include <cmath>
 #include <exception>
 #include <H5Cpp.h>
+#ifdef HAVE_PSRDADA
 #include <dada_hdu.h>
+#endif
 #include <ascii_header.h>
 
 #include <Observation.hpp>
@@ -51,10 +53,11 @@ void readIntegrationSteps(const Observation & observation, const std::string  & 
 template< typename T > void readSIGPROC(const Observation & observation, const unsigned int padding, const uint8_t inputBits, const unsigned int bytesToSkip, const std::string & inputFilename, std::vector< std::vector< T > * > & data, const unsigned int firstBatch = 0);
 // LOFAR data
 template< typename T > void readLOFAR(std::string headerFilename, std::string rawFilename, Observation & observation, const unsigned int padding, std::vector< std::vector< T > * > & data, unsigned int nrBatches = 0, unsigned int firstBatch = 0);
+#ifdef HAVE_PSRDADA
 // PSRDADA buffer
 void readPSRDADAHeader(Observation & observation, dada_hdu_t & ringBuffer) throw(RingBufferError);
 template< typename T > inline void readPSRDADA(dada_hdu_t & ringBuffer, std::vector< T > * data) throw(RingBufferError);
-
+#endif
 
 // Implementations
 
@@ -197,6 +200,7 @@ template< typename T > void readLOFAR(std::string headerFilename, std::string ra
   delete [] word;
 }
 
+#ifdef HAVE_PSRDADA
 template< typename T > inline void readPSRDADA(dada_hdu_t & ringBuffer, std::vector< T > * data) throw(RingBufferError) {
   char * buffer = 0;
   uint64_t bufferBytes = 0;
@@ -210,7 +214,7 @@ template< typename T > inline void readPSRDADA(dada_hdu_t & ringBuffer, std::vec
     throw RingBufferError("Impossible to mark the PSRDADA buffer as cleared.");
   }
 }
-
+#endif
 } // AstroData
 
 #endif // READ_DATA_HPP
