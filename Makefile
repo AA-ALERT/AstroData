@@ -1,9 +1,9 @@
 
 SOURCE_ROOT ?= $(HOME)
 
-UTILS := $(SOURCE_ROOT)/src/utils
+UTILS := $(SOURCE_ROOT)/utils
 HDF5_INCLUDE ?= -I/usr/include
-PSRDADA := $(SOURCE_ROOT)/src/psrdada
+PSRDADA := $(SOURCE_ROOT)/psrdada
 
 CC := g++
 CFLAGS := -std=c++11 -Wall
