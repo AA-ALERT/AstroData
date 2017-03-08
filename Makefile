@@ -2,7 +2,7 @@
 SOURCE_ROOT ?= $(HOME)
 
 UTILS := $(SOURCE_ROOT)/src/utils
-HDF5 := $(SOURCE_ROOT)/src/hdf5
+HDF5_INCLUDE ?= /usr/include
 PSRDADA := $(SOURCE_ROOT)/src/psrdada
 
 CC := g++
@@ -18,7 +18,7 @@ all: bin/ColorMap.o bin/Observation.o bin/Platform.o bin/ReadData.o
 
 bin/ReadData.o: include/ReadData.hpp src/ReadData.cpp
 	-mkdir -p bin
-	$(CC) -o bin/ReadData.o -c src/ReadData.cpp -I"include" -I"$(UTILS)/include" -I"$(HDF5)/include" -I"$(PSRDADA)/src" $(CFLAGS)
+	$(CC) -o bin/ReadData.o -c src/ReadData.cpp -I"include" -I"$(UTILS)/include" -I"$(HDF5_INCLUDE)" -I"$(PSRDADA)/src" $(CFLAGS)
 
 bin/ColorMap.o: include/ColorMap.hpp src/ColorMap.cpp
 	-mkdir -p bin
