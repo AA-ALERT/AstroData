@@ -22,8 +22,8 @@
 #include <H5Cpp.h>
 #ifdef HAVE_PSRDADA
 #include <dada_hdu.h>
-#endif
 #include <ascii_header.h>
+#endif
 
 #include <Observation.hpp>
 #include <utils.hpp>
