@@ -20,6 +20,9 @@ void readPaddingConf(paddingConf & padding, const std::string & paddingFilename)
 	std::string temp;
 	std::ifstream paddingFile(paddingFilename);
 
+  if ( !paddingFile ) {
+    throw FileError("Impossible to open " + paddingFilename);
+  }
 	while ( ! paddingFile.eof() ) {
 		unsigned int middle = 0;
 
@@ -36,6 +39,9 @@ void readVectorWidthConf(vectorWidthConf & vectorWidth, const std::string & vect
 	std::string temp;
 	std::ifstream vectorFile(vectorFilename);
 
+  if ( !vectorFile ) {
+    throw FileError("Impossible to open " + vectorFilename);
+  }
 	while ( ! vectorFile.eof() ) {
 		unsigned int middle = 0;
 

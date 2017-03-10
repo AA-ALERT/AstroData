@@ -16,10 +16,10 @@
 #include <map>
 #include <fstream>
 
+#include <ReadData.hpp>
 #include <utils.hpp>
 
-#ifndef PLATFORM_HPP
-#define PLATFORM_HPP
+#pragma once
 
 namespace AstroData {
 
@@ -33,6 +33,4 @@ void readPaddingConf(paddingConf & padding, const std::string & paddingFilename)
 void readVectorWidthConf(vectorWidthConf & vectorWidth, const std::string & vectorFilename);
 
 } // AstroData
-
-#endif // PLATFORM_HPP
 
