@@ -20,15 +20,26 @@ RingBufferError::RingBufferError(std::string message) : message(message) {}
 
 RingBufferError::~RingBufferError() throw () {}
 
-const char * RingBufferError::what() const throw() {
+const char * RingBufferError::what() const throw () {
     return message.c_str();
 }
 
-void readZappedChannels(Observation & observation, const std::string & inputFileName, std::vector< uint8_t > & zappedChannels) {
+FileError::FileError(std::string message) : message(message) {}
+
+FileError::~FileError() throw () {}
+
+const char * FileError::what() const throw () {
+  return message.c_str();
+}
+
+void readZappedChannels(Observation & observation, const std::string & inputFilename, std::vector< uint8_t > & zappedChannels) {
   unsigned int nrChannels = 0;
   std::ifstream input;
 
-  input.open(inputFileName);
+  input.open(inputFilename);
+  if ( !input ) {
+    throw FileError("Impossible to open " + inputFilename);
+  }
   while ( !input.eof() ) {
     unsigned int channel = observation.getNrChannels();
 
@@ -42,10 +53,13 @@ void readZappedChannels(Observation & observation, const std::string & inputFile
   observation.setNrZappedChannels(nrChannels);
 }
 
-void readIntegrationSteps(const Observation & observation, const std::string  & inputFileName, std::set< unsigned int > & integrationSteps) {
+void readIntegrationSteps(const Observation & observation, const std::string  & inputFilename, std::set< unsigned int > & integrationSteps) {
   std::ifstream input;
 
-  input.open(inputFileName);
+  input.open(inputFilename);
+  if ( !input ) {
+    throw FileError("Impossible to open " + inputFilename );
+  }
   while ( !input.eof() ) {
     unsigned int step = observation.getNrSamplesPerBatch();
 

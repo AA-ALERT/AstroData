@@ -43,6 +43,17 @@ public:
 private:
   std::string message;
 };
+// Exception: cannot read from a configuration/input file
+class FileError : public std::exception {
+public:
+  explicit FileError(std::string message);
+  ~FileError() throw ();
+
+  const char * what() const throw ();
+
+private:
+  std::string message;
+};
 
 // Zapped channels (excluded from computation)
 void readZappedChannels(Observation & observation, const std::string & inputFileName, std::vector< uint8_t > & zappedChannels);
@@ -66,6 +77,10 @@ template< typename T > void readSIGPROC(const Observation & observation, const u
   char * buffer = new char [BUFFER_DIM];
 
   inputFile.open(inputFilename.c_str(), std::ios::binary);
+  if ( ! inputFile ) {
+    delete [] buffer;
+    throw FileError("Impossible to open " + inputFilename);
+  }
   inputFile.sync_with_stdio(false);
   inputFile.seekg(bytesToSkip, std::ios::beg);
   for ( unsigned int batch = 0; batch < observation.getNrBatches(); batch++ ) {
@@ -174,6 +189,9 @@ template< typename T > void readLOFAR(std::string headerFilename, std::string ra
   // Read the raw file with the actual data
   std::ifstream rawFile;
   rawFile.open(rawFilename.c_str(), std::ios::binary);
+  if ( !rawFile ) {
+    throw FileError("Impossible to open " + rawFilename);
+  }
   rawFile.sync_with_stdio(false);
   if ( firstBatch > 0 ) {
     rawFile.seekg(firstBatch * observation.getNrSamplesPerBatch() * nrSubbands * nrChannels, std::ios::beg);
