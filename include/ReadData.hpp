@@ -29,8 +29,7 @@
 #include <utils.hpp>
 
 
-#ifndef READ_DATA_HPP
-#define READ_DATA_HPP
+#pragma once
 
 namespace AstroData {
 
@@ -216,6 +215,4 @@ template< typename T > inline void readPSRDADA(dada_hdu_t & ringBuffer, std::vec
 }
 #endif
 } // AstroData
-
-#endif // READ_DATA_HPP
 
