@@ -16,6 +16,14 @@
 
 namespace AstroData {
 
+FileError::FileError(std::string message) : message(message) {}
+
+FileError::~FileError() throw () {}
+
+const char * FileError::what() const throw () {
+  return message.c_str();
+}
+
 void readPaddingConf(paddingConf & padding, const std::string & paddingFilename) {
 	std::string temp;
 	std::ifstream paddingFile(paddingFilename);

@@ -16,12 +16,23 @@
 #include <map>
 #include <fstream>
 
-#include <ReadData.hpp>
 #include <utils.hpp>
 
 #pragma once
 
 namespace AstroData {
+
+// Exception: cannot read from a configuration/input file
+class FileError : public std::exception {
+public:
+  explicit FileError(std::string message);
+  ~FileError() throw ();
+
+  const char * what() const throw ();
+
+private:
+  std::string message;
+};
 
 // Memory padding
 typedef std::map< std::string, unsigned int > paddingConf;

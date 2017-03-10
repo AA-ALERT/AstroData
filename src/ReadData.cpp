@@ -24,14 +24,6 @@ const char * RingBufferError::what() const throw () {
     return message.c_str();
 }
 
-FileError::FileError(std::string message) : message(message) {}
-
-FileError::~FileError() throw () {}
-
-const char * FileError::what() const throw () {
-  return message.c_str();
-}
-
 void readZappedChannels(Observation & observation, const std::string & inputFilename, std::vector< uint8_t > & zappedChannels) {
   unsigned int nrChannels = 0;
   std::ifstream input;

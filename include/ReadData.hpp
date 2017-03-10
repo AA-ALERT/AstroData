@@ -26,6 +26,7 @@
 #endif
 
 #include <Observation.hpp>
+#include <Platform.hpp>
 #include <utils.hpp>
 
 
@@ -40,17 +41,6 @@ public:
   ~RingBufferError() throw ();
 
   const char * what() const throw ();
-private:
-  std::string message;
-};
-// Exception: cannot read from a configuration/input file
-class FileError : public std::exception {
-public:
-  explicit FileError(std::string message);
-  ~FileError() throw ();
-
-  const char * what() const throw ();
-
 private:
   std::string message;
 };
