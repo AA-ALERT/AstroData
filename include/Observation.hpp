@@ -37,7 +37,7 @@ public:
   unsigned int getNrPaddedBeams(unsigned int padding) const;
   unsigned int getNrSynthesizedBeams() const;
   unsigned int getNrPaddedSynthesizedBeams(const unsigned int padding) const;
-  float getSamplingRate() const;
+  float getSamplingTime() const;
   unsigned int getNrSamplesPerBatch() const;
   unsigned int getNrSamplesPerPaddedBatch(unsigned int padding) const;
   // Frequency parameters
@@ -87,7 +87,7 @@ public:
   void setNrStations(const unsigned int stations);
   void setNrBeams(const unsigned int beams);
   void setNrSynthesizedBeams(const unsigned int beams);
-  void setSamplingRate(const float sampling);
+  void setSamplingTime(const float sampling);
   void setNrSamplesPerBatch(const unsigned int samples);
   // Frequency parameters
   void setFrequencyRange(const unsigned int subbands, const unsigned int channels, const float baseFrequency, const float bandwidth);
@@ -109,7 +109,7 @@ private:
   unsigned int nrStations;
   unsigned int nrBeams;
   unsigned int nrSynthesizedBeams;
-  float samplingRate;
+  float samplingTime;
   unsigned int nrSamplesPerBatchSubbanding;
   unsigned int nrSamplesPerBatch;
   unsigned int nrSamplesPerSubbandingDispersedChannel;
@@ -177,8 +177,8 @@ inline unsigned int Observation::getNrSamplesPerBatch() const {
   return nrSamplesPerBatch;
 }
 
-inline float Observation::getSamplingRate() const {
-  return samplingRate;
+inline float Observation::getSamplingTime() const {
+  return samplingTime;
 }
 
 inline unsigned int Observation::getNrSamplesPerPaddedBatch(unsigned int padding) const {
