@@ -78,7 +78,7 @@ void readPSRDADAHeader(Observation & observation, dada_hdu_t & ringBuffer) throw
   }
   ascii_header_get(header, "SAMPLES_PER_BATCH", "%d", &uintValue);
   observation.setNrSamplesPerBatch(uintValue);
-  ascii_header_get(header, "CHANNELS", "%d", &uintValue);
+  ascii_header_get(header, "NCHANS", "%d", &uintValue);
   ascii_header_get(header, "MIN_FREQUENCY", "%f", &floatValue[0]);
   ascii_header_get(header, "CHANNEL_BANDWIDTH", "%f", &floatValue[1]);
   observation.setFrequencyRange(1, uintValue, floatValue[0], floatValue[1]);
