@@ -82,6 +82,8 @@ void readPSRDADAHeader(Observation & observation, dada_hdu_t & ringBuffer) throw
   ascii_header_get(header, "MIN_FREQUENCY", "%f", &floatValue[0]);
   ascii_header_get(header, "CHANNEL_BANDWIDTH", "%f", &floatValue[1]);
   observation.setFrequencyRange(1, uintValue, floatValue[0], floatValue[1]);
+  ascii_header_get(header, "TSAMP", "%f", &floatValue[0]);
+  observation.setSamplingTime(floatValue[0]);
   if ( ipcbuf_mark_cleared(ringBuffer.header_block) < 0 ) {
     throw RingBufferError("Impossible to mark the PSRDADA header as cleared.");
   }
