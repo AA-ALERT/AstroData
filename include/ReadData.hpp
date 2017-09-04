@@ -1,4 +1,5 @@
-// Copyright 2012 Alessio Sclocco <a.sclocco@vu.nl>
+// Copyright 2017 Netherlands Institute for Radio Astronomy (ASTRON)
+// Copyright 2017 Netherlands eScience Center
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,11 +20,13 @@
 #include <cstring>
 #include <cmath>
 #include <exception>
+#ifdef HAVE_HDF5
 #include <H5Cpp.h>
+#endif // HAVE_HDF5
 #ifdef HAVE_PSRDADA
 #include <dada_hdu.h>
 #include <ascii_header.h>
-#endif
+#endif // HAVE_PSRDADA
 
 #include <Observation.hpp>
 #include <Platform.hpp>
@@ -51,13 +54,15 @@ void readZappedChannels(Observation & observation, const std::string & inputFile
 void readIntegrationSteps(const Observation & observation, const std::string  & inputFileName, std::set< unsigned int > & integrationSteps);
 // SIGPROC data
 template< typename T > void readSIGPROC(const Observation & observation, const unsigned int padding, const uint8_t inputBits, const unsigned int bytesToSkip, const std::string & inputFilename, std::vector< std::vector< T > * > & data, const unsigned int firstBatch = 0);
+#ifdef HAVE_HDF5
 // LOFAR data
 template< typename T > void readLOFAR(std::string headerFilename, std::string rawFilename, Observation & observation, const unsigned int padding, std::vector< std::vector< T > * > & data, unsigned int nrBatches = 0, unsigned int firstBatch = 0);
+#endif // HAVE_HDF5
 #ifdef HAVE_PSRDADA
 // PSRDADA buffer
 void readPSRDADAHeader(Observation & observation, dada_hdu_t & ringBuffer) throw(RingBufferError);
 template< typename T > inline void readPSRDADA(dada_hdu_t & ringBuffer, std::vector< T > * data) throw(RingBufferError);
-#endif
+#endif // HAVE_PSRDADA
 
 // Implementations
 
@@ -75,11 +80,11 @@ template< typename T > void readSIGPROC(const Observation & observation, const u
   inputFile.seekg(bytesToSkip, std::ios::beg);
   for ( unsigned int batch = 0; batch < observation.getNrBatches(); batch++ ) {
     if ( inputBits >= 8 ) {
-      data.at(batch) = new std::vector< T >(observation.getNrChannels() * observation.getNrSamplesPerPaddedBatch(padding / sizeof(T)));
+      data.at(batch) = new std::vector< T >(observation.getNrChannels() * observation.getNrSamplesPerBatch(padding / sizeof(T)));
       for ( unsigned int sample = 0; sample < observation.getNrSamplesPerBatch(); sample++ ) {
         for ( unsigned int channel = observation.getNrChannels(); channel > 0; channel-- ) {
           inputFile.read(buffer, BUFFER_DIM);
-          data.at(batch)->at((static_cast< uint64_t >(channel - 1) * observation.getNrSamplesPerPaddedBatch(padding / sizeof(T))) + sample) = *(reinterpret_cast< T * >(buffer));
+          data.at(batch)->at((static_cast< uint64_t >(channel - 1) * observation.getNrSamplesPerBatch(padding / sizeof(T))) + sample) = *(reinterpret_cast< T * >(buffer));
         }
       }
     } else {
@@ -132,6 +137,7 @@ template< typename T > void readSIGPROC(const Observation & observation, const u
   delete [] buffer;
 }
 
+#ifdef HAVE_HDF5
 template< typename T > void readLOFAR(std::string headerFilename, std::string rawFilename, Observation & observation, const unsigned int padding, std::vector< std::vector< T > * > & data, unsigned int nrBatches, unsigned int firstBatch) {
   unsigned int nrSubbands, nrChannels;
   float minFreq, channelBandwidth;
@@ -190,7 +196,7 @@ template< typename T > void readLOFAR(std::string headerFilename, std::string ra
 
   char * word = new char [4];
   for ( unsigned int batch = 0; batch < observation.getNrBatches(); batch++ ) {
-    data.at(batch) = new std::vector< T >(observation.getNrChannels() * observation.getNrSamplesPerPaddedBatch(padding / sizeof(T)));
+    data.at(batch) = new std::vector< T >(observation.getNrChannels() * observation.getNrSamplesPerBatch(padding / sizeof(T)));
     for ( unsigned int sample = 0; sample < observation.getNrSamplesPerBatch(); sample++ ) {
       for ( unsigned int subband = 0; subband < nrSubbands; subband++ ) {
         for ( unsigned int channel = 0; channel < nrChannels; channel++ ) {
@@ -198,7 +204,7 @@ template< typename T > void readLOFAR(std::string headerFilename, std::string ra
 
           rawFile.read(word, 4);
           isa::utils::bigEndianToLittleEndian(word);
-          data.at(batch)->at((globalChannel * observation.getNrSamplesPerPaddedBatch(padding / sizeof(T))) + sample) = *(reinterpret_cast< T * >(word));
+          data.at(batch)->at((globalChannel * observation.getNrSamplesPerBatch(padding / sizeof(T))) + sample) = *(reinterpret_cast< T * >(word));
         }
       }
     }
@@ -206,6 +212,7 @@ template< typename T > void readLOFAR(std::string headerFilename, std::string ra
   rawFile.close();
   delete [] word;
 }
+#endif // HAVE_HDF5
 
 #ifdef HAVE_PSRDADA
 template< typename T > inline void readPSRDADA(dada_hdu_t & ringBuffer, std::vector< T > * data) throw(RingBufferError) {
@@ -221,6 +228,7 @@ template< typename T > inline void readPSRDADA(dada_hdu_t & ringBuffer, std::vec
     throw RingBufferError("Impossible to mark the PSRDADA buffer as cleared.");
   }
 }
-#endif
+#endif // HAVE_PSRDADA
+
 } // AstroData
 

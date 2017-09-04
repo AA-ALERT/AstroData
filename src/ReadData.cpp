@@ -1,4 +1,5 @@
-// Copyright 2015 Alessio Sclocco <a.sclocco@vu.nl>
+// Copyright 2017 Netherlands Institute for Radio Astronomy (ASTRON)
+// Copyright 2017 Netherlands eScience Center
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -88,6 +89,7 @@ void readPSRDADAHeader(Observation & observation, dada_hdu_t & ringBuffer) throw
     throw RingBufferError("Impossible to mark the PSRDADA header as cleared.");
   }
 }
-#endif
+#endif // HAVE_PSRDADA
+
 } // AstroData
 

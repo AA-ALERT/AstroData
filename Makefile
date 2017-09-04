@@ -2,7 +2,6 @@
 SOURCE_ROOT ?= $(HOME)
 
 UTILS := $(SOURCE_ROOT)/utils
-HDF5_INCLUDE ?= -I/usr/include
 
 CC := g++
 CFLAGS := -std=c++11 -Wall
@@ -12,6 +11,10 @@ else
 	CFLAGS += -O3 -g0
 endif
 
+ifdef LOFAR
+	CFLAGS += -DHAVE_HDF5
+	HDF5_INCLUDE ?= -I/usr/include
+endif
 ifdef PSRDADA
 	CFLAGS += -DHAVE_PSRDADA
 	INCLUDES += -I"$(PSRDADA)/src"

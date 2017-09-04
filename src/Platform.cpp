@@ -1,4 +1,5 @@
-// Copyright 2015 Alessio Sclocco <a.sclocco@vu.nl>
+// Copyright 2017 Netherlands Institute for Radio Astronomy (ASTRON)
+// Copyright 2017 Netherlands eScience Center
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,41 +26,41 @@ const char * FileError::what() const throw () {
 }
 
 void readPaddingConf(paddingConf & padding, const std::string & paddingFilename) {
-	std::string temp;
-	std::ifstream paddingFile(paddingFilename);
+  std::string temp;
+  std::ifstream paddingFile(paddingFilename);
 
   if ( !paddingFile ) {
     throw FileError("Impossible to open " + paddingFilename);
   }
-	while ( ! paddingFile.eof() ) {
-		unsigned int middle = 0;
+  while ( ! paddingFile.eof() ) {
+    unsigned int middle = 0;
 
-		std::getline(paddingFile, temp);
-		if ( ! std::isalpha(temp[0]) ) {
-			continue;
-		}
-		middle = temp.find(" ");
-		padding.insert(std::make_pair(temp.substr(0, middle), isa::utils::castToType< std::string, unsigned int >(temp.substr(middle + 1))));
-	}
+    std::getline(paddingFile, temp);
+    if ( ! std::isalpha(temp[0]) ) {
+      continue;
+    }
+    middle = temp.find(" ");
+    padding.insert(std::make_pair(temp.substr(0, middle), isa::utils::castToType< std::string, unsigned int >(temp.substr(middle + 1))));
+  }
 }
 
 void readVectorWidthConf(vectorWidthConf & vectorWidth, const std::string & vectorFilename) {
-	std::string temp;
-	std::ifstream vectorFile(vectorFilename);
+  std::string temp;
+  std::ifstream vectorFile(vectorFilename);
 
   if ( !vectorFile ) {
     throw FileError("Impossible to open " + vectorFilename);
   }
-	while ( ! vectorFile.eof() ) {
-		unsigned int middle = 0;
+  while ( ! vectorFile.eof() ) {
+    unsigned int middle = 0;
 
-		std::getline(vectorFile, temp);
-		if ( ! std::isalpha(temp[0]) ) {
-			continue;
-		}
-		middle = temp.find(" ");
-		vectorWidth.insert(std::make_pair(temp.substr(0, middle), isa::utils::castToType< std::string, unsigned int >(temp.substr(middle + 1))));
-	}
+    std::getline(vectorFile, temp);
+    if ( ! std::isalpha(temp[0]) ) {
+      continue;
+    }
+    middle = temp.find(" ");
+    vectorWidth.insert(std::make_pair(temp.substr(0, middle), isa::utils::castToType< std::string, unsigned int >(temp.substr(middle + 1))));
+  }
 }
 
 } // AstroData
