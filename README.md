@@ -19,14 +19,15 @@ Then build and test as follows:
 
 ## Dependencies
 
- * [HDF5](https://support.hdfgroup.org/HDF5/)
  * [utils](https://github.com/isazi/utils) - master branch
 
 ## Optional dependencies
 
- * [PSRDADA](http://psrdada.sourceforge.net/)
+ * [HDF5](https://support.hdfgroup.org/HDF5/)
+ Set the LOFAR environment variable to *true*.
 
-Set the PSRDADA environment variable to location of the psrdada source, preferably `SOURCE_ROOT/psrdada`.
+ * [PSRDADA](http://psrdada.sourceforge.net/)
+ Set the PSRDADA environment variable to location of the psrdada source, preferably `SOURCE_ROOT/psrdada`.
 
 # Included classes
 
@@ -60,10 +61,6 @@ Generator for fake data, useful for for testing.
 
  * *generatePulsar* Generates a periodic single signal, not too relastic.
  * *generateSinglePulse* Generates a single pulse
-
-## ColorMap
-
- * *getColorMap()* Returns an array of colors, used in the pulsar pipeline for plotting.
 
 # License
 
