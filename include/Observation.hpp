@@ -18,8 +18,7 @@
 #include <utils.hpp>
 
 
-#ifndef OBSERVATION_HPP
-#define OBSERVATION_HPP
+#pragma once
 
 namespace AstroData {
 
@@ -386,6 +385,4 @@ inline void Observation::setNrBins(const unsigned int bins) {
 }
 
 } // AstroData
-
-#endif // OBSERVATION_HPP
 
