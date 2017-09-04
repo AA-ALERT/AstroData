@@ -20,8 +20,7 @@
 
 #include <Observation.hpp>
 
-#ifndef GENERATOR_HPP
-#define GENERATOR_HPP
+#pragma once
 
 namespace AstroData {
 
@@ -163,6 +162,4 @@ template< typename T > void generateSinglePulse(const unsigned int width, const 
 }
 
 } // AstroData
-
-#endif // GENERATOR_HPP
 

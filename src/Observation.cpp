@@ -16,7 +16,7 @@
 
 namespace AstroData {
 
-Observation::Observation() : nrBatches(0), nrStations(0), nrBeams(0), nrSynthesizedBeams(0), samplingTime(0.0f), nrSamplesPerBatch(0), nrSamplesPerBatch_subbanding(0), nrSamplesPerDispersedChannel(0), nrSamplesPerDispersedChannel_subbanding(0), nrSubbands(0), nrChannels(0), nrChannelsPerSubband(0), nrZappedChannels(0), minSubbandFreq(0.0), maxSubbandFreq(0.0), subbandBandwidth(0.0), minChannelFreq(0.0f), maxChannelFreq(0.0f), channelBandwidth(0.0f), nrDelayBatches(0), nrDelayBatches_subbanding(0), nrDMs(0), nrDMs_subbanding(0), firstDM(0.0f), firstDM_subbanding(0.0f), lastDM(0.0f), lastDM_subbanding(0.0f), DMStep(0.0f), DMStep_subbanding(0.0f), nrPeriods(0), firstPeriod(0), lastPeriod(0), periodStep(0), nrBins(0) {}
+Observation::Observation() : nrBatches(0), nrStations(0), nrBeams(0), nrSynthesizedBeams(0), samplingTime(0.0f), nrSamplesPerBatch(0), nrSamplesPerBatch_subbanding(0), nrSamplesPerDispersedBatch(0), nrSamplesPerDispersedBatch_subbanding(0), nrSubbands(0), nrChannels(0), nrChannelsPerSubband(0), nrZappedChannels(0), minSubbandFreq(0.0), maxSubbandFreq(0.0), subbandBandwidth(0.0), minChannelFreq(0.0f), maxChannelFreq(0.0f), channelBandwidth(0.0f), nrDelayBatches(0), nrDelayBatches_subbanding(0), nrDMs(0), nrDMs_subbanding(0), firstDM(0.0f), firstDM_subbanding(0.0f), lastDM(0.0f), lastDM_subbanding(0.0f), DMStep(0.0f), DMStep_subbanding(0.0f), nrPeriods(0), firstPeriod(0), lastPeriod(0), periodStep(0), nrBins(0) {}
 
 Observation::~Observation() {}
 
@@ -44,7 +44,7 @@ unsigned int Observation::getNrSynthesizedBeams(const unsigned int padding) cons
   }
 }
 
-unsigned int Observation::getNrSamplesPerBatch(const bool subbanding = false, const unsigned int padding) const {
+unsigned int Observation::getNrSamplesPerBatch(const bool subbanding, const unsigned int padding) const {
   if ( padding == 0 ) {
     if ( subbanding ) {
       return nrSamplesPerBatch_subbanding;
@@ -92,7 +92,7 @@ unsigned int Observation::getNrSamplesPerDispersedBatch(const bool subbanding, c
   }
 }
 
-unsigned int Observation::getNrDelayBatches(const bool subbanding = false) const {
+unsigned int Observation::getNrDelayBatches(const bool subbanding) const {
   if ( subbanding ) {
     return nrDelayBatches_subbanding;
   } else {
