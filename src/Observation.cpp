@@ -20,6 +20,142 @@ Observation::Observation() : nrBatches(0), nrStations(0), nrBeams(0), nrSynthesi
 
 Observation::~Observation() {}
 
+unsigned int Observation::getNrStations(const unsigned int padding) const {
+  if ( padding == 0 ) {
+    return nrStations;
+  } else {
+    return isa::utils::pad(nrStations, padding);
+  }
+}
+
+unsigned int Observation::getNrBeams(const unsigned int padding) const {
+  if ( padding == 0 ) {
+    return nrBeams;
+  } else {
+    return isa::utils::pad(nrBeams, padding);
+  }
+}
+
+unsigned int Observation::getNrSynthesizedBeams(const unsigned int padding) const {
+  if ( padding == 0 ) {
+    return nrSynthesizedBeams;
+  } else {
+    return isa::utils::pad(nrSynthesizedBeams, padding);
+  }
+}
+
+unsigned int Observation::getNrSamplesPerBatch(const bool subbanding = false, const unsigned int padding) const {
+  if ( padding == 0 ) {
+    if ( subbanding ) {
+      return nrSamplesPerBatch_subbanding;
+    } else {
+      return nrSamplesPerBatch;
+    }
+  } else {
+    if ( subbanding ) {
+      return isa::utils::pad(nrSamplesPerBatch_subbanding, padding);
+    } else {
+      return isa::utils::pad(nrSamplesPerBatch, padding);
+    }
+  }
+}
+
+unsigned int Observation::getNrSubbands(const unsigned int padding) const {
+  if ( padding == 0 ) {
+    return nrSubbands;
+  } else {
+    return isa::utils::pad(nrSubbands, padding);
+  }
+}
+
+unsigned int Observation::getNrChannels(const unsigned int padding) const {
+  if ( padding == 0 ) {
+    return nrChannels;
+  } else {
+    return isa::utils::pad(nrChannels, padding);
+  }
+}
+
+unsigned int Observation::getNrSamplesPerDispersedBatch(const bool subbanding, const unsigned int padding) const {
+  if ( padding == 0 ) {
+    if ( subbanding ) {
+      return nrSamplesPerDispersedBatch_subbanding;
+    } else {
+      return nrSamplesPerDispersedBatch;
+    }
+  } else {
+    if ( subbanding ) {
+      return isa::utils::pad(nrSamplesPerDispersedBatch_subbanding, padding);
+    } else {
+      return isa::utils::pad(nrSamplesPerDispersedBatch, padding);
+    }
+  }
+}
+
+unsigned int Observation::getNrDelayBatches(const bool subbanding = false) const {
+  if ( subbanding ) {
+    return nrDelayBatches_subbanding;
+  } else {
+    return nrDelayBatches;
+  }
+}
+
+unsigned int Observation::getNrDMs(const bool subbanding, const unsigned int padding) const {
+  if ( padding == 0 ) {
+    if ( subbanding ) {
+      return nrDMs_subbanding;
+    } else {
+      return nrDMs;
+    }
+  } else {
+    if ( subbanding ) {
+      return isa::utils::pad(nrDMs_subbanding, padding);
+    } else {
+      return isa::utils::pad(nrDMs, padding);
+    }
+  }
+}
+
+float Observation::getFirstDM(const bool subbanding) const {
+  if ( subbanding ) {
+    return firstDM_subbanding;
+  } else {
+    return firstDM;
+  }
+}
+
+float Observation::getLastDM(const bool subbanding) const {
+  if ( subbanding ) {
+    return lastDM_subbanding;
+  } else {
+    return lastDM;
+  }
+}
+
+float Observation::getDMStep(const bool subbanding) const {
+  if ( subbanding ) {
+    return DMStep_subbanding;
+  } else {
+    return DMStep;
+  }
+}
+
+unsigned int Observation::getNrPeriods(const unsigned int padding) const {
+  if ( padding == 0 ) {
+    return nrPeriods;
+  } else {
+    return isa::utils::pad(nrPeriods, padding);
+  }
+}
+
+unsigned int Observation::getNrBins(const unsigned int padding) const {
+  if ( padding == 0 ) {
+    return nrBins;
+  } else {
+    return isa::utils::pad(nrBins, padding);
+  }
+}
+
 void Observation::setFrequencyRange(const unsigned int subbands, const unsigned int channels, const float baseFrequency, const float bandwidth) {
   nrSubbands = subbands;
   nrChannels = channels;
@@ -32,25 +168,49 @@ void Observation::setFrequencyRange(const unsigned int subbands, const unsigned 
   channelBandwidth = bandwidth;
 }
 
-void Observation::setDMSubbandingRange(const unsigned int dms, const float baseDM, const float step) {
-  nrDMsSubbanding = dms;
-  DMStep_subbanding = step;
-  firstDM_subbanding = baseDM;
-  lastDM_subbanding = baseDM + ((dms - 1) * step);
-}
-
-void Observation::setDMRange(const unsigned int dms, const float baseDM, const float step) {
-  nrDMs = dms;
-  DMStep = step;
-  firstDM = baseDM;
-  lastDM = baseDM + ((dms - 1) * step);
+void Observation::setDMRange(const unsigned int dms, const float baseDM, const float step, const bool subbanding) {
+  if ( subbanding ) {
+    nrDMs_subbanding = dms;
+    firstDM_subbanding = baseDM;
+    lastDM_subbanding = baseDM + ((dms - 1) * step);
+    DMStep_subbanding = step;
+  } else {
+    nrDMs = dms;
+    firstDM = baseDM;
+    lastDM = baseDM + ((dms - 1) * step);
+    DMStep = step;
+  }
 }
 
 void Observation::setPeriodRange(const unsigned int periods, const unsigned int basePeriod, const unsigned int step) {
   nrPeriods = periods;
-  periodStep = step;
   firstPeriod = basePeriod;
   lastPeriod = basePeriod + ((periods - 1) * step);
+  periodStep = step;
+}
+
+void Observation::setNrDelayBatches(const unsigned int batches, const bool subbanding) {
+  if ( subbanding ) {
+    nrDelayBatches_subbanding = batches;
+  } else {
+    nrDelayBatches = batches;
+  }
+}
+
+void Observation::setNrSamplesPerBatch(const unsigned int samples, const bool subbanding) {
+  if ( subbanding ) {
+    nrSamplesPerBatch_subbanding = samples;
+  } else {
+    nrSamplesPerBatch = samples;
+  }
+}
+
+void Observation::setNrSamplesPerDispersedBatch(const unsigned int samples, const bool subbanding) {
+  if ( subbanding ) {
+    nrSamplesPerDispersedBatch_subbanding = samples;
+  } else {
+    nrSamplesPerDispersedBatch = samples;
+  }
 }
 
 } // AstroData
