@@ -16,75 +16,27 @@
 
 namespace AstroData {
 
-Observation::Observation() : nrBatches(0), nrStations(0), nrBeams(0), nrSynthesizedBeams(0), samplingTime(0.0f), nrSamplesPerBatchSubbanding(0), nrSamplesPerBatch(0), nrSamplesPerSubbandingDispersedChannel(0), nrSamplesPerDispersedChannel(0), nrSubbands(0), nrChannels(0), nrChannelsPerSubband(0), nrZappedChannels(0), subbandMinFreq(0.0), subbandMaxFreq(0.0), subbandBandwidth(0.0), minFreq(0.0f), maxFreq(0.0f), channelBandwidth(0.0f), nrDelayBatchesSubbanding(0), nrDelayBatches(0), nrDMsSubbanding(0), nrDMs(0), firstDMSubbanding(0.0f), firstDM(0.0f), lastDMSubbanding(0.0f), lastDM(0.0f), DMSubbandingStep(0.0f), DMStep(0.0f), nrPeriods(0), firstPeriod(0), lastPeriod(0), periodStep(0), nrBins(0) {}
+Observation::Observation() : nrBatches(0), nrStations(0), nrBeams(0), nrSynthesizedBeams(0), samplingTime(0.0f), nrSamplesPerBatch(0), nrSamplesPerBatch_subbanding(0), nrSamplesPerDispersedChannel(0), nrSamplesPerDispersedChannel_subbanding(0), nrSubbands(0), nrChannels(0), nrChannelsPerSubband(0), nrZappedChannels(0), minSubbandFreq(0.0), maxSubbandFreq(0.0), subbandBandwidth(0.0), minChannelFreq(0.0f), maxChannelFreq(0.0f), channelBandwidth(0.0f), nrDelayBatches(0), nrDelayBatches_subbanding(0), nrDMs(0), nrDMs_subbanding(0), firstDM(0.0f), firstDM_subbanding(0.0f), lastDM(0.0f), lastDM_subbanding(0.0f), DMStep(0.0f), DMStep_subbanding(0.0f), nrPeriods(0), firstPeriod(0), lastPeriod(0), periodStep(0), nrBins(0) {}
 
 Observation::~Observation() {}
-
-void Observation::setNrBatches(const unsigned int batches) {
-  nrBatches = batches;
-}
-
-void Observation::setNrStations(const unsigned int stations) {
-  nrStations = stations;
-}
-
-void Observation::setNrBeams(const unsigned int beams) {
-  nrBeams = beams;
-}
-
-void Observation::setNrSynthesizedBeams(const unsigned int beams) {
-  nrSynthesizedBeams = beams;
-}
-
-void Observation::setNrDelayBatchesSubbanding(const unsigned int batches) {
-  nrDelayBatchesSubbanding = batches;
-}
-
-void Observation::setNrDelayBatches(const unsigned int batches) {
-  nrDelayBatches = batches;
-}
-
-void Observation::setSamplingTime(const float sampling) {
-  samplingTime = sampling;
-}
-
-void Observation::setNrSamplesPerBatch(const unsigned int samples) {
-  nrSamplesPerBatch = samples;
-}
-
-void Observation::setNrSamplesPerBatchSubbanding(const unsigned int samples) {
-  nrSamplesPerBatchSubbanding = samples;
-}
-
-void Observation::setNrSamplesPerSubbandingDispersedChannel(const unsigned int samples) {
-  nrSamplesPerSubbandingDispersedChannel = samples;
-}
-
-void Observation::setNrSamplesPerDispersedChannel(const unsigned int samples) {
-  nrSamplesPerDispersedChannel = samples;
-}
 
 void Observation::setFrequencyRange(const unsigned int subbands, const unsigned int channels, const float baseFrequency, const float bandwidth) {
   nrSubbands = subbands;
   nrChannels = channels;
   nrChannelsPerSubband = channels / subbands;
-  subbandMinFreq = baseFrequency + ((nrChannelsPerSubband / 2) * bandwidth);
-  subbandMaxFreq = baseFrequency + ((nrChannels - (nrChannelsPerSubband / 2)) * bandwidth);
+  minSubbandFreq = baseFrequency + ((nrChannelsPerSubband / 2) * bandwidth);
+  maxSubbandFreq = baseFrequency + ((nrChannels - (nrChannelsPerSubband / 2)) * bandwidth);
   subbandBandwidth = nrChannelsPerSubband * bandwidth;
-  minFreq = baseFrequency;
-  maxFreq = baseFrequency + ((channels - 1) * bandwidth);
+  minChannelFreq = baseFrequency;
+  maxChannelFreq = baseFrequency + ((channels - 1) * bandwidth);
   channelBandwidth = bandwidth;
-}
-
-void Observation::setNrZappedChannels(const unsigned int zappedChannels) {
-  nrZappedChannels = zappedChannels;
 }
 
 void Observation::setDMSubbandingRange(const unsigned int dms, const float baseDM, const float step) {
   nrDMsSubbanding = dms;
-  DMSubbandingStep = step;
-  firstDMSubbanding = baseDM;
-  lastDMSubbanding = baseDM + ((dms - 1) * step);
+  DMStep_subbanding = step;
+  firstDM_subbanding = baseDM;
+  lastDM_subbanding = baseDM + ((dms - 1) * step);
 }
 
 void Observation::setDMRange(const unsigned int dms, const float baseDM, const float step) {
@@ -99,10 +51,6 @@ void Observation::setPeriodRange(const unsigned int periods, const unsigned int 
   periodStep = step;
   firstPeriod = basePeriod;
   lastPeriod = basePeriod + ((periods - 1) * step);
-}
-
-void Observation::setNrBins(const unsigned int bins) {
-  nrBins = bins;
 }
 
 } // AstroData

@@ -70,7 +70,7 @@ public:
   float getFirstDM() const;
   float getLastDMSubbanding() const;
   float getLastDM() const;
-  float getDMSubbandingStep() const;
+  float getDMStep_subbanding() const;
   float getDMStep() const;
   // Periods
   unsigned int getNrPeriods() const;
@@ -110,32 +110,32 @@ private:
   unsigned int nrBeams;
   unsigned int nrSynthesizedBeams;
   float samplingTime;
-  unsigned int nrSamplesPerBatchSubbanding;
   unsigned int nrSamplesPerBatch;
-  unsigned int nrSamplesPerSubbandingDispersedChannel;
+  unsigned int nrSamplesPerBatch_subbanding;
   unsigned int nrSamplesPerDispersedChannel;
+  unsigned int nrSamplesPerDispersedChannel_subbanding;
 
   unsigned int nrSubbands;
   unsigned int nrChannels;
   unsigned int nrChannelsPerSubband;
   unsigned int nrZappedChannels;
-  float subbandMinFreq;
-  float subbandMaxFreq;
+  float minSubbandFreq;
+  float maxSubbandFreq;
   float subbandBandwidth;
-  float minFreq;
-  float maxFreq;
+  float minChannelFreq;
+  float maxChannelFreq;
   float channelBandwidth;
 
-  unsigned int nrDelayBatchesSubbanding;
   unsigned int nrDelayBatches;
-  unsigned int nrDMsSubbanding;
+  unsigned int nrDelayBatches_subbanding;
   unsigned int nrDMs;
-  float firstDMSubbanding;
+  unsigned int nrDMs_subbanding;
   float firstDM;
-  float lastDMSubbanding;
+  float firstDM_subbanding;
   float lastDM;
-  float DMSubbandingStep;
+  float lastDM_subbanding;
   float DMStep;
+  float DMStep_subbanding;
 
   unsigned int nrPeriods;
   unsigned int firstPeriod;
@@ -210,7 +210,7 @@ inline unsigned int Observation::getNrZappedChannels() const {
 }
 
 inline unsigned int Observation::getNrSamplesPerPaddedSubbandingDispersedChannel(unsigned int padding) const {
-  return isa::utils::pad(nrSamplesPerSubbandingDispersedChannel, padding);
+  return isa::utils::pad(nrSamplesPerDispersedChannel_subbanding, padding);
 }
 
 inline unsigned int Observation::getNrSamplesPerPaddedDispersedChannel(unsigned int padding) const {
@@ -218,11 +218,11 @@ inline unsigned int Observation::getNrSamplesPerPaddedDispersedChannel(unsigned 
 }
 
 inline float Observation::getSubbandMinFreq() const {
-  return subbandMinFreq;
+  return minSubbandFreq;
 }
 
 inline float Observation::getSubbandMaxFreq() const {
-  return subbandMaxFreq;
+  return maxSubbandFreq;
 }
 
 inline float Observation::getSubbandBandwidth() const {
@@ -230,11 +230,11 @@ inline float Observation::getSubbandBandwidth() const {
 }
 
 inline float Observation::getMinFreq() const {
-  return minFreq;
+  return minChannelFreq;
 }
 
 inline float Observation::getMaxFreq() const {
-  return maxFreq;
+  return maxChannelFreq;
 }
 
 inline float Observation::getChannelBandwidth() const {
@@ -242,7 +242,7 @@ inline float Observation::getChannelBandwidth() const {
 }
 
 inline unsigned int Observation::getNrSamplesPerSubbandingDispersedChannel() const {
-  return nrSamplesPerSubbandingDispersedChannel;
+  return nrSamplesPerDispersedChannel_subbanding;
 }
 
 inline unsigned int Observation::getNrSamplesPerDispersedChannel() const {
@@ -250,15 +250,15 @@ inline unsigned int Observation::getNrSamplesPerDispersedChannel() const {
 }
 
 inline unsigned int Observation::getNrSamplesPerBatchSubbanding() const {
-  return nrSamplesPerBatchSubbanding;
+  return nrSamplesPerBatch_subbanding;
 }
 
 inline unsigned int Observation::getNrSamplesPerPaddedBatchSubbanding(unsigned int padding) const {
-  return isa::utils::pad(nrSamplesPerBatchSubbanding, padding);
+  return isa::utils::pad(nrSamplesPerBatch_subbanding, padding);
 }
 
 inline unsigned int Observation::getNrDelayBatchesSubbanding() const {
-  return nrDelayBatchesSubbanding;
+  return nrDelayBatches_subbanding;
 }
 
 inline unsigned int Observation::getNrDelayBatches() const {
@@ -282,7 +282,7 @@ inline unsigned int Observation::getNrPaddedDMs(unsigned int padding) const {
 }
 
 inline float Observation::getFirstDMSubbanding() const {
-  return firstDMSubbanding;
+  return firstDM_subbanding;
 }
 
 inline float Observation::getFirstDM() const {
@@ -290,15 +290,15 @@ inline float Observation::getFirstDM() const {
 }
 
 inline float Observation::getLastDMSubbanding() const {
-  return lastDMSubbanding;
+  return lastDM_subbanding;
 }
 
 inline float Observation::getLastDM() const {
   return lastDM;
 }
 
-inline float Observation::getDMSubbandingStep() const {
-  return DMSubbandingStep;
+inline float Observation::getDMStep_subbanding() const {
+  return DMStep_subbanding;
 }
 
 inline float Observation::getDMStep() const {
@@ -331,6 +331,58 @@ inline unsigned int Observation::getLastPeriod() const {
 
 inline unsigned int Observation::getPeriodStep() const {
   return periodStep;
+}
+
+inline void Observation::setNrBatches(const unsigned int batches) {
+  nrBatches = batches;
+}
+
+inline void Observation::setNrStations(const unsigned int stations) {
+  nrStations = stations;
+}
+
+inline void Observation::setNrBeams(const unsigned int beams) {
+  nrBeams = beams;
+}
+
+inline void Observation::setNrSynthesizedBeams(const unsigned int beams) {
+  nrSynthesizedBeams = beams;
+}
+
+inline void Observation::setNrDelayBatchesSubbanding(const unsigned int batches) {
+  nrDelayBatches_subbanding = batches;
+}
+
+inline void Observation::setNrDelayBatches(const unsigned int batches) {
+  nrDelayBatches = batches;
+}
+
+inline void Observation::setSamplingTime(const float sampling) {
+  samplingTime = sampling;
+}
+
+inline void Observation::setNrSamplesPerBatch(const unsigned int samples) {
+  nrSamplesPerBatch = samples;
+}
+
+inline void Observation::setNrSamplesPerBatchSubbanding(const unsigned int samples) {
+  nrSamplesPerBatch_subbanding = samples;
+}
+
+inline void Observation::setNrSamplesPerSubbandingDispersedChannel(const unsigned int samples) {
+  nrSamplesPerDispersedChannel_subbanding = samples;
+}
+
+inline void Observation::setNrSamplesPerDispersedChannel(const unsigned int samples) {
+  nrSamplesPerDispersedChannel = samples;
+}
+
+inline void Observation::setNrZappedChannels(const unsigned int zappedChannels) {
+  nrZappedChannels = zappedChannels;
+}
+
+inline void Observation::setNrBins(const unsigned int bins) {
+  nrBins = bins;
 }
 
 } // AstroData
