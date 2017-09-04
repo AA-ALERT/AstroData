@@ -27,7 +27,6 @@ public:
   Observation();
   ~Observation();
 
-  // Getters
   // General observation parameters
   unsigned int getNrBatches() const;
   unsigned int getNrStations() const;
@@ -80,7 +79,6 @@ public:
   unsigned int getNrBins() const;
   unsigned int getNrPaddedBins(unsigned int padding) const;
 
-  // Setters
   // General observation parameters
   void setNrBatches(const unsigned int batches);
   void setNrStations(const unsigned int stations);
