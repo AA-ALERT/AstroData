@@ -22,7 +22,7 @@ endif
 
 all: bin/Observation.o bin/Platform.o bin/ReadData.o
 	-@mkdir -p lib
-	$(CC) -o lib/libAstroData.so -shared -Wl,-soname,libAstroData.so bin/ReadData.o bin/Observation.o bin/Platform.o
+	$(CC) -o lib/libAstroData.so -shared -Wl,-soname,libAstroData.so bin/ReadData.o bin/Observation.o bin/Platform.o $(CFLAGS)
 
 bin/ReadData.o: include/ReadData.hpp src/ReadData.cpp
 	-@mkdir -p bin
