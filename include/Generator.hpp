@@ -19,7 +19,7 @@
 #include <cmath>
 #include <algorithm>
 
-#include <Observation.hpp>
+#include "Observation.hpp"
 
 #pragma once
 
@@ -45,7 +45,7 @@ template< typename T > void generatePulsar(const unsigned int period, const unsi
     }
   }
   // Generate the pulsar
-	float inverseHighFreq = 1.0f / (observation.getMaxFreq() * observation.getMaxFreq());
+  float inverseHighFreq = 1.0f / (observation.getMaxFreq() * observation.getMaxFreq());
   float kDM = 4148.808f * DM;
   for ( unsigned int channel = 0; channel < observation.getNrChannels(); channel++ ) {
     float inverseFreq = 1.0f / ((observation.getMinFreq() + (channel * observation.getChannelBandwidth())) * (observation.getMinFreq() + (channel * observation.getChannelBandwidth())));
@@ -108,7 +108,7 @@ template< typename T > void generateSinglePulse(const unsigned int width, const 
   // Generate the pulse
   unsigned int batch = 0;
   unsigned int sample = 0;
-	float inverseHighFreq = 1.0f / std::pow(observation.getMaxFreq(), 2.0f);
+  float inverseHighFreq = 1.0f / std::pow(observation.getMaxFreq(), 2.0f);
   float kDM = 4148.808f * DM;
 
   if ( random ) {
