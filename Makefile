@@ -1,8 +1,6 @@
 
 SOURCE_ROOT ?= $(HOME)
 
-UTILS := $(SOURCE_ROOT)/utils
-
 CC := g++
 CFLAGS := -std=c++11 -Wall
 ifdef DEBUG
@@ -26,15 +24,15 @@ all: bin/Observation.o bin/Platform.o bin/ReadData.o
 
 bin/ReadData.o: include/ReadData.hpp src/ReadData.cpp
 	-@mkdir -p bin
-	$(CC) -o bin/ReadData.o -c -fpic src/ReadData.cpp -I"include" -I"$(UTILS)/include" $(HDF5_INCLUDE) $(INCLUDES) $(CFLAGS)
+	$(CC) -o bin/ReadData.o -c -fpic src/ReadData.cpp -I"include" -I"$(SOURCE_ROOT)/include" $(HDF5_INCLUDE) $(INCLUDES) $(CFLAGS)
 
-bin/Observation.o: $(UTILS)/include/utils.hpp include/Observation.hpp src/Observation.cpp
+bin/Observation.o: $(SOURCE_ROOT)/include/utils.hpp include/Observation.hpp src/Observation.cpp
 	-@mkdir -p bin
-	$(CC) -o bin/Observation.o -c -fpic src/Observation.cpp -I"include" -I"$(UTILS)/include" $(CFLAGS)
+	$(CC) -o bin/Observation.o -c -fpic src/Observation.cpp -I"include" -I"$(SOURCE_ROOT)/include" $(CFLAGS)
 
-bin/Platform.o: $(UTILS)/include/utils.hpp include/Platform.hpp src/Platform.cpp
+bin/Platform.o: $(SOURCE_ROOT)/include/utils.hpp include/Platform.hpp src/Platform.cpp
 	-@mkdir -p bin
-	$(CC) -o bin/Platform.o -c -fpic src/Platform.cpp -I"include" -I"$(UTILS)/include" $(CFLAGS)
+	$(CC) -o bin/Platform.o -c -fpic src/Platform.cpp -I"include" -I"$(SOURCE_ROOT)/include" $(CFLAGS)
 
 clean:
 	-@rm bin/*.o
