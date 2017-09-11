@@ -1,8 +1,10 @@
 
 INSTALL_ROOT ?= $(HOME)
+INCUDES := -I"include" -I"$(INSTALL_ROOT)/include"
 
 CC := g++
 CFLAGS := -std=c++11 -Wall
+
 ifdef DEBUG
 	CFLAGS += -O0 -g3
 else
@@ -11,7 +13,7 @@ endif
 
 ifdef LOFAR
 	CFLAGS += -DHAVE_HDF5
-	HDF5_INCLUDE ?= -I/usr/include
+	INCLUDES += -I"$(HDF5INCLUDE)"
 endif
 ifdef PSRDADA
 	CFLAGS += -DHAVE_PSRDADA
@@ -24,15 +26,15 @@ all: bin/Observation.o bin/Platform.o bin/ReadData.o
 
 bin/ReadData.o: include/ReadData.hpp src/ReadData.cpp
 	-@mkdir -p bin
-	$(CC) -o bin/ReadData.o -c -fpic src/ReadData.cpp -I"include" -I"$(INSTALL_ROOT)/include" $(HDF5_INCLUDE) $(INCLUDES) $(CFLAGS)
+	$(CC) -o bin/ReadData.o -c -fpic src/ReadData.cpp $(INCLUDES) $(CFLAGS)
 
 bin/Observation.o: $(INSTALL_ROOT)/include/utils.hpp include/Observation.hpp src/Observation.cpp
 	-@mkdir -p bin
-	$(CC) -o bin/Observation.o -c -fpic src/Observation.cpp -I"include" -I"$(INSTALL_ROOT)/include" $(CFLAGS)
+	$(CC) -o bin/Observation.o -c -fpic src/Observation.cpp $(INCLUDES) $(CFLAGS)
 
 bin/Platform.o: $(INSTALL_ROOT)/include/utils.hpp include/Platform.hpp src/Platform.cpp
 	-@mkdir -p bin
-	$(CC) -o bin/Platform.o -c -fpic src/Platform.cpp -I"include" -I"$(INSTALL_ROOT)/include" $(CFLAGS)
+	$(CC) -o bin/Platform.o -c -fpic src/Platform.cpp $(INCLUDES) $(CFLAGS)
 
 clean:
 	-@rm bin/*.o
