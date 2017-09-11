@@ -40,3 +40,6 @@ clean:
 	-@rm bin/*.o
 	-@rm lib/*
 
+install: all
+	cp lib/* $(SOURCE_ROOT)/lib
+	cp include/* $(SOURCE_ROOT)/include
