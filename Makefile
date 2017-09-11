@@ -21,19 +21,22 @@ ifdef PSRDADA
 endif
 
 all: bin/Observation.o bin/Platform.o bin/ReadData.o
+	-@mkdir -p lib
+	$(CC) -o lib/libAstroData.so -shared -Wl,-soname,libAstroData.so bin/ReadData.o bin/Observation.o bin/Platform.o
 
 bin/ReadData.o: include/ReadData.hpp src/ReadData.cpp
 	-@mkdir -p bin
-	$(CC) -o bin/ReadData.o -c src/ReadData.cpp -I"include" -I"$(UTILS)/include" $(HDF5_INCLUDE) $(INCLUDES) $(CFLAGS)
+	$(CC) -o bin/ReadData.o -c -fpic src/ReadData.cpp -I"include" -I"$(UTILS)/include" $(HDF5_INCLUDE) $(INCLUDES) $(CFLAGS)
 
 bin/Observation.o: $(UTILS)/include/utils.hpp include/Observation.hpp src/Observation.cpp
 	-@mkdir -p bin
-	$(CC) -o bin/Observation.o -c src/Observation.cpp -I"include" -I"$(UTILS)/include" $(CFLAGS)
+	$(CC) -o bin/Observation.o -c -fpic src/Observation.cpp -I"include" -I"$(UTILS)/include" $(CFLAGS)
 
 bin/Platform.o: $(UTILS)/include/utils.hpp include/Platform.hpp src/Platform.cpp
 	-@mkdir -p bin
-	$(CC) -o bin/Platform.o -c src/Platform.cpp -I"include" -I"$(UTILS)/include" $(CFLAGS)
+	$(CC) -o bin/Platform.o -c -fpic src/Platform.cpp -I"include" -I"$(UTILS)/include" $(CFLAGS)
 
 clean:
 	-@rm bin/*.o
+	-@rm lib/*
 
