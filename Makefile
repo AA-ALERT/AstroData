@@ -41,5 +41,5 @@ clean:
 	-@rm lib/*
 
 install: all
-	cp lib/* $(SOURCE_ROOT)/lib
-	cp include/* $(SOURCE_ROOT)/include
+	-@cp lib/* $(SOURCE_ROOT)/lib
+	-@cp include/* $(SOURCE_ROOT)/include
