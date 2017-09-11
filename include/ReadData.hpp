@@ -28,9 +28,9 @@
 #include <ascii_header.h>
 #endif // HAVE_PSRDADA
 
-#include <Observation.hpp>
-#include <Platform.hpp>
 #include <utils.hpp>
+#include "Observation.hpp"
+#include "Platform.hpp"
 
 
 #pragma once
