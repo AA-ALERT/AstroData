@@ -34,11 +34,11 @@ template< typename T > void generatePulsar(const unsigned int period, const unsi
   std::srand(std::time(0));
   // Generate the  "noise"
   for ( unsigned int batch = 0; batch < observation.getNrBatches(); batch++ ) {
-    data[batch] = new std::vector< T >(observation.getNrChannels() * observation.getNrSamplesPerPaddedBatch(padding / sizeof(T)));
+    data[batch] = new std::vector< T >(observation.getNrChannels() * observation.getNrSamplesPerBatch(false, padding / sizeof(T)));
     if ( random ) {
       for ( unsigned int channel = 0; channel < observation.getNrChannels(); channel++ ) {
         for ( unsigned int sample = 0; sample < observation.getNrSamplesPerBatch(); sample++ ) {
-          data[batch]->at((channel * observation.getNrSamplesPerPaddedBatch(padding / sizeof(T))) + sample) = static_cast< T >(std::rand() % 25);
+          data[batch]->at((channel * observation.getNrSamplesPerBatch(false, padding / sizeof(T))) + sample) = static_cast< T >(std::rand() % 25);
         }
       }
     } else {
@@ -62,9 +62,9 @@ template< typename T > void generatePulsar(const unsigned int period, const unsi
         unsigned int internalSample = (sample + i) % observation.getNrSamplesPerBatch();
 
         if ( random ) {
-          data[batch]->at((channel * observation.getNrSamplesPerPaddedBatch(padding / sizeof(T))) + internalSample) = static_cast< T >(std::rand() % 128);
+          data[batch]->at((channel * observation.getNrSamplesPerBatch(false, padding / sizeof(T))) + internalSample) = static_cast< T >(std::rand() % 128);
         } else {
-          data[batch]->at((channel * observation.getNrSamplesPerPaddedBatch(padding / sizeof(T))) + internalSample) = static_cast< T >(42);
+          data[batch]->at((channel * observation.getNrSamplesPerBatch(false, padding / sizeof(T))) + internalSample) = static_cast< T >(42);
         }
       }
     }
@@ -76,7 +76,7 @@ template< typename T > void generateSinglePulse(const unsigned int width, const 
   // Generate the  "noise"
   for ( unsigned int batch = 0; batch < observation.getNrBatches(); batch++ ) {
     if ( inputBits >= 8 ) {
-      data[batch] = new std::vector< T >(observation.getNrChannels() * observation.getNrSamplesPerPaddedBatch(padding / sizeof(T)));
+      data[batch] = new std::vector< T >(observation.getNrChannels() * observation.getNrSamplesPerBatch(false, padding / sizeof(T)));
     } else {
       data[batch] = new std::vector< T >(observation.getNrChannels() * isa::utils::pad(observation.getNrSamplesPerBatch() / (8 / inputBits), padding / sizeof(T)));
     }
@@ -84,7 +84,7 @@ template< typename T > void generateSinglePulse(const unsigned int width, const 
       for ( unsigned int channel = 0; channel < observation.getNrChannels(); channel++ ) {
         for ( unsigned int sample = 0; sample < observation.getNrSamplesPerBatch(); sample++ ) {
           if ( inputBits >= 8 ) {
-            data[batch]->at((channel * observation.getNrSamplesPerPaddedBatch(padding / sizeof(T))) + sample) = static_cast< T >(std::rand() % 25);
+            data[batch]->at((channel * observation.getNrSamplesPerBatch(false, padding / sizeof(T))) + sample) = static_cast< T >(std::rand() % 25);
           } else {
             unsigned int byte = sample / (8 / inputBits);
             uint8_t firstBit = (sample % (8 / inputBits)) * inputBits;
@@ -131,7 +131,7 @@ template< typename T > void generateSinglePulse(const unsigned int width, const 
 
       if ( random ) {
         if ( inputBits >= 8 ) {
-          data[batch + ((sample + i + shift) / observation.getNrSamplesPerBatch())]->at((channel * observation.getNrSamplesPerPaddedBatch(padding / sizeof(T))) + (sample + i + shift)) = static_cast< T >(std::rand() % 256);
+          data[batch + ((sample + i + shift) / observation.getNrSamplesPerBatch())]->at((channel * observation.getNrSamplesPerBatch(false, padding / sizeof(T))) + (sample + i + shift)) = static_cast< T >(std::rand() % 256);
         } else {
           uint8_t value = static_cast< unsigned int >(std::rand() % inputBits);
           unsigned int byte = ((sample + i + shift) % observation.getNrSamplesPerBatch()) / (8 / inputBits);
@@ -145,7 +145,7 @@ template< typename T > void generateSinglePulse(const unsigned int width, const 
         }
       } else {
         if ( inputBits >= 8 ) {
-          data[batch + ((sample + i + shift) / observation.getNrSamplesPerBatch())]->at((channel * observation.getNrSamplesPerPaddedBatch(padding / sizeof(T))) + ((sample + i + shift) % observation.getNrSamplesPerBatch())) = static_cast< T >(42);
+          data[batch + ((sample + i + shift) / observation.getNrSamplesPerBatch())]->at((channel * observation.getNrSamplesPerBatch(false, padding / sizeof(T))) + ((sample + i + shift) % observation.getNrSamplesPerBatch())) = static_cast< T >(42);
         } else {
           unsigned int byte = ((sample + i + shift) % observation.getNrSamplesPerBatch()) / (8 / inputBits);
           uint8_t firstBit = (((sample + i + shift) % observation.getNrSamplesPerBatch()) % (8 / inputBits)) * inputBits;
