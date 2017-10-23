@@ -41,5 +41,7 @@ clean:
 	-@rm lib/*
 
 install: all
+	-@mkdir $(INSTALL_ROOT)/include
 	-@cp include/* $(INSTALL_ROOT)/include
+	-@mkdir $(INSTALL_ROOT)/lib
 	-@cp lib/* $(INSTALL_ROOT)/lib
