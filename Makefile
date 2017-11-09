@@ -38,7 +38,7 @@ bin/Platform.o: include/Platform.hpp src/Platform.cpp
 
 bin/SynthesizedBeams.o: include/SynthesizedBeams.hpp src/SynthesizedBeams.cpp
 	-@mkdir -p bin
-	$(CC) -o bin/SynthesidedBeams.o -c -fpic src/SynthesizedBeams.cpp $(INCLUDES) $(CFLAGS)
+	$(CC) -o bin/SynthesizedBeams.o -c -fpic src/SynthesizedBeams.cpp $(INCLUDES) $(CFLAGS)
 
 clean:
 	-@rm bin/*.o
