@@ -13,7 +13,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <fstream>
+
 #include <SynthesizedBeams.hpp>
+#include <Platform.hpp>
 
 
 void generateBeamMapping(AstroData::Observation & observation, std::vector< uint8_t > & beamMapping, unsigned int padding, bool subbanding) {
@@ -30,5 +33,23 @@ void generateBeamMapping(AstroData::Observation & observation, std::vector< uint
   }
 }
 
-void readBeamMapping(const AstroData::Observation & observation, const std::string & inputFilename, std::vector<unsigned int> & beamMapping, unsigned int padding, bool subbanding) {
+void readBeamMapping(const AstroData::Observation & observation, const std::string & inputFilename, std::vector<unsigned int> & beamMapping, const unsigned int padding, const bool subbanding) {
+  std::ifstream inputFile;
+
+  inputFile.open(inputFilename);
+  if ( !inputFile ) {i
+    throw FileError("Impossible to open " + inputFilename);
+  }
+  for ( unsigned int sBeam = 0; sBeam < observation.getNrSynthesizedBeams(); sBeam++ ) {
+    if ( subbanding ) {
+      for ( unsigned int subband = 0; subband < observation.getNrSubbands(); subband++ ) {
+        inputFile >> beamMapping[(sBeam * observation.getNrSubbands(padding / sizeof(unsigned int))) + subband];
+      }
+    } else {
+      for ( unsigned int channel = 0; channel < observation.getNrChannels(); channel++ ) {
+        inputFile >> beamMapping[(sBeam * observation.getNrChannels(padding / sizeof(unsigned int))) + channel];
+      }
+    }
+  }
+  inputFile.close();
 }
