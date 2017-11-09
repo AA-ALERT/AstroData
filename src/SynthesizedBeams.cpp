@@ -37,7 +37,7 @@ void readBeamMapping(const AstroData::Observation & observation, const std::stri
   std::ifstream inputFile;
 
   inputFile.open(inputFilename);
-  if ( !inputFile ) {i
+  if ( !inputFile ) {
     throw FileError("Impossible to open " + inputFilename);
   }
   for ( unsigned int sBeam = 0; sBeam < observation.getNrSynthesizedBeams(); sBeam++ ) {
