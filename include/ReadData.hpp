@@ -49,7 +49,7 @@ private:
 };
 
 // Zapped channels (excluded from computation)
-void readZappedChannels(Observation & observation, const std::string & inputFileName, std::vector< uint8_t > & zappedChannels);
+void readZappedChannels(Observation & observation, const std::string & inputFileName, std::vector<unsigned int> & zappedChannels);
 // Integration steps
 void readIntegrationSteps(const Observation & observation, const std::string  & inputFileName, std::set< unsigned int > & integrationSteps);
 // SIGPROC data
