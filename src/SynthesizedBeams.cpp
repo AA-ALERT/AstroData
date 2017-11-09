@@ -18,6 +18,7 @@
 #include <SynthesizedBeams.hpp>
 #include <Platform.hpp>
 
+namespace AstroData {
 
 void generateBeamMapping(AstroData::Observation & observation, std::vector<unsigned int & beamMapping, unsigned int padding, bool subbanding) {
   for ( unsigned int beam = 0; beam < observation.getNrSynthesizedBeams(); beam++ ) {
@@ -53,3 +54,6 @@ void readBeamMapping(const AstroData::Observation & observation, const std::stri
   }
   inputFile.close();
 }
+
+} // AstroData
+
