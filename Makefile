@@ -20,9 +20,9 @@ ifdef PSRDADA
 	INCLUDES += -I"$(PSRDADA)/src"
 endif
 
-all: bin/Observation.o bin/Platform.o bin/ReadData.o
+all: bin/Observation.o bin/Platform.o bin/ReadData.o bin/SynthesizedBeams.o
 	-@mkdir -p lib
-	$(CC) -o lib/libAstroData.so -shared -Wl,-soname,libAstroData.so bin/ReadData.o bin/Observation.o bin/Platform.o $(CFLAGS)
+	$(CC) -o lib/libAstroData.so -shared -Wl,-soname,libAstroData.so bin/ReadData.o bin/Observation.o bin/Platform.o bin/SynthesizedBeams.o $(CFLAGS)
 
 bin/ReadData.o: include/ReadData.hpp src/ReadData.cpp
 	-@mkdir -p bin
@@ -35,6 +35,10 @@ bin/Observation.o: include/Observation.hpp src/Observation.cpp
 bin/Platform.o: include/Platform.hpp src/Platform.cpp
 	-@mkdir -p bin
 	$(CC) -o bin/Platform.o -c -fpic src/Platform.cpp $(INCLUDES) $(CFLAGS)
+
+bin/SynthesizedBeams.o: include/SynthesizedBeams.hpp src/SynthesizedBeams.cpp
+	-@mkdir -p bin
+	$(CC) -o bin/SynthesidedBeams.o -c -fpic src/SynthesizedBeams.cpp $(INCLUDES) $(CFLAGS)
 
 clean:
 	-@rm bin/*.o
