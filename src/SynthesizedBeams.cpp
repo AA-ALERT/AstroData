@@ -20,7 +20,7 @@
 
 namespace AstroData {
 
-void generateBeamMapping(AstroData::Observation & observation, std::vector<unsigned int & beamMapping, unsigned int padding, bool subbanding) {
+void generateBeamMapping(const AstroData::Observation & observation, std::vector<unsigned int & beamMapping, unsigned int padding, bool subbanding) {
   for ( unsigned int beam = 0; beam < observation.getNrSynthesizedBeams(); beam++ ) {
     if ( subbanding) {
       for ( unsigned int subband = 0; subband < observation.getNrSubbands(); subband++ ) {
