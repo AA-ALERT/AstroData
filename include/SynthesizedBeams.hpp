@@ -23,7 +23,7 @@
 #pragma once
 
 // Generate beam mapping
-void generateBeamMapping(AstroData::Observation & observation, std::vector< uint8_t > & beamMapping, unsigned int padding, bool subbanding = false);
+void generateBeamMapping(AstroData::Observation & observation, std::vector<unsigned int> & beamMapping, unsigned int padding, bool subbanding = false);
 // Read beam mapping file
 void readBeamMapping(const AstroData::Observation & observation, const std::string & inputFilename, std::vector<unsigned int> & beamMapping, const unsigned int padding, const bool subbanding = false);
 

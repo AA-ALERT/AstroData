@@ -19,15 +19,15 @@
 #include <Platform.hpp>
 
 
-void generateBeamMapping(AstroData::Observation & observation, std::vector< uint8_t > & beamMapping, unsigned int padding, bool subbanding) {
+void generateBeamMapping(AstroData::Observation & observation, std::vector<unsigned int & beamMapping, unsigned int padding, bool subbanding) {
   for ( unsigned int beam = 0; beam < observation.getNrSynthesizedBeams(); beam++ ) {
     if ( subbanding) {
       for ( unsigned int subband = 0; subband < observation.getNrSubbands(); subband++ ) {
-        beamMapping[(beam * observation.getNrSubbands(padding / sizeof(uint8_t))) + subband] = beam % observation.getNrBeams();
+        beamMapping[(beam * observation.getNrSubbands(padding / sizeof(unsigned int))) + subband] = beam % observation.getNrBeams();
       }
     } else {
       for ( unsigned int channel = 0; channel < observation.getNrChannels(); channel++ ) {
-        beamMapping[(beam * observation.getNrChannels(padding / sizeof(uint8_t))) + channel] = beam % observation.getNrBeams();
+        beamMapping[(beam * observation.getNrChannels(padding / sizeof(unsigned int))) + channel] = beam % observation.getNrBeams();
       }
     }
   }
