@@ -51,22 +51,22 @@ private:
 // Zapped channels (excluded from computation)
 void readZappedChannels(Observation & observation, const std::string & inputFileName, std::vector<unsigned int> & zappedChannels);
 // Integration steps
-void readIntegrationSteps(const Observation & observation, const std::string  & inputFileName, std::set< unsigned int > & integrationSteps);
+void readIntegrationSteps(const Observation & observation, const std::string  & inputFileName, std::set<unsigned int> & integrationSteps);
 // SIGPROC data
-template< typename T > void readSIGPROC(const Observation & observation, const unsigned int padding, const uint8_t inputBits, const unsigned int bytesToSkip, const std::string & inputFilename, std::vector< std::vector< T > * > & data, const unsigned int firstBatch = 0);
+template<typename T> void readSIGPROC(const Observation & observation, const unsigned int padding, const uint8_t inputBits, const unsigned int bytesToSkip, const std::string & inputFilename, std::vector<std::vector<T> *> & data, const unsigned int firstBatch = 0);
 #ifdef HAVE_HDF5
 // LOFAR data
-template< typename T > void readLOFAR(std::string headerFilename, std::string rawFilename, Observation & observation, const unsigned int padding, std::vector< std::vector< T > * > & data, unsigned int nrBatches = 0, unsigned int firstBatch = 0);
+template<typename T> void readLOFAR(std::string headerFilename, std::string rawFilename, Observation & observation, const unsigned int padding, std::vector<std::vector<T> *> & data, unsigned int nrBatches = 0, unsigned int firstBatch = 0);
 #endif // HAVE_HDF5
 #ifdef HAVE_PSRDADA
 // PSRDADA buffer
 void readPSRDADAHeader(Observation & observation, dada_hdu_t & ringBuffer) throw(RingBufferError);
-template< typename T > inline void readPSRDADA(dada_hdu_t & ringBuffer, std::vector< T > * data) throw(RingBufferError);
+template<typename T> inline void readPSRDADA(dada_hdu_t & ringBuffer, std::vector<T> * data) throw(RingBufferError);
 #endif // HAVE_PSRDADA
 
 // Implementations
 
-template< typename T > void readSIGPROC(const Observation & observation, const unsigned int padding, const uint8_t inputBits, const unsigned int bytesToSkip, const std::string & inputFilename, std::vector< std::vector< T > * > & data, const unsigned int firstBatch) {
+template<typename T> void readSIGPROC(const Observation & observation, const unsigned int padding, const uint8_t inputBits, const unsigned int bytesToSkip, const std::string & inputFilename, std::vector<std::vector<T> *> & data, const unsigned int firstBatch) {
   std::ifstream inputFile;
   const unsigned int BUFFER_DIM = sizeof(T);
   char * buffer = new char [BUFFER_DIM];
@@ -80,17 +80,17 @@ template< typename T > void readSIGPROC(const Observation & observation, const u
   inputFile.seekg(bytesToSkip, std::ios::beg);
   for ( unsigned int batch = 0; batch < observation.getNrBatches(); batch++ ) {
     if ( inputBits >= 8 ) {
-      data.at(batch) = new std::vector< T >(observation.getNrChannels() * observation.getNrSamplesPerBatch(false, padding / sizeof(T)));
+      data.at(batch) = new std::vector<T>(observation.getNrChannels() * observation.getNrSamplesPerBatch(false, padding / sizeof(T)));
       for ( unsigned int sample = 0; sample < observation.getNrSamplesPerBatch(); sample++ ) {
         for ( unsigned int channel = observation.getNrChannels(); channel > 0; channel-- ) {
           inputFile.read(buffer, BUFFER_DIM);
-          data.at(batch)->at((static_cast< uint64_t >(channel - 1) * observation.getNrSamplesPerBatch(false, padding / sizeof(T))) + sample) = *(reinterpret_cast< T * >(buffer));
+          data.at(batch)->at((static_cast<uint64_t>(channel - 1) * observation.getNrSamplesPerBatch(false, padding / sizeof(T))) + sample) = *(reinterpret_cast<T *>(buffer));
         }
       }
     } else {
-      uint64_t bytesToRead = static_cast< uint64_t >(observation.getNrSamplesPerBatch() * (observation.getNrChannels() / (8.0 / inputBits)));
+      uint64_t bytesToRead = static_cast<uint64_t>(observation.getNrSamplesPerBatch() * (observation.getNrChannels() / (8.0 / inputBits)));
 
-      data.at(batch) = new std::vector< T >(observation.getNrChannels() * isa::utils::pad(observation.getNrSamplesPerBatch() / (8 / inputBits), padding / sizeof(T)));
+      data.at(batch) = new std::vector<T>(observation.getNrChannels() * isa::utils::pad(observation.getNrSamplesPerBatch() / (8 / inputBits), padding / sizeof(T)));
       for ( uint64_t byte = 0; byte < bytesToRead; byte++ ) {
         unsigned int channel = (observation.getNrChannels() - 1) - ((byte * (8 / inputBits)) % observation.getNrChannels());
         unsigned int sample = (byte * (8 / inputBits)) / observation.getNrChannels();
@@ -112,22 +112,22 @@ template< typename T > void readSIGPROC(const Observation & observation, const u
 
             while ( item < (8 / inputBits) ) {
               channelFirstBit = item * inputBits;
-              sampleBuffer = data.at(batch)->at((static_cast< uint64_t >(channel - channelOffset) * isa::utils::pad(observation.getNrSamplesPerBatch() / (8 / inputBits), padding / sizeof(T))) + sampleByte);
+              sampleBuffer = data.at(batch)->at((static_cast<uint64_t>(channel - channelOffset) * isa::utils::pad(observation.getNrSamplesPerBatch() / (8 / inputBits), padding / sizeof(T))) + sampleByte);
               for ( uint8_t bit = 0; bit < inputBits; bit++ ) {
                 isa::utils::setBit(sampleBuffer, isa::utils::getBit(*buffer, channelFirstBit + bit), sampleFirstBit + bit);
               }
-              data.at(batch)->at((static_cast< uint64_t >(channel - channelOffset) * isa::utils::pad(observation.getNrSamplesPerBatch() / (8 / inputBits), padding / sizeof(T))) + sampleByte) = sampleBuffer;
+              data.at(batch)->at((static_cast<uint64_t>(channel - channelOffset) * isa::utils::pad(observation.getNrSamplesPerBatch() / (8 / inputBits), padding / sizeof(T))) + sampleByte) = sampleBuffer;
               item++;
               channelOffset++;
             }
 
             break;
           }
-          sampleBuffer = data.at(batch)->at((static_cast< uint64_t >(channel - item) * isa::utils::pad(observation.getNrSamplesPerBatch() / (8 / inputBits), padding / sizeof(T))) + sampleByte);
+          sampleBuffer = data.at(batch)->at((static_cast<uint64_t>(channel - item) * isa::utils::pad(observation.getNrSamplesPerBatch() / (8 / inputBits), padding / sizeof(T))) + sampleByte);
           for ( uint8_t bit = 0; bit < inputBits; bit++ ) {
             isa::utils::setBit(sampleBuffer, isa::utils::getBit(*buffer, channelFirstBit + bit), sampleFirstBit + bit);
           }
-          data.at(batch)->at((static_cast< uint64_t >(channel - item) * isa::utils::pad(observation.getNrSamplesPerBatch() / (8 / inputBits), padding / sizeof(T))) + sampleByte) = sampleBuffer;
+          data.at(batch)->at((static_cast<uint64_t>(channel - item) * isa::utils::pad(observation.getNrSamplesPerBatch() / (8 / inputBits), padding / sizeof(T))) + sampleByte) = sampleBuffer;
         }
       }
     }
@@ -138,7 +138,7 @@ template< typename T > void readSIGPROC(const Observation & observation, const u
 }
 
 #ifdef HAVE_HDF5
-template< typename T > void readLOFAR(std::string headerFilename, std::string rawFilename, Observation & observation, const unsigned int padding, std::vector< std::vector< T > * > & data, unsigned int nrBatches, unsigned int firstBatch) {
+template<typename T> void readLOFAR(std::string headerFilename, std::string rawFilename, Observation & observation, const unsigned int padding, std::vector<std::vector<T> *> & data, unsigned int nrBatches, unsigned int firstBatch) {
   unsigned int nrSubbands, nrChannels;
   float minFreq, channelBandwidth;
   // Read the HDF5 file with the metadata
@@ -149,35 +149,35 @@ template< typename T > void readLOFAR(std::string headerFilename, std::string ra
   unsigned int valueUInt = 0;
 
   H5::Group currentNode = headerFile.openGroup("/");
-  currentNode.openAttribute("OBSERVATION_FREQUENCY_MIN").read(typeDouble, reinterpret_cast< void * >(&valueDouble));
+  currentNode.openAttribute("OBSERVATION_FREQUENCY_MIN").read(typeDouble, reinterpret_cast<void *>(&valueDouble));
   minFreq = valueDouble;
   currentNode = currentNode.openGroup(currentNode.getObjnameByIdx(0));
-  currentNode.openAttribute("TOTAL_INTEGRATION_TIME").read(typeDouble, reinterpret_cast< void * >(&valueDouble));
+  currentNode.openAttribute("TOTAL_INTEGRATION_TIME").read(typeDouble, reinterpret_cast<void *>(&valueDouble));
   double totalIntegrationTime = valueDouble;
-  currentNode.openAttribute("NOF_BEAMS").read(typeUInt, reinterpret_cast< void * >(&valueUInt));
+  currentNode.openAttribute("NOF_BEAMS").read(typeUInt, reinterpret_cast<void *>(&valueUInt));
   observation.setNrBeams(valueUInt);
   currentNode = currentNode.openGroup(currentNode.getObjnameByIdx(0));
-  currentNode.openAttribute("NOF_SAMPLES").read(typeUInt, reinterpret_cast< void * >(&valueUInt));
+  currentNode.openAttribute("NOF_SAMPLES").read(typeUInt, reinterpret_cast<void *>(&valueUInt));
   unsigned int totalSamples = valueUInt;
-  currentNode.openAttribute("NOF_STATIONS").read(typeUInt, reinterpret_cast< void * >(&valueUInt));
+  currentNode.openAttribute("NOF_STATIONS").read(typeUInt, reinterpret_cast<void *>(&valueUInt));
   observation.setNrStations(valueUInt);
-  currentNode.openAttribute("CHANNELS_PER_SUBBAND").read(typeUInt, reinterpret_cast< void * >(&valueUInt));
+  currentNode.openAttribute("CHANNELS_PER_SUBBAND").read(typeUInt, reinterpret_cast<void *>(&valueUInt));
   nrChannels = valueUInt;
-  currentNode.openAttribute("CHANNEL_WIDTH").read(typeDouble, reinterpret_cast< void * >(&valueDouble));
+  currentNode.openAttribute("CHANNEL_WIDTH").read(typeDouble, reinterpret_cast<void *>(&valueDouble));
   channelBandwidth = valueDouble / 1000000;
   H5::DataSet currentData = currentNode.openDataSet("STOKES_0");
-  currentData.openAttribute("NOF_SUBBANDS").read(typeUInt, reinterpret_cast< void * >(&valueUInt));
+  currentData.openAttribute("NOF_SUBBANDS").read(typeUInt, reinterpret_cast<void *>(&valueUInt));
   nrSubbands = valueUInt;
   headerFile.close();
 
-  observation.setNrSamplesPerBatch(static_cast< unsigned int >(totalSamples / totalIntegrationTime));
+  observation.setNrSamplesPerBatch(static_cast<unsigned int>(totalSamples / totalIntegrationTime));
   if ( nrBatches == 0 ) {
-    observation.setNrBatches(static_cast< unsigned int >(totalIntegrationTime));
+    observation.setNrBatches(static_cast<unsigned int>(totalIntegrationTime));
   } else {
-    if ( static_cast< unsigned int >(totalIntegrationTime) >= (firstBatch + nrBatches) ) {
+    if ( static_cast<unsigned int>(totalIntegrationTime) >= (firstBatch + nrBatches) ) {
       observation.setNrBatches(nrBatches);
     } else {
-      observation.setNrBatches(static_cast< unsigned int >(totalIntegrationTime) - firstBatch);
+      observation.setNrBatches(static_cast<unsigned int>(totalIntegrationTime) - firstBatch);
     }
   }
   observation.setFrequencyRange(1, nrSubbands * nrChannels, minFreq, channelBandwidth);
@@ -196,7 +196,7 @@ template< typename T > void readLOFAR(std::string headerFilename, std::string ra
 
   char * word = new char [4];
   for ( unsigned int batch = 0; batch < observation.getNrBatches(); batch++ ) {
-    data.at(batch) = new std::vector< T >(observation.getNrChannels() * observation.getNrSamplesPerBatch(false, padding / sizeof(T)));
+    data.at(batch) = new std::vector<T>(observation.getNrChannels() * observation.getNrSamplesPerBatch(false, padding / sizeof(T)));
     for ( unsigned int sample = 0; sample < observation.getNrSamplesPerBatch(); sample++ ) {
       for ( unsigned int subband = 0; subband < nrSubbands; subband++ ) {
         for ( unsigned int channel = 0; channel < nrChannels; channel++ ) {
@@ -204,7 +204,7 @@ template< typename T > void readLOFAR(std::string headerFilename, std::string ra
 
           rawFile.read(word, 4);
           isa::utils::bigEndianToLittleEndian(word);
-          data.at(batch)->at((globalChannel * observation.getNrSamplesPerBatch(false, padding / sizeof(T))) + sample) = *(reinterpret_cast< T * >(word));
+          data.at(batch)->at((globalChannel * observation.getNrSamplesPerBatch(false, padding / sizeof(T))) + sample) = *(reinterpret_cast<T *>(word));
         }
       }
     }
@@ -215,15 +215,15 @@ template< typename T > void readLOFAR(std::string headerFilename, std::string ra
 #endif // HAVE_HDF5
 
 #ifdef HAVE_PSRDADA
-template< typename T > inline void readPSRDADA(dada_hdu_t & ringBuffer, std::vector< T > * data) throw(RingBufferError) {
+template<typename T> inline void readPSRDADA(dada_hdu_t & ringBuffer, std::vector<T> * data) throw(RingBufferError) {
   char * buffer = 0;
   uint64_t bufferBytes = 0;
 
-  buffer = ipcbuf_get_next_read(reinterpret_cast< ipcbuf_t * >(ringBuffer.data_block), &bufferBytes);
+  buffer = ipcbuf_get_next_read(reinterpret_cast<ipcbuf_t *>(ringBuffer.data_block), &bufferBytes);
   if ( (buffer == 0) || (bufferBytes == 0) ) {
     throw RingBufferError("Impossible to read the PSRDADA buffer.");
   }
-  std::memcpy(reinterpret_cast< void * >(data->data()), reinterpret_cast< const void * >(buffer), data->size() * sizeof(T));
+  std::memcpy(reinterpret_cast<void *>(data->data()), reinterpret_cast<const void *>(buffer), data->size() * sizeof(T));
   if ( ipcbuf_mark_cleared(reinterpret_cast< ipcbuf_t * >(ringBuffer.data_block)) < 0 ) {
     throw RingBufferError("Impossible to mark the PSRDADA buffer as cleared.");
   }
