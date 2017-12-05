@@ -1,20 +1,20 @@
 # AstroData
 
-Set of C++ classes to read data and generate fake data for the pulsar search and FRB pipeline.
+Set of C++ classes to operate on radio astronomical data.
 
 # Installation
 
-Set the `SOURCE_ROOT` environment variable to the location of the pipeline sourcode.
+Set the `INSTALL_ROOT` environment variable to the location where you want the library and include files installed.
 If this package is installed in `$HOME/Code/APERTIF/AstroData` this would be:
 
 ```bash
- $ export SOURCE_ROOT=$HOME/Code/APERTIF
+ $ export INSTALL_ROOT=$HOME/Code/APERTIF
 ```
 
-Then build and test as follows:
+Then build as follows:
 
 ```bash
- $ make
+ $ make install
 ```
 
 ## Dependencies
@@ -27,7 +27,7 @@ Then build and test as follows:
  Set the LOFAR environment variable to *true*.
 
  * [PSRDADA](http://psrdada.sourceforge.net/)
- Set the PSRDADA environment variable to location of the psrdada source, preferably `SOURCE_ROOT/psrdada`.
+ Set the PSRDADA environment variable to location of the psrdada source, preferably `${INSTALL_ROOT}/psrdada`.
 
 # Included classes
 
