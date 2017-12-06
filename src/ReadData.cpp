@@ -17,11 +17,11 @@
 
 namespace AstroData {
 
-RingBufferError::RingBufferError(std::string message) : message(message) {}
+RingBufferError::RingBufferError(const std::string & message) : message(message) {}
 
-RingBufferError::~RingBufferError() throw () {}
+RingBufferError::~RingBufferError() noexcept {}
 
-const char * RingBufferError::what() const throw () {
+const char * RingBufferError::what() const noexcept {
     return message.c_str();
 }
 
@@ -31,7 +31,7 @@ void readZappedChannels(Observation & observation, const std::string & inputFile
 
   input.open(inputFilename);
   if ( !input ) {
-    throw FileError("Impossible to open " + inputFilename);
+    throw FileError("ERROR: impossible to open zapped channels file \"" + inputFilename + "\"");
   }
   while ( !input.eof() ) {
     unsigned int channel = observation.getNrChannels();
@@ -46,12 +46,12 @@ void readZappedChannels(Observation & observation, const std::string & inputFile
   observation.setNrZappedChannels(nrChannels);
 }
 
-void readIntegrationSteps(const Observation & observation, const std::string  & inputFilename, std::set< unsigned int > & integrationSteps) {
+void readIntegrationSteps(const Observation & observation, const std::string  & inputFilename, std::set<unsigned int> & integrationSteps) {
   std::ifstream input;
 
   input.open(inputFilename);
   if ( !input ) {
-    throw FileError("Impossible to open " + inputFilename );
+    throw FileError("ERROR: impossible to open integration steps file \"" + inputFilename + "\"");
   }
   while ( !input.eof() ) {
     unsigned int step = observation.getNrSamplesPerBatch();
@@ -65,7 +65,7 @@ void readIntegrationSteps(const Observation & observation, const std::string  & 
 }
 
 #ifdef HAVE_PSRDADA
-void readPSRDADAHeader(Observation & observation, dada_hdu_t & ringBuffer) throw(RingBufferError) {
+void readPSRDADAHeader(Observation & observation, dada_hdu_t & ringBuffer) {
   // Staging variables for the header elements
   unsigned int uintValue = 0;
   float floatValue[2] = {0.0f, 0.0f};
@@ -75,7 +75,7 @@ void readPSRDADAHeader(Observation & observation, dada_hdu_t & ringBuffer) throw
 
   header = ipcbuf_get_next_read(ringBuffer.header_block, &headerBytes);
   if ( (header == 0) || (headerBytes == 0 ) ) {
-    throw RingBufferError("Impossible to read the PSRDADA header.");
+    throw RingBufferError("ERROR: impossible to read the PSRDADA header");
   }
   ascii_header_get(header, "SAMPLES_PER_BATCH", "%d", &uintValue);
   observation.setNrSamplesPerBatch(uintValue);
@@ -86,7 +86,7 @@ void readPSRDADAHeader(Observation & observation, dada_hdu_t & ringBuffer) throw
   ascii_header_get(header, "TSAMP", "%f", &floatValue[0]);
   observation.setSamplingTime(floatValue[0]);
   if ( ipcbuf_mark_cleared(ringBuffer.header_block) < 0 ) {
-    throw RingBufferError("Impossible to mark the PSRDADA header as cleared.");
+    throw RingBufferError("ERROR: impossible to mark the PSRDADA header as cleared");
   }
 }
 #endif // HAVE_PSRDADA

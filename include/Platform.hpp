@@ -26,19 +26,19 @@ namespace AstroData {
 // Exception: cannot read from a configuration/input file
 class FileError : public std::exception {
 public:
-  explicit FileError(std::string message);
-  ~FileError() throw ();
+  explicit FileError(const std::string & message);
+  ~FileError() noexcept;
 
-  const char * what() const throw ();
+  const char * what() const noexcept;
 
 private:
   std::string message;
 };
 
 // Memory padding
-typedef std::map< std::string, unsigned int > paddingConf;
+typedef std::map<std::string, unsigned int> paddingConf;
 // Vector unit width
-typedef std::map< std::string, unsigned int > vectorWidthConf;
+typedef std::map<std::string, unsigned int> vectorWidthConf;
 
 // Read configuration files
 void readPaddingConf(paddingConf & padding, const std::string & paddingFilename);

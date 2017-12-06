@@ -40,10 +40,10 @@ namespace AstroData {
 // Exception: the PSRDADA ring buffer does not work
 class RingBufferError : public std::exception {
 public:
-  explicit RingBufferError(std::string message);
-  ~RingBufferError() throw ();
+  explicit RingBufferError(const std::string & message);
+  ~RingBufferError() noexcept;
 
-  const char * what() const throw ();
+  const char * what() const noexcept;
 private:
   std::string message;
 };
@@ -60,8 +60,8 @@ template<typename T> void readLOFAR(std::string headerFilename, std::string rawF
 #endif // HAVE_HDF5
 #ifdef HAVE_PSRDADA
 // PSRDADA buffer
-void readPSRDADAHeader(Observation & observation, dada_hdu_t & ringBuffer) throw(RingBufferError);
-template<typename T> inline void readPSRDADA(dada_hdu_t & ringBuffer, std::vector<T> * data) throw(RingBufferError);
+void readPSRDADAHeader(Observation & observation, dada_hdu_t & ringBuffer);
+template<typename T> inline void readPSRDADA(dada_hdu_t & ringBuffer, std::vector<T> * data);
 #endif // HAVE_PSRDADA
 
 // Implementations
@@ -74,7 +74,7 @@ template<typename T> void readSIGPROC(const Observation & observation, const uns
   inputFile.open(inputFilename.c_str(), std::ios::binary);
   if ( ! inputFile ) {
     delete [] buffer;
-    throw FileError("Impossible to open " + inputFilename);
+    throw FileError("ERROR: impossible to open SIGPROC file \"" + inputFilename + "\"");
   }
   inputFile.sync_with_stdio(false);
   inputFile.seekg(bytesToSkip, std::ios::beg);
@@ -215,17 +215,17 @@ template<typename T> void readLOFAR(std::string headerFilename, std::string rawF
 #endif // HAVE_HDF5
 
 #ifdef HAVE_PSRDADA
-template<typename T> inline void readPSRDADA(dada_hdu_t & ringBuffer, std::vector<T> * data) throw(RingBufferError) {
+template<typename T> inline void readPSRDADA(dada_hdu_t & ringBuffer, std::vector<T> * data) {
   char * buffer = 0;
   uint64_t bufferBytes = 0;
 
   buffer = ipcbuf_get_next_read(reinterpret_cast<ipcbuf_t *>(ringBuffer.data_block), &bufferBytes);
   if ( (buffer == 0) || (bufferBytes == 0) ) {
-    throw RingBufferError("Impossible to read the PSRDADA buffer.");
+    throw RingBufferError("ERROR: impossible to read the PSRDADA buffer");
   }
   std::memcpy(reinterpret_cast<void *>(data->data()), reinterpret_cast<const void *>(buffer), data->size() * sizeof(T));
   if ( ipcbuf_mark_cleared(reinterpret_cast< ipcbuf_t * >(ringBuffer.data_block)) < 0 ) {
-    throw RingBufferError("Impossible to mark the PSRDADA buffer as cleared.");
+    throw RingBufferError("ERROR: impossible to mark the PSRDADA buffer as cleared");
   }
 }
 #endif // HAVE_PSRDADA

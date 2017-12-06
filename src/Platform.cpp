@@ -17,11 +17,11 @@
 
 namespace AstroData {
 
-FileError::FileError(std::string message) : message(message) {}
+FileError::FileError(const std::string & message) : message(message) {}
 
-FileError::~FileError() throw () {}
+FileError::~FileError() noexcept {}
 
-const char * FileError::what() const throw () {
+const char * FileError::what() const noexcept {
   return message.c_str();
 }
 
@@ -30,7 +30,7 @@ void readPaddingConf(paddingConf & padding, const std::string & paddingFilename)
   std::ifstream paddingFile(paddingFilename);
 
   if ( !paddingFile ) {
-    throw FileError("Impossible to open " + paddingFilename);
+    throw FileError("ERROR: impossible to open padding file \"" + paddingFilename + "\"");
   }
   while ( ! paddingFile.eof() ) {
     unsigned int middle = 0;
@@ -40,7 +40,7 @@ void readPaddingConf(paddingConf & padding, const std::string & paddingFilename)
       continue;
     }
     middle = temp.find(" ");
-    padding.insert(std::make_pair(temp.substr(0, middle), isa::utils::castToType< std::string, unsigned int >(temp.substr(middle + 1))));
+    padding.insert(std::make_pair(temp.substr(0, middle), isa::utils::castToType<std::string, unsigned int>(temp.substr(middle + 1))));
   }
 }
 
@@ -49,7 +49,7 @@ void readVectorWidthConf(vectorWidthConf & vectorWidth, const std::string & vect
   std::ifstream vectorFile(vectorFilename);
 
   if ( !vectorFile ) {
-    throw FileError("Impossible to open " + vectorFilename);
+    throw FileError("ERROR: impossible to open vector file \"" + vectorFilename + "\"");
   }
   while ( ! vectorFile.eof() ) {
     unsigned int middle = 0;
@@ -59,7 +59,7 @@ void readVectorWidthConf(vectorWidthConf & vectorWidth, const std::string & vect
       continue;
     }
     middle = temp.find(" ");
-    vectorWidth.insert(std::make_pair(temp.substr(0, middle), isa::utils::castToType< std::string, unsigned int >(temp.substr(middle + 1))));
+    vectorWidth.insert(std::make_pair(temp.substr(0, middle), isa::utils::castToType<std::string, unsigned int>(temp.substr(middle + 1))));
   }
 }
 
