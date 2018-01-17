@@ -17,7 +17,6 @@ ifdef LOFAR
 endif
 ifdef PSRDADA
 	CFLAGS += -DHAVE_PSRDADA
-	INCLUDES += -I"$(PSRDADA)/src"
 endif
 
 all: bin/Observation.o bin/Platform.o bin/ReadData.o bin/SynthesizedBeams.o
