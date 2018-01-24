@@ -18,7 +18,7 @@ add_library(astrodata SHARED
   src/ReadData.cpp
   src/SynthesizedBeams.cpp
 )
-set_target_properties(astrodata PROPERTIES 
+set_target_properties(astrodata PROPERTIES
   VERSION ${PROJECT_VERSION}
   SOVERSION 1
   PUBLIC_HEADER "include/Generator.hpp;include/Observation.hpp;include/Platform.hpp;include/ReadData.hpp;include/SynthesizedBeams.hpp"
