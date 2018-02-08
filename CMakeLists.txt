@@ -12,12 +12,20 @@ if($ENV{PSRDADA})
 endif()
 
 # libastrodata
-add_library(astrodata SHARED
+set(LIBRARY_SOURCE
   src/Observation.cpp
   src/Platform.cpp
   src/ReadData.cpp
   src/SynthesizedBeams.cpp
 )
+set(LIBRARY_HEADER
+  include/Generator.hpp
+  include/Observation.hpp
+  include/Platform.hpp
+  include/ReadData.hpp
+  include/SynthesizedBeams.hpp
+)
+add_library(astrodata SHARED ${LIBRARY_SOURCE} ${LIBRARY_HEADER})
 set_target_properties(astrodata PROPERTIES
   VERSION ${PROJECT_VERSION}
   SOVERSION 1
