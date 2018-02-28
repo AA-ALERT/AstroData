@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(AstroData VERSION 3.1)
+project(AstroData VERSION 3.1.1)
 include(GNUInstallDirs)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++14")
