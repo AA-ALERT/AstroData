@@ -52,8 +52,35 @@ private:
 void readZappedChannels(Observation & observation, const std::string & inputFileName, std::vector<unsigned int> & zappedChannels);
 // Integration steps
 void readIntegrationSteps(const Observation & observation, const std::string  & inputFileName, std::set<unsigned int> & integrationSteps);
-// SIGPROC data
-template<typename T> void readSIGPROC(const Observation & observation, const unsigned int padding, const uint8_t inputBits, const unsigned int bytesToSkip, const std::string & inputFilename, std::vector<std::vector<T> *> & data, const unsigned int firstBatch = 0);
+/**
+ * @brief Read a full SIGPROC filterbank file.
+ * @tparam T Data type of the filterbank file.
+ * @param observation Object containing the observation parameters.
+ * @param padding Padding used for cache aligning.
+ * @param inputBits Number of bits each sample is represented with.
+ * @param bytesToSkip Number of bytes used for the header.
+ * @param inputFilename Name of the filterbank file
+ * @param data Data structure to read data into.
+ * @param firstBatch First batch to read.
+ */
+template<typename T>
+void readSIGPROC(Observation & observation, unsigned int padding, uint8_t inputBits, unsigned int bytesToSkip,
+                 std::string & inputFilename, std::vector<std::vector<T> *> & data, unsigned int firstBatch = 0);
+/**
+ * @brief Read one batch from a SIGPROC filterbank file.
+ *
+ * @tparam T Data type of the filterbank file.
+ * @param observation Object containing the observation parameters.
+ * @param padding Padding used for cache aligning.
+ * @param inputBits Number of bits each sample is represented with.
+ * @param bytesToSkip Number of bytes used for the header.
+ * @param inputFilename Name of the filterbank file.
+ * @param data Data structure to read data into.
+ * @param batch Batch to read.
+ */
+template<typename T>
+void readSIGPROC(Observation & observation, unsigned int padding, uint8_t inputBits, unsigned int bytesToSkip,
+                 std::string & inputFilename, std::vector<T> * data, unsigned int batch = 0);
 #ifdef HAVE_HDF5
 // LOFAR data
 template<typename T> void readLOFAR(std::string headerFilename, std::string rawFilename, Observation & observation, const unsigned int padding, std::vector<std::vector<T> *> & data, unsigned int nrBatches = 0, unsigned int firstBatch = 0);
@@ -66,20 +93,23 @@ template<typename T> inline void readPSRDADA(dada_hdu_t & ringBuffer, std::vecto
 
 // Implementations
 
-template<typename T> void readSIGPROC(const Observation & observation, const unsigned int padding, const uint8_t inputBits, const unsigned int bytesToSkip, const std::string & inputFilename, std::vector<std::vector<T> *> & data, const unsigned int firstBatch) {
+template<typename T>
+void readSIGPROC(const Observation & observation, const unsigned int padding, const uint8_t inputBits,
+                 const unsigned int bytesToSkip, const std::string & inputFilename,
+                 std::vector<std::vector<T> *> & data, const unsigned int firstBatch) {
   std::ifstream inputFile;
   const unsigned int BUFFER_DIM = sizeof(T);
-  char * buffer = new char [BUFFER_DIM];
+  char * buffer = nullptr;
 
   inputFile.open(inputFilename.c_str(), std::ios::binary);
   if ( ! inputFile ) {
-    delete [] buffer;
-    throw FileError("ERROR: impossible to open SIGPROC file \"" + inputFilename + "\"");
+    throw FileError("ERROR: impossible to open SIGPROC file \"" + inputFilename + "\".");
   }
-  inputFile.sync_with_stdio(false);
+  buffer = new char [BUFFER_DIM];
   inputFile.seekg(bytesToSkip, std::ios::beg);
   for ( unsigned int batch = 0; batch < observation.getNrBatches(); batch++ ) {
     if ( inputBits >= 8 ) {
+      inputFile.seekg((firstBatch - 1) * observation.getNrChannels() * observation.getNrSamplesPerBatch() * sizeof(T), std::ios::cur);
       data.at(batch) = new std::vector<T>(observation.getNrChannels() * observation.getNrSamplesPerBatch(false, padding / sizeof(T)));
       for ( unsigned int sample = 0; sample < observation.getNrSamplesPerBatch(); sample++ ) {
         for ( unsigned int channel = observation.getNrChannels(); channel > 0; channel-- ) {
@@ -88,10 +118,9 @@ template<typename T> void readSIGPROC(const Observation & observation, const uns
         }
       }
     } else {
-      uint64_t bytesToRead = static_cast<uint64_t>(observation.getNrSamplesPerBatch() * (observation.getNrChannels() / (8.0 / inputBits)));
-
+      inputFile.seekg(static_cast<uint64_t>((firstBatch - 1) * observation.getNrChannels() * observation.getNrSamplesPerBatch() / (8.0 / inputBits) * sizeof(T)), std::ios::cur);
       data.at(batch) = new std::vector<T>(observation.getNrChannels() * isa::utils::pad(observation.getNrSamplesPerBatch() / (8 / inputBits), padding / sizeof(T)));
-      for ( uint64_t byte = 0; byte < bytesToRead; byte++ ) {
+      for ( uint64_t byte = 0; byte < static_cast<uint64_t>(observation.getNrSamplesPerBatch() * (observation.getNrChannels() / (8.0 / inputBits))); byte++ ) {
         unsigned int channel = (observation.getNrChannels() - 1) - ((byte * (8 / inputBits)) % observation.getNrChannels());
         unsigned int sample = (byte * (8 / inputBits)) / observation.getNrChannels();
         unsigned int sampleByte = sample / (8 / inputBits);
@@ -129,6 +158,77 @@ template<typename T> void readSIGPROC(const Observation & observation, const uns
           }
           data.at(batch)->at((static_cast<uint64_t>(channel - item) * isa::utils::pad(observation.getNrSamplesPerBatch() / (8 / inputBits), padding / sizeof(T))) + sampleByte) = sampleBuffer;
         }
+      }
+    }
+  }
+  inputFile.close();
+
+  delete [] buffer;
+}
+
+template<typename T>
+void readSIGPROC(const Observation & observation, const unsigned int padding, const uint8_t inputBits,
+                 const uint64_t bytesToSkip, const std::string & inputFilename, std::vector<T> * data,
+                 const unsigned int batch = 0) {
+  std::ifstream inputFile;
+  const unsigned int BUFFER_DIM = sizeof(T);
+  char * buffer = nullptr;
+
+  inputFile.open(inputFilename.c_str(), std::ios::binary);
+  if ( ! inputFile ) {
+    throw FileError("ERROR: impossible to open SIGPROC file \"" + inputFilename + "\".");
+  }
+  buffer = new char [BUFFER_DIM];
+  inputFile.seekg(bytesToSkip, std::ios::beg);
+  if ( inputBits >= 8 ) {
+    inputFile.seekg(batch * observation.getNrChannels() * observation.getNrSamplesPerBatch() * sizeof(T), std::ios::cur);
+    data = new std::vector<T>(observation.getNrChannels() * observation.getNrSamplesPerBatch(false, padding / sizeof(T)));
+    for ( unsigned int sample = 0; sample < observation.getNrSamplesPerBatch(); sample++ ) {
+      for ( unsigned int channel = observation.getNrChannels(); channel > 0; channel-- ) {
+        inputFile.read(buffer, BUFFER_DIM);
+        data->at((static_cast<uint64_t>(channel - 1) * observation.getNrSamplesPerBatch(false, padding / sizeof(T))) + sample) = *(reinterpret_cast<T *>(buffer));
+      }
+    }
+  } else {
+    inputFile.seekg(static_cast<uint64_t>(batch * observation.getNrChannels() * observation.getNrSamplesPerBatch() / (8.0 / inputBits) * sizeof(T)), std::ios::cur);
+    data = new std::vector<T>(observation.getNrChannels() * isa::utils::pad(observation.getNrSamplesPerBatch() / (8 / inputBits), padding / sizeof(T)));
+    for ( uint64_t byte = 0; byte < observation.getNrChannels() * observation.getNrSamplesPerBatch() / (8.0 / inputBits); byte++ ) {
+      unsigned int channel = (observation.getNrChannels() - 1) - ((byte * (8 / inputBits)) % observation.getNrChannels());
+      unsigned int sample = (byte * (8 / inputBits)) / observation.getNrChannels();
+      unsigned int sampleByte = sample / (8 / inputBits);
+      uint8_t sampleFirstBit = (sample % (8 / inputBits)) * inputBits;
+
+      inputFile.read(buffer, BUFFER_DIM);
+      for ( unsigned int item = 0; item < 8 / inputBits; item++ ) {
+        uint8_t channelFirstBit = item * inputBits;
+        uint8_t sampleBuffer = 0;
+
+        if ( item > channel ) {
+          // All channels read, the remaining elements are from the next sample
+          unsigned int channelOffset = 0;
+          channel = (observation.getNrChannels() - 1);
+          sample += 1;
+          sampleByte = sample / (8 / inputBits);
+          sampleFirstBit = (sample % (8 / inputBits)) * inputBits;
+
+          while ( item < (8 / inputBits) ) {
+            channelFirstBit = item * inputBits;
+            sampleBuffer = data->at((static_cast<uint64_t>(channel - channelOffset) * isa::utils::pad(observation.getNrSamplesPerBatch() / (8 / inputBits), padding / sizeof(T))) + sampleByte);
+            for ( uint8_t bit = 0; bit < inputBits; bit++ ) {
+              isa::utils::setBit(sampleBuffer, isa::utils::getBit(*buffer, channelFirstBit + bit), sampleFirstBit + bit);
+            }
+            data->at((static_cast<uint64_t>(channel - channelOffset) * isa::utils::pad(observation.getNrSamplesPerBatch() / (8 / inputBits), padding / sizeof(T))) + sampleByte) = sampleBuffer;
+            item++;
+            channelOffset++;
+          }
+
+          break;
+        }
+        sampleBuffer = data->at((static_cast<uint64_t>(channel - item) * isa::utils::pad(observation.getNrSamplesPerBatch() / (8 / inputBits), padding / sizeof(T))) + sampleByte);
+        for ( uint8_t bit = 0; bit < inputBits; bit++ ) {
+          isa::utils::setBit(sampleBuffer, isa::utils::getBit(*buffer, channelFirstBit + bit), sampleFirstBit + bit);
+        }
+        data->at((static_cast<uint64_t>(channel - item) * isa::utils::pad(observation.getNrSamplesPerBatch() / (8 / inputBits), padding / sizeof(T))) + sampleByte) = sampleBuffer;
       }
     }
   }
@@ -231,4 +331,3 @@ template<typename T> inline void readPSRDADA(dada_hdu_t & ringBuffer, std::vecto
 #endif // HAVE_PSRDADA
 
 } // AstroData
-
