@@ -64,7 +64,7 @@ void readIntegrationSteps(const Observation & observation, const std::string  & 
  * @param firstBatch First batch to read.
  */
 template<typename T>
-void readSIGPROC(const Observation & observation, unsigned int padding, uint8_t inputBits, unsigned int bytesToSkip, const std::string & inputFilename, std::vector<std::vector<T> *> & data, unsigned int firstBatch = 0);
+void readSIGPROC(const Observation & observation, const unsigned int padding, const uint8_t inputBits, const unsigned int bytesToSkip, const std::string & inputFilename, std::vector<std::vector<T> *> & data, const unsigned int firstBatch = 0);
 /**
  * @brief Read one batch from a SIGPROC filterbank file.
  *
@@ -78,7 +78,7 @@ void readSIGPROC(const Observation & observation, unsigned int padding, uint8_t 
  * @param batch Batch to read.
  */
 template<typename T>
-void readSIGPROC(const Observation & observation, unsigned int padding, uint8_t inputBits, unsigned int bytesToSkip, const std::string & inputFilename, std::vector<T> * data, unsigned int batch = 0);
+void readSIGPROC(const Observation & observation, const unsigned int padding, const uint8_t inputBits, const unsigned int bytesToSkip, const std::string & inputFilename, std::vector<T> * data, const unsigned int batch = 0);
 #ifdef HAVE_HDF5
 // LOFAR data
 template<typename T> void readLOFAR(std::string headerFilename, std::string rawFilename, Observation & observation, const unsigned int padding, std::vector<std::vector<T> *> & data, unsigned int nrBatches = 0, unsigned int firstBatch = 0);
