@@ -169,7 +169,7 @@ void readSIGPROC(const Observation & observation, const unsigned int padding, co
 template<typename T>
 void readSIGPROC(const Observation & observation, const unsigned int padding, const uint8_t inputBits,
                  const uint64_t bytesToSkip, const std::string & inputFilename, std::vector<T> * data,
-                 const unsigned int batch = 0) {
+                 const unsigned int batch) {
   std::ifstream inputFile;
   const unsigned int BUFFER_DIM = sizeof(T);
   char * buffer = nullptr;
