@@ -64,8 +64,7 @@ void readIntegrationSteps(const Observation & observation, const std::string  & 
  * @param firstBatch First batch to read.
  */
 template<typename T>
-void readSIGPROC(Observation & observation, unsigned int padding, uint8_t inputBits, unsigned int bytesToSkip,
-                 std::string & inputFilename, std::vector<std::vector<T> *> & data, unsigned int firstBatch = 0);
+void readSIGPROC(const Observation & observation, unsigned int padding, uint8_t inputBits, unsigned int bytesToSkip, const std::string & inputFilename, const std::vector<std::vector<T> *> & data, unsigned int firstBatch = 0);
 /**
  * @brief Read one batch from a SIGPROC filterbank file.
  *
@@ -79,8 +78,7 @@ void readSIGPROC(Observation & observation, unsigned int padding, uint8_t inputB
  * @param batch Batch to read.
  */
 template<typename T>
-void readSIGPROC(Observation & observation, unsigned int padding, uint8_t inputBits, unsigned int bytesToSkip,
-                 std::string & inputFilename, std::vector<T> * data, unsigned int batch = 0);
+void readSIGPROC(const Observation & observation, unsigned int padding, uint8_t inputBits, unsigned int bytesToSkip, const std::string & inputFilename, std::vector<T> * data, unsigned int batch = 0);
 #ifdef HAVE_HDF5
 // LOFAR data
 template<typename T> void readLOFAR(std::string headerFilename, std::string rawFilename, Observation & observation, const unsigned int padding, std::vector<std::vector<T> *> & data, unsigned int nrBatches = 0, unsigned int firstBatch = 0);
@@ -94,9 +92,7 @@ template<typename T> inline void readPSRDADA(dada_hdu_t & ringBuffer, std::vecto
 // Implementations
 
 template<typename T>
-void readSIGPROC(const Observation & observation, const unsigned int padding, const uint8_t inputBits,
-                 const unsigned int bytesToSkip, const std::string & inputFilename,
-                 std::vector<std::vector<T> *> & data, const unsigned int firstBatch) {
+void readSIGPROC(const Observation & observation, const unsigned int padding, const uint8_t inputBits, const unsigned int bytesToSkip, const std::string & inputFilename, const std::vector<std::vector<T> *> & data, const unsigned int firstBatch) {
   std::ifstream inputFile;
   const unsigned int BUFFER_DIM = sizeof(T);
   char * buffer = nullptr;
@@ -167,9 +163,7 @@ void readSIGPROC(const Observation & observation, const unsigned int padding, co
 }
 
 template<typename T>
-void readSIGPROC(const Observation & observation, const unsigned int padding, const uint8_t inputBits,
-                 const uint64_t bytesToSkip, const std::string & inputFilename, std::vector<T> * data,
-                 const unsigned int batch) {
+void readSIGPROC(const Observation & observation, const unsigned int padding, const uint8_t inputBits, const uint64_t bytesToSkip, const std::string & inputFilename, std::vector<T> * data, const unsigned int batch) {
   std::ifstream inputFile;
   const unsigned int BUFFER_DIM = sizeof(T);
   char * buffer = nullptr;
