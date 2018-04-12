@@ -185,7 +185,6 @@ void readSIGPROC(const Observation & observation, const unsigned int padding, co
   }
   buffer = new char [BUFFER_DIM];
   if ( inputBits >= 8 ) {
-    data = new std::vector<T>(observation.getNrChannels() * observation.getNrSamplesPerBatch(false, padding / sizeof(T)));
     for ( unsigned int sample = 0; sample < observation.getNrSamplesPerBatch(); sample++ ) {
       for ( unsigned int channel = observation.getNrChannels(); channel > 0; channel-- ) {
         inputFile.read(buffer, BUFFER_DIM);
@@ -193,7 +192,6 @@ void readSIGPROC(const Observation & observation, const unsigned int padding, co
       }
     }
   } else {
-    data = new std::vector<T>(observation.getNrChannels() * isa::utils::pad(observation.getNrSamplesPerBatch() / (8 / inputBits), padding / sizeof(T)));
     for ( uint64_t byte = 0; byte < observation.getNrChannels() * observation.getNrSamplesPerBatch() / (8.0 / inputBits); byte++ ) {
       unsigned int channel = (observation.getNrChannels() - 1) - ((byte * (8 / inputBits)) % observation.getNrChannels());
       unsigned int sample = (byte * (8 / inputBits)) / observation.getNrChannels();
