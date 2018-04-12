@@ -101,11 +101,18 @@ void readSIGPROC(const Observation & observation, const unsigned int padding, co
   if ( ! inputFile ) {
     throw FileError("ERROR: impossible to open SIGPROC file \"" + inputFilename + "\".");
   }
+  if ( firstBatch > 0 ) {
+    if ( inputBits >= 8 ) {
+      inputFile.seekg(bytesToSkip + ((firstBatch - 1) * observation.getNrChannels() * observation.getNrSamplesPerBatch() * sizeof(T)), std::ios::beg);
+    } else {
+      inputFile.seekg(bytesToSkip + static_cast<uint64_t>((firstBatch - 1) * observation.getNrChannels() * observation.getNrSamplesPerBatch() / (8.0 / inputBits) * sizeof(T)), std::ios::beg);
+    }
+  } else {
+    inputFile.seekg(bytesToSkip, std::ios::beg);
+  }
   buffer = new char [BUFFER_DIM];
-  inputFile.seekg(bytesToSkip, std::ios::beg);
   for ( unsigned int batch = 0; batch < observation.getNrBatches(); batch++ ) {
     if ( inputBits >= 8 ) {
-      inputFile.seekg((firstBatch - 1) * observation.getNrChannels() * observation.getNrSamplesPerBatch() * sizeof(T), std::ios::cur);
       data.at(batch) = new std::vector<T>(observation.getNrChannels() * observation.getNrSamplesPerBatch(false, padding / sizeof(T)));
       for ( unsigned int sample = 0; sample < observation.getNrSamplesPerBatch(); sample++ ) {
         for ( unsigned int channel = observation.getNrChannels(); channel > 0; channel-- ) {
@@ -114,7 +121,6 @@ void readSIGPROC(const Observation & observation, const unsigned int padding, co
         }
       }
     } else {
-      inputFile.seekg(static_cast<uint64_t>((firstBatch - 1) * observation.getNrChannels() * observation.getNrSamplesPerBatch() / (8.0 / inputBits) * sizeof(T)), std::ios::cur);
       data.at(batch) = new std::vector<T>(observation.getNrChannels() * isa::utils::pad(observation.getNrSamplesPerBatch() / (8 / inputBits), padding / sizeof(T)));
       for ( uint64_t byte = 0; byte < static_cast<uint64_t>(observation.getNrSamplesPerBatch() * (observation.getNrChannels() / (8.0 / inputBits))); byte++ ) {
         unsigned int channel = (observation.getNrChannels() - 1) - ((byte * (8 / inputBits)) % observation.getNrChannels());
