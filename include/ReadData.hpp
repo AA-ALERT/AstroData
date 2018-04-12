@@ -178,10 +178,13 @@ void readSIGPROC(const Observation & observation, const unsigned int padding, co
   if ( ! inputFile ) {
     throw FileError("ERROR: impossible to open SIGPROC file \"" + inputFilename + "\".");
   }
-  buffer = new char [BUFFER_DIM];
-  inputFile.seekg(bytesToSkip, std::ios::beg);
   if ( inputBits >= 8 ) {
-    inputFile.seekg(batch * observation.getNrChannels() * observation.getNrSamplesPerBatch() * sizeof(T), std::ios::cur);
+    inputFile.seekg(bytesToSkip + (batch * observation.getNrChannels() * observation.getNrSamplesPerBatch() * sizeof(T), std::ios::beg));
+  } else {
+    inputFile.seekg(bytesToSkip + static_cast<uint64_t>(batch * observation.getNrChannels() * observation.getNrSamplesPerBatch() / (8.0 / inputBits) * sizeof(T)), std::ios::beg);
+  }
+  buffer = new char [BUFFER_DIM];
+  if ( inputBits >= 8 ) {
     data = new std::vector<T>(observation.getNrChannels() * observation.getNrSamplesPerBatch(false, padding / sizeof(T)));
     for ( unsigned int sample = 0; sample < observation.getNrSamplesPerBatch(); sample++ ) {
       for ( unsigned int channel = observation.getNrChannels(); channel > 0; channel-- ) {
@@ -190,7 +193,6 @@ void readSIGPROC(const Observation & observation, const unsigned int padding, co
       }
     }
   } else {
-    inputFile.seekg(static_cast<uint64_t>(batch * observation.getNrChannels() * observation.getNrSamplesPerBatch() / (8.0 / inputBits) * sizeof(T)), std::ios::cur);
     data = new std::vector<T>(observation.getNrChannels() * isa::utils::pad(observation.getNrSamplesPerBatch() / (8 / inputBits), padding / sizeof(T)));
     for ( uint64_t byte = 0; byte < observation.getNrChannels() * observation.getNrSamplesPerBatch() / (8.0 / inputBits); byte++ ) {
       unsigned int channel = (observation.getNrChannels() - 1) - ((byte * (8 / inputBits)) % observation.getNrChannels());
