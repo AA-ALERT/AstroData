@@ -188,7 +188,7 @@ void readSIGPROC(const Observation & observation, const unsigned int padding, co
     for ( unsigned int sample = 0; sample < observation.getNrSamplesPerBatch(); sample++ ) {
       for ( unsigned int channel = observation.getNrChannels(); channel > 0; channel-- ) {
         inputFile.read(buffer, BUFFER_DIM);
-        data->at((static_cast<uint64_t>(channel - 1) * observation.getNrSamplesPerBatch(false, padding / sizeof(T))) + sample) = *(reinterpret_cast<T *>(buffer));
+        data->at((static_cast<uint64_t>(channel - 1) * observation.getNrSamplesPerBatch()) + sample) = *(reinterpret_cast<T *>(buffer));
       }
     }
   } else {
@@ -213,11 +213,11 @@ void readSIGPROC(const Observation & observation, const unsigned int padding, co
 
           while ( item < (8 / inputBits) ) {
             channelFirstBit = item * inputBits;
-            sampleBuffer = data->at((static_cast<uint64_t>(channel - channelOffset) * isa::utils::pad(observation.getNrSamplesPerBatch() / (8 / inputBits), padding / sizeof(T))) + sampleByte);
+            sampleBuffer = data->at((static_cast<uint64_t>(channel - channelOffset) * (observation.getNrSamplesPerBatch() / (8 / inputBits))) + sampleByte);
             for ( uint8_t bit = 0; bit < inputBits; bit++ ) {
               isa::utils::setBit(sampleBuffer, isa::utils::getBit(*buffer, channelFirstBit + bit), sampleFirstBit + bit);
             }
-            data->at((static_cast<uint64_t>(channel - channelOffset) * isa::utils::pad(observation.getNrSamplesPerBatch() / (8 / inputBits), padding / sizeof(T))) + sampleByte) = sampleBuffer;
+            data->at((static_cast<uint64_t>(channel - channelOffset) * (observation.getNrSamplesPerBatch() / (8 / inputBits))) + sampleByte) = sampleBuffer;
             item++;
             channelOffset++;
           }
