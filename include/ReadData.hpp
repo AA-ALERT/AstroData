@@ -179,7 +179,7 @@ void readSIGPROC(const Observation & observation, const unsigned int padding, co
     throw FileError("ERROR: impossible to open SIGPROC file \"" + inputFilename + "\".");
   }
   if ( inputBits >= 8 ) {
-    inputFile.seekg(bytesToSkip + (batch * observation.getNrChannels() * observation.getNrSamplesPerBatch() * sizeof(T), std::ios::beg));
+    inputFile.seekg(bytesToSkip + (batch * observation.getNrChannels() * observation.getNrSamplesPerBatch() * sizeof(T)), std::ios::beg);
   } else {
     inputFile.seekg(bytesToSkip + static_cast<uint64_t>(batch * observation.getNrChannels() * observation.getNrSamplesPerBatch() / (8.0 / inputBits) * sizeof(T)), std::ios::beg);
   }
