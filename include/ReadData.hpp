@@ -85,7 +85,7 @@ template<typename T> void readLOFAR(std::string headerFilename, std::string rawF
 #endif // HAVE_HDF5
 #ifdef HAVE_PSRDADA
 // PSRDADA buffer
-void readPSRDADAHeader(const Observation & observation, dada_hdu_t & ringBuffer);
+void readPSRDADAHeader(Observation & observation, dada_hdu_t & ringBuffer);
 template<typename T> inline void readPSRDADA(dada_hdu_t & ringBuffer, std::vector<T> * data);
 #endif // HAVE_PSRDADA
 

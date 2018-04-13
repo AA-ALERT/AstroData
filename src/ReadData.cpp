@@ -65,7 +65,7 @@ void readIntegrationSteps(const Observation & observation, const std::string  & 
 }
 
 #ifdef HAVE_PSRDADA
-void readPSRDADAHeader(const Observation & observation, dada_hdu_t & ringBuffer) {
+void readPSRDADAHeader(Observation & observation, dada_hdu_t & ringBuffer) {
   // Staging variables for the header elements
   unsigned int uintValue = 0;
   float floatValue[2] = {0.0f, 0.0f};
