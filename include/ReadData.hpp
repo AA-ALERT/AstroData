@@ -98,6 +98,7 @@ void readSIGPROC(const Observation & observation, const unsigned int padding, co
   char * buffer = nullptr;
 
   inputFile.open(inputFilename.c_str(), std::ios::binary);
+  inputFile.exceptions(std::ifstream::failbit);
   if ( ! inputFile ) {
     throw FileError("ERROR: impossible to open SIGPROC file \"" + inputFilename + "\".");
   }
@@ -175,6 +176,7 @@ void readSIGPROC(const Observation & observation, const unsigned int padding, co
   char * buffer = nullptr;
 
   inputFile.open(inputFilename.c_str(), std::ios::binary);
+  inputFile.exceptions(std::ifstream::failbit);
   if ( ! inputFile ) {
     throw FileError("ERROR: impossible to open SIGPROC file \"" + inputFilename + "\".");
   }
