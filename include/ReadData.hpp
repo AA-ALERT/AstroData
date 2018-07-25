@@ -112,11 +112,11 @@ void readSIGPROC(const Observation &observation, const unsigned int padding, con
     {
         if (inputBits >= 8)
         {
-            inputFile.seekg(bytesToSkip + ((firstBatch - 1) * observation.getNrChannels() * observation.getNrSamplesPerBatch() * sizeof(T)), std::ios::beg);
+            inputFile.seekg(bytesToSkip + (static_cast<uint64_t>(firstBatch - 1) * observation.getNrChannels() * observation.getNrSamplesPerBatch() * sizeof(T)), std::ios::beg);
         }
         else
         {
-            inputFile.seekg(bytesToSkip + static_cast<uint64_t>((firstBatch - 1) * observation.getNrChannels() * observation.getNrSamplesPerBatch() / (8.0 / inputBits) * sizeof(T)), std::ios::beg);
+            inputFile.seekg(bytesToSkip + (static_cast<uint64_t>(firstBatch - 1) * observation.getNrChannels() * observation.getNrSamplesPerBatch() / (8.0 / inputBits) * sizeof(T)), std::ios::beg);
         }
     }
     else
@@ -208,11 +208,11 @@ void readSIGPROC(const Observation &observation, const unsigned int padding, con
     }
     if (inputBits >= 8)
     {
-        inputFile.seekg(bytesToSkip + (batch * observation.getNrChannels() * observation.getNrSamplesPerBatch() * sizeof(T)), std::ios::beg);
+        inputFile.seekg(bytesToSkip + (static_cast<uint64_t>(batch) * observation.getNrChannels() * observation.getNrSamplesPerBatch() * sizeof(T)), std::ios::beg);
     }
     else
     {
-        inputFile.seekg(bytesToSkip + static_cast<uint64_t>(batch * observation.getNrChannels() * observation.getNrSamplesPerBatch() / (8.0 / inputBits) * sizeof(T)), std::ios::beg);
+        inputFile.seekg(bytesToSkip + (static_cast<uint64_t>(batch) * observation.getNrChannels() * observation.getNrSamplesPerBatch() / (8.0 / inputBits) * sizeof(T)), std::ios::beg);
     }
     buffer = new char[BUFFER_DIM];
     if (inputBits >= 8)
