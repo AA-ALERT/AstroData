@@ -34,6 +34,7 @@ public:
   unsigned int getNrStations(const unsigned int padding = 0) const;
   unsigned int getNrBeams(const unsigned int padding = 0) const;
   unsigned int getNrSynthesizedBeams(const unsigned int padding = 0) const;
+  unsigned int getDownsampling() const;
   float getSamplingTime() const;
   unsigned int getNrSamplesPerBatch(const bool subbanding = false, const unsigned int padding = 0) const;
   unsigned int getNrSamplesPerDispersedBatch(const bool subbanding = false, const unsigned int padding = 0) const;
@@ -66,6 +67,7 @@ public:
   void setNrStations(const unsigned int stations);
   void setNrBeams(const unsigned int beams);
   void setNrSynthesizedBeams(const unsigned int beams);
+  void setDownsampling(const unsigned int sampling);
   void setSamplingTime(const float sampling);
   void setNrSamplesPerBatch(const unsigned int samples, const bool subbanding = false);
   void setNrSamplesPerDispersedBatch(const unsigned int samples, const bool subbanding = false);
@@ -83,6 +85,7 @@ private:
   unsigned int nrStations;
   unsigned int nrBeams;
   unsigned int nrSynthesizedBeams;
+  unsigned int downsampling;
   float samplingTime;
   unsigned int nrSamplesPerBatch;
   unsigned int nrSamplesPerBatch_subbanding;
@@ -119,6 +122,11 @@ private:
 };
 
 // Implementations
+// Getters
+inline unsigned int Observation::getDownsampling() const
+{
+  return downsampling;
+}
 inline unsigned int Observation::getNrBatches() const {
   return nrBatches;
 }
@@ -171,6 +179,11 @@ inline unsigned int Observation::getPeriodStep() const {
   return periodStep;
 }
 
+// Setters
+inline void Observation::setDownsampling(const unsigned int sampling)
+{
+  downsampling = sampling;
+}
 inline void Observation::setNrBatches(const unsigned int batches) {
   nrBatches = batches;
 }

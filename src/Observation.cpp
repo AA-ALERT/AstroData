@@ -17,7 +17,7 @@
 
 namespace AstroData {
 
-Observation::Observation() : nrBatches(0), nrStations(0), nrBeams(0), nrSynthesizedBeams(0), samplingTime(0.0f), nrSamplesPerBatch(0), nrSamplesPerBatch_subbanding(0), nrSamplesPerDispersedBatch(0), nrSamplesPerDispersedBatch_subbanding(0), nrSubbands(0), nrChannels(0), nrChannelsPerSubband(0), nrZappedChannels(0), minSubbandFreq(0.0), maxSubbandFreq(0.0), subbandBandwidth(0.0), minChannelFreq(0.0f), maxChannelFreq(0.0f), channelBandwidth(0.0f), nrDelayBatches(0), nrDelayBatches_subbanding(0), nrDMs(0), nrDMs_subbanding(0), firstDM(0.0f), firstDM_subbanding(0.0f), lastDM(0.0f), lastDM_subbanding(0.0f), DMStep(0.0f), DMStep_subbanding(0.0f), nrPeriods(0), firstPeriod(0), lastPeriod(0), periodStep(0), nrBins(0) {}
+Observation::Observation() : nrBatches(0), nrStations(0), nrBeams(0), nrSynthesizedBeams(0), downsampling(1), samplingTime(0.0f), nrSamplesPerBatch(0), nrSamplesPerBatch_subbanding(0), nrSamplesPerDispersedBatch(0), nrSamplesPerDispersedBatch_subbanding(0), nrSubbands(0), nrChannels(0), nrChannelsPerSubband(0), nrZappedChannels(0), minSubbandFreq(0.0), maxSubbandFreq(0.0), subbandBandwidth(0.0), minChannelFreq(0.0f), maxChannelFreq(0.0f), channelBandwidth(0.0f), nrDelayBatches(0), nrDelayBatches_subbanding(0), nrDMs(0), nrDMs_subbanding(0), firstDM(0.0f), firstDM_subbanding(0.0f), lastDM(0.0f), lastDM_subbanding(0.0f), DMStep(0.0f), DMStep_subbanding(0.0f), nrPeriods(0), firstPeriod(0), lastPeriod(0), periodStep(0), nrBins(0) {}
 
 Observation::~Observation() {}
 
@@ -160,7 +160,14 @@ unsigned int Observation::getNrBins(const unsigned int padding) const {
 void Observation::setFrequencyRange(const unsigned int subbands, const unsigned int channels, const float baseFrequency, const float bandwidth) {
   nrSubbands = subbands;
   nrChannels = channels;
-  nrChannelsPerSubband = channels / subbands;
+  if ( nrSubbands > 0 )
+  {
+    nrChannelsPerSubband = channels / subbands;
+  }
+  else
+  {
+    nrChannelsPerSubband = 0;
+  }
   minSubbandFreq = baseFrequency + ((nrChannelsPerSubband / 2) * bandwidth);
   maxSubbandFreq = baseFrequency + ((nrChannels - (nrChannelsPerSubband / 2)) * bandwidth);
   subbandBandwidth = nrChannelsPerSubband * bandwidth;
