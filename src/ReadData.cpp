@@ -1,5 +1,4 @@
-// Copyright 2017 Netherlands Institute for Radio Astronomy (ASTRON)
-// Copyright 2017 Netherlands eScience Center
+// Copyright 2017 Netherlands eScience Center and Netherlands Institute for Radio Astronomy (ASTRON)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -72,6 +71,98 @@ void readIntegrationSteps(const Observation &observation, const std::string &inp
         }
     }
     input.close();
+}
+
+std::uint64_t getSIGPROCHeaderSize(const std::string &inputFilename)
+{
+    std::uint64_t headerSize = 0;
+    std::uint8_t state = 0;
+    char buffer = '\0';
+    std::ifstream inputFile;
+
+    inputFile.open(inputFilename.c_str(), std::ios::binary);
+    inputFile.exceptions(std::ifstream::failbit);
+    if ( !inputFile )
+    {
+        throw FileError("ERROR: impossible to open SIGPROC file \"" + inputFilename + "\".");
+    }
+    while ( inputFile.get(buffer) )
+    {
+        switch ( buffer )
+        {
+            case 'H':
+                state = 1;
+                break;
+            case 'E':
+                if ( (state == 1) || (state == 5) || (state == 8) )
+                {
+                    state++;
+                }
+                else
+                {
+                    state = 0;
+                }
+                break;
+            case 'A':
+                if ( state == 2 )
+                {
+                    state++;
+                }
+                else
+                {
+                    state = 0;
+                }
+                break;
+            case 'D':
+                if ( (state == 3) || (state == 9) )
+                {
+                    state++;
+                }
+                else
+                {
+                    state = 0;
+                }
+                break;
+            case 'R':
+                if ( state == 6 )
+                {
+                    state++;
+                }
+                else
+                {
+                    state = 0;
+                }
+                break;
+            case '_':
+                if ( state == 7 )
+                {
+                    state++;
+                }
+                else
+                {
+                    state = 0;
+                }
+                break;
+            case 'N':
+                if ( state == 8 )
+                {
+                    state++;
+                }
+                else
+                {
+                    state = 0;
+                }
+                break;
+            default:
+                break;
+        }
+        headerSize++;
+        if ( state == 10 )
+        {
+            break;
+        }
+    }
+    return headerSize;
 }
 
 #ifdef HAVE_PSRDADA

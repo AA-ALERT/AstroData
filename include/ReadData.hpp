@@ -1,5 +1,4 @@
-// Copyright 2017 Netherlands Institute for Radio Astronomy (ASTRON)
-// Copyright 2017 Netherlands eScience Center
+// Copyright 2017 Netherlands eScience Center and Netherlands Institute for Radio Astronomy (ASTRON)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -64,6 +63,12 @@ void readIntegrationSteps(const Observation &observation, const std::string &inp
  * @param inputFilename Name of the filterbank file
  * @param data Data structure to read data into.
  * @param firstBatch First batch to read.
+ */
+std::uint64_t getSIGPROCHeaderSize(const std::string &inputFilename);
+/**
+ * @brief Measure the size, in bytes, of the header of a SIGPROC file.
+ * @param inputFilename Name of the filterbank file
+ * @return The length of the header.
  */
 template <typename T>
 void readSIGPROC(const Observation &observation, const unsigned int padding, const uint8_t inputBits, const std::uint64_t bytesToSkip, const std::string &inputFilename, std::vector<std::vector<T> *> &data, const unsigned int firstBatch = 0);
