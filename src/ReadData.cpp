@@ -94,7 +94,7 @@ std::uint64_t getSIGPROCHeaderSize(const std::string &inputFilename)
                 state = 1;
                 break;
             case 'E':
-                if ( (state == 1) || (state == 5) || (state == 8) )
+                if ( (state == 1) || (state == 4) || (state == 7) )
                 {
                     state++;
                 }
@@ -124,7 +124,7 @@ std::uint64_t getSIGPROCHeaderSize(const std::string &inputFilename)
                 }
                 break;
             case 'R':
-                if ( state == 6 )
+                if ( state == 5 )
                 {
                     state++;
                 }
@@ -134,7 +134,7 @@ std::uint64_t getSIGPROCHeaderSize(const std::string &inputFilename)
                 }
                 break;
             case '_':
-                if ( state == 7 )
+                if ( state == 6 )
                 {
                     state++;
                 }
