@@ -15,17 +15,34 @@
 
 #include <vector>
 #include <string>
+#include <fstream>
 
 #include <Observation.hpp>
-#include <Platform.hpp>
+#include "Platform.hpp"
 
 
 #pragma once
 
 namespace AstroData {
-// Generate beam mapping
+/**
+ ** @brief Generate a mapping between input and synthesized beams.
+ ** The current mapping simply associates one input beam to one synthesized beam.
+ **
+ ** @param observation Object containing the observation parameters.
+ ** @param beamMapping The vector containing the index of input beams corresponding to synthesized beams.
+ ** @param padding The padding used to store data structures.
+ ** @param subbanding A flag to indicate if using or not subbanding mode.
+ */
 void generateBeamMapping(const AstroData::Observation & observation, std::vector<unsigned int> & beamMapping, const unsigned int padding, const bool subbanding = false);
-// Read beam mapping file
+/**
+ ** @brief Read the mapping between input and synthesized beams from an input file.
+ **
+ ** @param observation Object containing the observation parameters.
+ ** @param inputFilename The filename of the file containing the mappings.
+ ** @param beamMapping The vector containing the index of input beams corresponding to synthesized beams.
+ ** @param padding The padding used to store data structures.
+ ** @param subbanding A flag to indicate if using or not subbanding mode.
+ */
 void readBeamMapping(const AstroData::Observation & observation, const std::string & inputFilename, std::vector<unsigned int> & beamMapping, const unsigned int padding, const bool subbanding = false);
 } // AstroData
 
