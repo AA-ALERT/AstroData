@@ -67,6 +67,12 @@ void readZappedChannels(Observation &observation, const std::string &inputFileNa
  */
 void readIntegrationSteps(const Observation &observation, const std::string &inputFileName, std::set<unsigned int> &integrationSteps);
 /**
+ * @brief Measure the size, in bytes, of the header of a SIGPROC file.
+ * @param inputFilename Name of the filterbank file
+ * @return The length of the header.
+ */
+std::uint64_t getSIGPROCHeaderSize(const std::string &inputFilename);
+/**
  * @brief Read a full SIGPROC filterbank file.
  * @tparam T Data type of the filterbank file.
  * @param observation Object containing the observation parameters.
@@ -76,12 +82,6 @@ void readIntegrationSteps(const Observation &observation, const std::string &inp
  * @param inputFilename Name of the filterbank file
  * @param data Data structure to read data into.
  * @param firstBatch First batch to read.
- */
-std::uint64_t getSIGPROCHeaderSize(const std::string &inputFilename);
-/**
- * @brief Measure the size, in bytes, of the header of a SIGPROC file.
- * @param inputFilename Name of the filterbank file
- * @return The length of the header.
  */
 template <typename T>
 void readSIGPROC(const Observation &observation, const unsigned int padding, const uint8_t inputBits, const std::uint64_t bytesToSkip, const std::string &inputFilename, std::vector<std::vector<T> *> &data, const unsigned int firstBatch = 0);
