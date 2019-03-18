@@ -49,9 +49,22 @@ class RingBufferError : public std::exception
     std::string message;
 };
 
-// Zapped channels (excluded from computation)
+/**
+ ** @brief Read the list of channels excluded from the computation.
+ **
+ ** @param observation Object containing the observation parameters.
+ ** @param inputFileName The file containing the list of zapped channels.
+ ** @param zappedChannels The vector in which to store the index of the zapped channels.
+ */
 void readZappedChannels(Observation &observation, const std::string &inputFileName, std::vector<unsigned int> &zappedChannels);
-// Integration steps
+/**
+ ** @brief Read the list of integration steps.
+ ** Each integration step is a value representing a width in samples.
+ **
+ ** @param observation Object containing the observation parameters.
+ ** @param inputFileName The file containing the list of zapped channels.
+ ** @param zappedChannels The set of integration steps.
+ */
 void readIntegrationSteps(const Observation &observation, const std::string &inputFileName, std::set<unsigned int> &integrationSteps);
 /**
  * @brief Read a full SIGPROC filterbank file.
