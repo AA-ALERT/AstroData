@@ -14,6 +14,7 @@
 
 #include <ReadData.hpp>
 #include <ArgumentList.hpp>
+#include <iostream>
 #include <string>
 #include <vector>
 #include <gtest/gtest.h>
@@ -24,7 +25,15 @@ int main(int argc, char * argv[])
 {
     testing::InitGoogleTest(&argc, argv);
     isa::utils::ArgumentList arguments(argc, argv);
-    fileName = arguments.getSwitchArgument<std::string>("-zapped_channels_file");
+    try
+    {
+        fileName = arguments.getSwitchArgument<std::string>("-zapped_channels_file");
+    }
+    catch ( isa::utils::EmptyCommandLine & err )
+    {
+        std::cerr << "Required command line parameters:" << std::endl;
+        std::cerr << "\t-zapped_channels_file <string>" << std::endl;
+    }
     return RUN_ALL_TESTS();
 }
 
