@@ -31,8 +31,10 @@ int main(int argc, char * argv[])
     }
     catch ( isa::utils::EmptyCommandLine & err )
     {
+        std::cerr << std::endl;
         std::cerr << "Required command line parameters:" << std::endl;
         std::cerr << "\t-zapped_channels_file <string>" << std::endl;
+        std::cerr << std::endl;
     }
     return RUN_ALL_TESTS();
 }
