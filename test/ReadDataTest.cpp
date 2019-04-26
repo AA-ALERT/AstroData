@@ -12,17 +12,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <Observation.hpp>
 #include <ReadData.hpp>
+#include <ArgumentList.hpp>
 #include <string>
 #include <vector>
 #include <gtest/gtest.h>
+
+std::string fileName;
+
+int main(int argc, char * argv[])
+{
+    testing::InitGoogleTest(&argc, argv);
+    isa::utils::ArgumentList arguments(argc, argv);
+    fileName = arguments.getSwitchArgument<std::string>("-zapped_channels_file");
+    RUN_ALL_TESTS();
+    return 0;
+}
 
 TEST(ZappedChannels, FileError)
 {
     AstroData::Observation observation;
     std::vector<unsigned int> channels;
-    std::string wrongFileName = "./zappred_channels.conf";
+    std::string wrongFileName = "zappred_channels.conf";
     ASSERT_THROW(AstroData::readZappedChannels(observation, wrongFileName, channels), AstroData::FileError);    
 }
 
@@ -30,7 +41,6 @@ TEST(ZappedChannels, MatchingChannels)
 {
     AstroData::Observation observation;
     std::vector<unsigned int> channels;
-    std::string fileName = "./zapped_channels.conf";
     observation.setFrequencyRange(1, 1024, 0.0f, 0.0f);
     channels.resize(observation.getNrChannels());
     AstroData::readZappedChannels(observation, fileName, channels);
