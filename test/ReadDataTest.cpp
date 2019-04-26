@@ -40,6 +40,6 @@ TEST(ZappedChannels, MatchingChannels)
     EXPECT_EQ(channels.at(19), 1);
     EXPECT_EQ(channels.at(1023), 1);
     EXPECT_EQ(channels.at(0), 1);
-    EXPECT_EQ(channels.at(45), 0);
-    EXPECT_EQ(channels.at(128), 0);
+    EXPECT_NE(channels.at(45), 1);
+    EXPECT_NE(channels.at(128), 1);
 }
