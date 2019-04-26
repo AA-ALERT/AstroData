@@ -25,8 +25,7 @@ int main(int argc, char * argv[])
     testing::InitGoogleTest(&argc, argv);
     isa::utils::ArgumentList arguments(argc, argv);
     fileName = arguments.getSwitchArgument<std::string>("-zapped_channels_file");
-    RUN_ALL_TESTS();
-    return 0;
+    return RUN_ALL_TESTS();
 }
 
 TEST(ZappedChannels, FileError)
