@@ -41,6 +41,12 @@ install(TARGETS astrodata
 # Unit testing
 enable_testing()
 set(TEST_LINK_LIBRARIES gtest pthread isa_utils)
+if($ENV{LOFAR})
+  set(TEST_LINK_LIBRARIES ${TARGET_LINK_LIBRARIES} hdf5 hdf5_cpp z)
+endif()
+if($ENV{PSRDADA})
+  set(TEST_LINK_LIBRARIES ${TEST_LINK_LIBRARIES} psrdada cudart)
+endif()
 ## ReadDataTest
 add_executable(ReadDataTest
   test/ReadDataTest.cpp
