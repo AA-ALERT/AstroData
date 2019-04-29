@@ -39,6 +39,16 @@ int main(int argc, char * argv[])
         std::cerr << "\t-zapped_channels_file <string>" << std::endl;
         std::cerr << "\t-integration_steps_file <string>" << std::endl;
         std::cerr << std::endl;
+        return -1;
+    }
+    catch ( isa::utils::SwitchNotFound & err )
+    {
+        std::cerr << std::endl;
+        std::cerr << "Required command line parameters:" << std::endl;
+        std::cerr << "\t-zapped_channels_file <string>" << std::endl;
+        std::cerr << "\t-integration_steps_file <string>" << std::endl;
+        std::cerr << std::endl;
+        return -1;
     }
     return RUN_ALL_TESTS();
 }
