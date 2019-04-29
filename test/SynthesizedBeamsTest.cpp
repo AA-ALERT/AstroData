@@ -49,6 +49,7 @@ TEST(BeamMapping, GenerateSingle)
     observation.setNrBeams(12);
     observation.setNrSynthesizedBeams(71);
     observation.setFrequencyRange(1, 1536, 0.0f, 0.0f);
+    mapping.resize(observation.getNrSynthesizedBeams() * observation.getNrChannels(padding));
     AstroData::generateBeamMapping(observation, mapping, padding);
     for ( unsigned int sBeam = 0; sBeam < observation.getNrSynthesizedBeams(); sBeam++ )
     {
@@ -66,6 +67,7 @@ TEST(BeamMapping, GenerateSubband)
     observation.setNrBeams(12);
     observation.setNrSynthesizedBeams(71);
     observation.setFrequencyRange(32, 1536, 0.0f, 0.0f);
+    mapping.resize(observation.getNrSynthesizedBeams() * observation.getNrSubbands(padding));
     AstroData::generateBeamMapping(observation, mapping, padding, true);
     for ( unsigned int sBeam = 0; sBeam < observation.getNrSynthesizedBeams(); sBeam++ )
     {
@@ -83,6 +85,7 @@ TEST(BeamMapping, ReadSubband)
     observation.setNrBeams(12);
     observation.setNrSynthesizedBeams(71);
     observation.setFrequencyRange(32, 1536, 0.0f, 0.0f);
+    mapping.resize(observation.getNrSynthesizedBeams() * observation.getNrSubbands(padding));
     AstroData::readBeamMapping(observation, path + "/sb_table.conf", mapping, padding, true);
     EXPECT_EQ(mapping[0], 4);
     EXPECT_EQ(mapping[31], 11);
