@@ -20,8 +20,7 @@
 #include <gtest/gtest.h>
 
 std::string const wrongFileName = "does_not_exist";
-std::string channelsFileName;
-std::string integrationStepsFileName;
+std::string path;
 
 int main(int argc, char * argv[])
 {
@@ -29,15 +28,13 @@ int main(int argc, char * argv[])
     isa::utils::ArgumentList arguments(argc, argv);
     try
     {
-        channelsFileName = arguments.getSwitchArgument<std::string>("-zapped_channels_file");
-        integrationStepsFileName = arguments.getSwitchArgument<std::string>("-integration_steps_file");
+        path = arguments.getSwitchArgument<std::string>("-path");
     }
     catch ( isa::utils::EmptyCommandLine & err )
     {
         std::cerr << std::endl;
         std::cerr << "Required command line parameters:" << std::endl;
-        std::cerr << "\t-zapped_channels_file <string>" << std::endl;
-        std::cerr << "\t-integration_steps_file <string>" << std::endl;
+        std::cerr << "\t-path <string> // The path of the test input files" << std::endl;
         std::cerr << std::endl;
         return -1;
     }
@@ -45,8 +42,7 @@ int main(int argc, char * argv[])
     {
         std::cerr << std::endl;
         std::cerr << "Required command line parameters:" << std::endl;
-        std::cerr << "\t-zapped_channels_file <string>" << std::endl;
-        std::cerr << "\t-integration_steps_file <string>" << std::endl;
+        std::cerr << "\t-path <string> // The path of the test input files" << std::endl;
         std::cerr << std::endl;
         return -1;
     }
@@ -66,7 +62,7 @@ TEST(ZappedChannels, MatchingChannels)
     std::vector<unsigned int> channels;
     observation.setFrequencyRange(1, 1024, 0.0f, 0.0f);
     channels.resize(observation.getNrChannels());
-    AstroData::readZappedChannels(observation, channelsFileName, channels);
+    AstroData::readZappedChannels(observation, path + "/zapped_channels.conf", channels);
     EXPECT_EQ(channels.at(4), 1);
     EXPECT_EQ(channels.at(39), 1);
     EXPECT_EQ(channels.at(7), 1);
@@ -89,7 +85,7 @@ TEST(IntegrationSteps, MatchingSteps)
     AstroData::Observation observation;
     std::set<unsigned int> steps;
     observation.setNrSamplesPerBatch(12500);
-    AstroData::readIntegrationSteps(observation, channelsFileName, steps);
+    AstroData::readIntegrationSteps(observation, path + "/integration_steps.conf", steps);
     EXPECT_EQ(steps.size(), 3);
     EXPECT_EQ(*steps.find(2), 2);
     EXPECT_EQ(*steps.find(5), 5);
