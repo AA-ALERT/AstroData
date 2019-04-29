@@ -30,15 +30,7 @@ int main(int argc, char * argv[])
     {
         path = arguments.getSwitchArgument<std::string>("-path");
     }
-    catch ( isa::utils::EmptyCommandLine & err )
-    {
-        std::cerr << std::endl;
-        std::cerr << "Required command line parameters:" << std::endl;
-        std::cerr << "\t-path <string> // The path of the test input files" << std::endl;
-        std::cerr << std::endl;
-        return -1;
-    }
-    catch ( isa::utils::SwitchNotFound & err )
+    catch ( std::exception & err )
     {
         std::cerr << std::endl;
         std::cerr << "Required command line parameters:" << std::endl;
