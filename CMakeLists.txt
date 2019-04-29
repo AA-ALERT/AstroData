@@ -53,4 +53,11 @@ add_executable(ReadDataTest
 )
 target_include_directories(ReadDataTest PRIVATE include)
 target_link_libraries(ReadDataTest PRIVATE astrodata ${TEST_LINK_LIBRARIES})
-add_test(NAME ReadDataTest COMMAND ReadDataTest)
+add_test(NAME ReadDataTest COMMAND "ReadDataTest -path test")
+## SynthesizedBeamsTest
+add_executable(SynthesizedBeamsTest
+  test/SynthesizedBeamsTest.cpp
+)
+target_include_directories(SynthesizedBeamsTest PRIVATE include)
+target_link_libraries(SynthesizedBeamsTest PRIVATE astrodata ${TEST_LINK_LIBRARIES})
+add_test(NAME SynthesizedBeamsTest COMMAND "SynthesizedBeamsTest -path test")
