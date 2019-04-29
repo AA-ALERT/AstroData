@@ -67,7 +67,6 @@ TEST(ZappedChannels, MatchingChannels)
     observation.setFrequencyRange(1, 1024, 0.0f, 0.0f);
     channels.resize(observation.getNrChannels());
     AstroData::readZappedChannels(observation, channelsFileName, channels);
-    EXPECT_EQ(channels.size(), 7);
     EXPECT_EQ(channels.at(4), 1);
     EXPECT_EQ(channels.at(39), 1);
     EXPECT_EQ(channels.at(7), 1);
