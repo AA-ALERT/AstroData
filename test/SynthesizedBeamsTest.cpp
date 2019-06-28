@@ -100,3 +100,21 @@ TEST(BeamMapping, ReadSubband)
     EXPECT_EQ(mapping[(70 * observation.getNrSubbands(padding / sizeof(unsigned int)))], 8);
     EXPECT_EQ(mapping[(70 * observation.getNrSubbands(padding / sizeof(unsigned int))) + 31], 1);
 }
+
+TEST(BeamMapping, ReadIdentity)
+{
+    AstroData::Observation observation;
+    std::vector<unsigned int> mapping;
+    observation.setNrBeams(5);
+    observation.setNrSynthesizedBeams(5);
+    observation.setFrequencyRange(7, 70, 0.0f, 0.0f);
+    mapping.resize(observation.getNrSynthesizedBeams() * observation.getNrSubbands(padding));
+    AstroData::readBeamMapping(observation, path + "/sb_identity.conf", mapping, padding, true);
+    for ( unsigned int sBeam = 0; sBeam < observation.getNrSynthesizedBeams(); sBeam++ )
+    {
+        for ( unsigned int subband = 0; subband < observation.getNrSubbands(); subband++ )
+        {
+            EXPECT_EQ(mapping[(sBeam * observation.getNrSubbands(padding / sizeof(unsigned int))) + subband], sBeam % observation.getNrBeams());
+        }
+    }
+}
