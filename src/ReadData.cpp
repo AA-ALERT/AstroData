@@ -162,6 +162,7 @@ std::uint64_t getSIGPROCHeaderSize(const std::string &inputFilename)
             break;
         }
     }
+    inputFile.close();
     return headerSize;
 }
 
