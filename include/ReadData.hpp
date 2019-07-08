@@ -63,7 +63,7 @@ void readZappedChannels(Observation &observation, const std::string &inputFileNa
  **
  ** @param observation Object containing the observation parameters.
  ** @param inputFileName The file containing the list of zapped channels.
- ** @param zappedChannels The set of integration steps.
+ ** @param integrationSteps The set of integration steps.
  */
 void readIntegrationSteps(const Observation &observation, const std::string &inputFileName, std::set<unsigned int> &integrationSteps);
 /**
