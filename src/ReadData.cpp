@@ -166,6 +166,221 @@ std::uint64_t getSIGPROCHeaderSize(const std::string &inputFilename)
     return headerSize;
 }
 
+void readSIGPROCHeader(const std::uint64_t headerSize, Observation & observation, const std::string & inputFilename)
+{
+    std::uint64_t bytesRead = 0;
+    std::uint8_t state = 0;
+    std::ifstream inputFile;
+    // Temporary variables
+    char buffer = '\0';
+    char * temp32 = new char [4];
+    char * temp64 = new char [8];
+    double tsamp = 0.0;
+    unsigned int nsamples = 0;
+    double fch1 = 0.0;
+    double foff = 0.0;
+    unsigned int nchans = 0;
+
+
+    inputFile.open(inputFilename.c_str(), std::ios::binary);
+    inputFile.exceptions(std::ifstream::failbit);
+    if ( !inputFile )
+    {
+        throw FileError("ERROR: impossible to open SIGPROC file \"" + inputFilename + "\".");
+    }
+    while ( inputFile.get(buffer) )
+    {
+        switch ( buffer )
+        {
+            case 't':
+                if ( state == 0 )
+                {
+                    state = 1;
+                }
+                break;
+            case 's':
+                if ( (state == 1) || (state == 5) )
+                {
+                    state++;
+                }
+                else if ( state == 11 )
+                {
+                    // nsamples : int
+                    inputFile.read(temp32, 4);
+                    nsamples = *(reinterpret_cast<unsigned int *>(temp32));
+                    bytesRead += 4;
+                    state = 0;
+                }
+                else if ( state == 20 )
+                {
+                    // nchans : int
+                    inputFile.read(temp32, 4);
+                    nchans = *(reinterpret_cast<unsigned int *>(temp32));
+                    bytesRead += 4;
+                    state = 0;
+                }
+                else
+                {
+                    state = 0;
+                }
+                break;
+            case 'a':
+                if ( (state == 2) || (state == 6) || (state == 18) )
+                {
+                    state++;
+                }
+                else
+                {
+                    state = 0;
+                }
+                break;
+            case 'm':
+                if ( (state == 3) || (state == 7) )
+                {
+                    state++;
+                }
+                else
+                {
+                    state = 0;
+                }
+                break;
+            case 'p':
+                if ( state == 4 )
+                {
+                    // tsamp : double
+                    inputFile.read(temp64, 8);
+                    tsamp = *(reinterpret_cast<double *>(temp64));
+                    bytesRead += 8;
+                    state = 0;
+                }
+                else if ( state == 8 )
+                {
+                    state++;
+                }
+                else
+                {
+                    state = 0;
+                }
+                break;
+            case 'n':
+                if ( state == 0 )
+                {
+                    state = 5;
+                }
+                else if ( state == 19 )
+                {
+                    state++;
+                }
+                else
+                {
+                    state = 0;
+                }
+                break;
+            case 'l':
+                if ( state == 9 )
+                {
+                    state++;
+                }
+                else
+                {
+                    state = 0;
+                }
+                break;
+            case 'e':
+                if ( state == 10 )
+                {
+                    state++;
+                }
+                else
+                {
+                    state = 0;
+                }
+                break;
+            case 'f':
+                if ( state == 0 )
+                {
+                    state = 12;
+                }
+                else if ( state == 15 )
+                {
+                    state++;
+                }
+                else if ( state == 16 )
+                {
+                    // foff : double
+                    inputFile.read(temp64, 8);
+                    foff = *(reinterpret_cast<double *>(temp64));
+                    bytesRead += 8;
+                    state = 0;
+                }
+                else
+                {
+                    state = 0;
+                }
+                break;
+            case 'c':
+                if ( state == 12 )
+                {
+                    state++;
+                }
+                else if ( state == 5 )
+                {
+                    state = 17;
+                }
+                else
+                {
+                    state = 0;
+                }
+                break;
+            case 'h':
+                if ( (state == 13) || (state == 17) )
+                {
+                    state++;
+                }
+                else
+                {
+                    state = 0;
+                }
+                break;
+            case '1':
+                if ( state == 14 )
+                {
+                    // fch1 : double
+                    inputFile.read(temp64, 8);
+                    fch1 = *(reinterpret_cast<double *>(temp64));
+                    bytesRead += 8;
+                    state = 0;
+                }
+                else
+                {
+                    state = 0;
+                }
+                break;
+            case 'o':
+                if ( state == 12 )
+                {
+                    state = 15;
+                }
+                else
+                {
+                    state = 0;
+                }
+                break;
+            default:
+                break;
+        }
+        bytesRead++;
+        if ( bytesRead >= headerSize )
+        {
+            break;
+        }
+    }
+    inputFile.close();
+    observation.setNrSamplesPerBatch(nsamples);
+    observation.setSamplingTime(tsamp);
+    observation.setFrequencyRange(1, nchans, fch1 + (foff * (nchans - 1)), -foff);
+}
+
 #ifdef HAVE_PSRDADA
 void readPSRDADAHeader(Observation &observation, dada_hdu_t &ringBuffer)
 {
