@@ -376,7 +376,7 @@ void readSIGPROCHeader(const std::uint64_t headerSize, Observation & observation
         }
     }
     inputFile.close();
-    observation.setNrSamplesPerBatch(nsamples);
+    observation.setNrSamplesPerBatch(nsamples / observation.getNrBatches());
     observation.setSamplingTime(tsamp);
     observation.setFrequencyRange(subbands, nchans, fch1 + (foff * (nchans - 1)), -foff);
 }
