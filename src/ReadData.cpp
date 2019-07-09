@@ -367,6 +367,7 @@ void readSIGPROCHeader(const std::uint64_t headerSize, Observation & observation
                 }
                 break;
             default:
+                state = 0;
                 break;
         }
         bytesRead++;
