@@ -78,8 +78,9 @@ std::uint64_t getSIGPROCHeaderSize(const std::string &inputFilename);
  * @param headerSize The size of the header in bytes.
  * @param observation Object to populate with read observation parameters.
  * @param inputFilename Name of the filterbank file.
+ * @param subbands Number of subbands for processing (default is 0).
  */
-void readSIGPROCHeader(const std::uint64_t headerSize, Observation & observation, const std::string & inputFilename);
+void readSIGPROCHeader(const std::uint64_t headerSize, Observation & observation, const std::string & inputFilename, const unsigned int subbands = 0);
 /**
  * @brief Read a full SIGPROC filterbank file.
  * @tparam T Data type of the filterbank file.

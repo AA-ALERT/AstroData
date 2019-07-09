@@ -166,7 +166,7 @@ std::uint64_t getSIGPROCHeaderSize(const std::string &inputFilename)
     return headerSize;
 }
 
-void readSIGPROCHeader(const std::uint64_t headerSize, Observation & observation, const std::string & inputFilename)
+void readSIGPROCHeader(const std::uint64_t headerSize, Observation & observation, const std::string & inputFilename, const unsigned int subbands)
 {
     std::uint64_t bytesRead = 0;
     std::uint8_t state = 0;
@@ -378,7 +378,7 @@ void readSIGPROCHeader(const std::uint64_t headerSize, Observation & observation
     inputFile.close();
     observation.setNrSamplesPerBatch(nsamples);
     observation.setSamplingTime(tsamp);
-    observation.setFrequencyRange(1, nchans, fch1 + (foff * (nchans - 1)), -foff);
+    observation.setFrequencyRange(subbands, nchans, fch1 + (foff * (nchans - 1)), -foff);
 }
 
 #ifdef HAVE_PSRDADA
