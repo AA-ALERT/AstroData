@@ -168,8 +168,8 @@ void Observation::setFrequencyRange(const unsigned int subbands, const unsigned 
   {
     nrChannelsPerSubband = 0;
   }
-  minSubbandFreq = baseFrequency + ((nrChannelsPerSubband / 2) * bandwidth);
-  maxSubbandFreq = baseFrequency + ((nrChannels - (nrChannelsPerSubband / 2)) * bandwidth);
+  minSubbandFreq = baseFrequency + ((nrChannelsPerSubband / 2.0) * bandwidth);
+  maxSubbandFreq = baseFrequency + ((nrChannels - (nrChannelsPerSubband / 2.0)) * bandwidth);
   subbandBandwidth = nrChannelsPerSubband * bandwidth;
   minChannelFreq = baseFrequency;
   maxChannelFreq = baseFrequency + ((channels - 1) * bandwidth);
